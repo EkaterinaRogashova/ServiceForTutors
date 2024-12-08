@@ -15,6 +15,5 @@ namespace ServiceForTutorContracts.BusinessLogicContracts
         TariffPlanViewModel? ReadElement(TariffPlanSearchModel model);
         bool Create(TariffPlanBindingModel model);
         bool Update(TariffPlanBindingModel model);
-        bool Delete(TariffPlanBindingModel model);
     }
 }

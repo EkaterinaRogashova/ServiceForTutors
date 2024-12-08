@@ -1,6 +1,7 @@
 ﻿using ServiceForTutorContracts.BindingModels;
 using ServiceForTutorContracts.BusinessLogicContracts;
 using ServiceForTutorContracts.SearchModels;
+using ServiceForTutorContracts.StoragesContracts;
 using ServiceForTutorContracts.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -12,29 +13,57 @@ namespace ServiceForTutorBusinessLogic.BusinessLogic
 {
     public class PurchasedTariffPlanLogic : IPurchasedTariffPlanLogic
     {
+        private readonly IPurchasedTariffPlanStorage _purchasedTariffPlanStorage;
+        public PurchasedTariffPlanLogic(IPurchasedTariffPlanStorage purchasedTariffPlanStorage)
+        {
+            _purchasedTariffPlanStorage = purchasedTariffPlanStorage;
+        }
         public bool Create(PurchasedTariffPlanBindingModel model)
         {
-            throw new NotImplementedException();
-        }
+            CheckModel(model);
+            var result = _purchasedTariffPlanStorage.Insert(model);
 
-        public bool Delete(PurchasedTariffPlanBindingModel model)
-        {
-            throw new NotImplementedException();
+            if (result == null)
+            {
+                return false;
+            }
+            return true;
         }
 
         public PurchasedTariffPlanViewModel? ReadElement(PurchasedTariffPlanSearchModel model)
         {
-            throw new NotImplementedException();
+            if (model == null)
+            {
+                throw new ArgumentNullException(nameof(model));
+            }
+            var element = _purchasedTariffPlanStorage.GetElement(model);
+            if (element == null)
+            {
+                return null;
+            }
+            return element;
         }
 
-        public List<PurchasedTariffPlanViewModel>? ReadList(PurchasedTariffPlanSearchModel? model)
+        private void CheckModel(PurchasedTariffPlanBindingModel model, bool withParams = true)
         {
-            throw new NotImplementedException();
-        }
+            if (model == null)
+            {
+                throw new ArgumentNullException(nameof(model));
+            }
+            if (!withParams)
+            {
+                return;
+            }
 
-        public bool Update(PurchasedTariffPlanBindingModel model)
-        {
-            throw new NotImplementedException();
+            var element = _purchasedTariffPlanStorage.GetElement(new PurchasedTariffPlanSearchModel
+            {
+                Id = model.Id,
+            });
+
+            if (element != null && element.Id != model.Id)
+            {
+                throw new InvalidOperationException("");
+            }
         }
     }
 }

@@ -11,10 +11,7 @@ namespace ServiceForTutorContracts.BusinessLogicContracts
 {
     public interface IPurchasedTariffPlanLogic
     {
-        List<PurchasedTariffPlanViewModel>? ReadList(PurchasedTariffPlanSearchModel? model);
         PurchasedTariffPlanViewModel? ReadElement(PurchasedTariffPlanSearchModel model);
         bool Create(PurchasedTariffPlanBindingModel model);
-        bool Update(PurchasedTariffPlanBindingModel model);
-        bool Delete(PurchasedTariffPlanBindingModel model);
     }
 }

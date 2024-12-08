@@ -15,6 +15,5 @@ namespace ServiceForTutorContracts.BusinessLogicContracts
         UserViewModel? ReadElement(UserSearchModel model);
         bool Create(UserBindingModel model);
         bool Update(UserBindingModel model);
-        bool Delete(UserBindingModel model);
     }
 }

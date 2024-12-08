@@ -14,7 +14,5 @@ namespace ServiceForTutorContracts.BusinessLogicContracts
         List<StudentAnswerViewModel>? ReadList(StudentAnswerSearchModel? model);
         StudentAnswerViewModel? ReadElement(StudentAnswerSearchModel model);
         bool Create(StudentAnswerBindingModel model);
-        bool Update(StudentAnswerBindingModel model);
-        bool Delete(StudentAnswerBindingModel model);
     }
 }

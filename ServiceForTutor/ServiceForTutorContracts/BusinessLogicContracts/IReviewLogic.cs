@@ -12,9 +12,6 @@ namespace ServiceForTutorContracts.BusinessLogicContracts
     public interface IReviewLogic
     {
         List<ReviewViewModel>? ReadList(ReviewSearchModel? model);
-        ReviewViewModel? ReadElement(ReviewSearchModel model);
         bool Create(ReviewBindingModel model);
-        bool Update(ReviewBindingModel model);
-        bool Delete(ReviewBindingModel model);
     }
 }

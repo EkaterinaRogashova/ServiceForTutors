@@ -1,6 +1,7 @@
 ﻿using ServiceForTutorContracts.BindingModels;
 using ServiceForTutorContracts.BusinessLogicContracts;
 using ServiceForTutorContracts.SearchModels;
+using ServiceForTutorContracts.StoragesContracts;
 using ServiceForTutorContracts.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -12,29 +13,76 @@ namespace ServiceForTutorBusinessLogic.BusinessLogic
 {
     public class TariffPlanLogic : ITariffPlanLogic
     {
+        private readonly ITariffPlanStorage _tariffPlanStorage;
+        public TariffPlanLogic(ITariffPlanStorage tariffPlanStorage)
+        {
+            _tariffPlanStorage = tariffPlanStorage;
+        }
         public bool Create(TariffPlanBindingModel model)
         {
-            throw new NotImplementedException();
-        }
+            CheckModel(model);
+            var result = _tariffPlanStorage.Insert(model);
 
-        public bool Delete(TariffPlanBindingModel model)
-        {
-            throw new NotImplementedException();
+            if (result == null)
+            {
+                return false;
+            }
+            return true;
         }
 
         public TariffPlanViewModel? ReadElement(TariffPlanSearchModel model)
         {
-            throw new NotImplementedException();
+            if (model == null)
+            {
+                throw new ArgumentNullException(nameof(model));
+            }
+            var element = _tariffPlanStorage.GetElement(model);
+            if (element == null)
+            {
+                return null;
+            }
+            return element;
         }
 
         public List<TariffPlanViewModel>? ReadList(TariffPlanSearchModel? model)
         {
-            throw new NotImplementedException();
+            var list = _tariffPlanStorage.GetFullList();
+            if (list == null)
+            {
+                return null;
+            }
+            return list;
         }
 
         public bool Update(TariffPlanBindingModel model)
         {
-            throw new NotImplementedException();
+            CheckModel(model);
+            if (_tariffPlanStorage.Update(model) == null)
+            {
+                return false;
+            }
+            return true;
+        }
+        private void CheckModel(TariffPlanBindingModel model, bool withParams = true)
+        {
+            if (model == null)
+            {
+                throw new ArgumentNullException(nameof(model));
+            }
+            if (!withParams)
+            {
+                return;
+            }
+
+            var element = _tariffPlanStorage.GetElement(new TariffPlanSearchModel
+            {
+                Id = model.Id,
+            });
+
+            if (element != null && element.Id != model.Id)
+            {
+                throw new InvalidOperationException("");
+            }
         }
     }
 }

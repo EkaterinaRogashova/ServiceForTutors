@@ -1,6 +1,7 @@
 ﻿using ServiceForTutorContracts.BindingModels;
 using ServiceForTutorContracts.BusinessLogicContracts;
 using ServiceForTutorContracts.SearchModels;
+using ServiceForTutorContracts.StoragesContracts;
 using ServiceForTutorContracts.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -12,29 +13,43 @@ namespace ServiceForTutorBusinessLogic.BusinessLogic
 {
     public class ReviewLogic : IReviewLogic
     {
+        private readonly IReviewStorage _reviewStorage;
+        public ReviewLogic(IReviewStorage reviewStorage)
+        {
+            _reviewStorage = reviewStorage;
+        }
         public bool Create(ReviewBindingModel model)
         {
-            throw new NotImplementedException();
-        }
+            CheckModel(model);
+            var result = _reviewStorage.Insert(model);
 
-        public bool Delete(ReviewBindingModel model)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ReviewViewModel? ReadElement(ReviewSearchModel model)
-        {
-            throw new NotImplementedException();
+            if (result == null)
+            {
+                return false;
+            }
+            return true;
         }
 
         public List<ReviewViewModel>? ReadList(ReviewSearchModel? model)
         {
-            throw new NotImplementedException();
+            var list = _reviewStorage.GetFullList();
+            if (list == null)
+            {
+                return null;
+            }
+            return list;
         }
 
-        public bool Update(ReviewBindingModel model)
+        private void CheckModel(ReviewBindingModel model, bool withParams = true)
         {
-            throw new NotImplementedException();
+            if (model == null)
+            {
+                throw new ArgumentNullException(nameof(model));
+            }
+            if (!withParams)
+            {
+                return;
+            }
         }
     }
 }

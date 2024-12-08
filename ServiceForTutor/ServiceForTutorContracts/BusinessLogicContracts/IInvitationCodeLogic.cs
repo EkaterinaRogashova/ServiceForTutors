@@ -14,7 +14,5 @@ namespace ServiceForTutorContracts.BusinessLogicContracts
         List<InvitationCodeViewModel>? ReadList(InvitationCodeSearchModel? model);
         InvitationCodeViewModel? ReadElement(InvitationCodeSearchModel model);
         bool Create(InvitationCodeBindingModel model);
-        bool Update(InvitationCodeBindingModel model);
-        bool Delete(InvitationCodeBindingModel model);
     }
 }
