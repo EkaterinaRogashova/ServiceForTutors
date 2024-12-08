@@ -1,0 +1,53 @@
+﻿@{
+    ViewData["Title"] = "Вход";
+}
+
+<div class="containerenter text-center mt-5" style="background-color: #DBCEF6; border-radius: 10px;">
+    <h3 class="display-4 mb-4">Добро пожаловать!</h3>
+
+    <form method="post" class="border p-4 rounded">
+        <div class="mb-4">
+            <label for="InputEmail1" class="form-label" style="font-size: 24px;">Введите e-mail</label>
+            <input type="email" name="login" class="form-control form-control-lg rounded" id="InputEmail1" placeholder="example@example.com" required style="background-color: #FDF8FF;">
+        </div>
+        <div class="mb-4">
+            <label for="InputPassword1" class="form-label" style="font-size: 24px;">Введите пароль</label>
+            <input type="password" name="password" class="form-control form-control-lg rounded" id="InputPassword1" placeholder="********" required style="background-color: #FDF8FF;">
+        </div>
+        <div class="mb-4">
+            <button type="submit" class="btn btn-lg w-100 rounded" style="background-color: #C5A8EA; color: #300E36;">Войти</button>
+        </div>
+    </form>
+
+    <div class="mt-4">
+        <span>Впервые здесь? </span>
+        <a href="@Url.Action("Register", "Home")" class="btn btn-link">Зарегистрироваться</a>
+    </div>
+</div>
+
+<style>
+    .containerenter {
+        max-width: 500px;
+        margin: auto;
+        background-color: #DBCEF6;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        border: none;
+    }
+
+    .form-control {
+        border-radius: 10px;
+        background-color: #FDF8FF;
+        border: none;
+    }
+
+    .btn-link {
+        color: #300E36;
+        text-decoration: none;
+    }
+
+        .btn-link:hover {
+            text-decoration: underline; /* Подчеркивание при наведении */
+        }
+</style>

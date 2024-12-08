@@ -1,0 +1,95 @@
+﻿@{
+    ViewData["Title"] = "Регистрация";
+}
+
+<div class="containerenter text-center mt-5" style="background-color: #DBCEF6; border-radius: 10px;">
+    <h3 class="display-4 mb-4">Регистрация</h3>
+    <div class="mb-4 d-flex justify-content-between">
+        <button id="teacherBtn" class="role-button rounded rounded w-100 me-2" style="background-color: #FDF8FF; border-radius: 40px;">Я учитель</button>
+        <button id="studentBtn" class="role-button rounded rounded w-100 me-2" style="background-color: #FDF8FF;">Я ученик</button>
+    </div>
+    <form method="post" id="registrationForm" class="border p-4 rounded">
+        <div class="mb-4">
+            <label for="InputEmail1" class="form-label" style="font-size: 24px;">Введите e-mail</label>
+            <input type="email" name="login" class="form-control form-control-lg rounded" id="InputEmail1" required style="background-color: #FDF8FF; border: none;">
+            <div class="invalid-feedback">Пожалуйста, введите корректный e-mail.</div>
+        </div>
+        <div class="mb-4">
+            <label for="InputF" class="form-label" style="font-size: 24px;">Введите фамилию</label>
+            <input type="text" name="surname" class="form-control form-control-lg rounded" id="InputF" required style="background-color: #FDF8FF; border: none;">
+            <div class="invalid-feedback">Пожалуйста, введите фамилию.</div>
+        </div>
+        <div class="mb-4">
+            <label for="InputI" class="form-label" style="font-size: 24px;">Введите имя</label>
+            <input type="text" name="name" class="form-control form-control-lg rounded" id="InputI" required style="background-color: #FDF8FF; border: none;">
+            <div class="invalid-feedback">Пожалуйста, введите имя.</div>
+        </div>
+        <div class="mb-4">
+            <label for="InputO" class="form-label" style="font-size: 24px;">Введите отчество</label>
+            <input type="text" name="lastname" class="form-control form-control-lg rounded" id="InputO" style="background-color: #FDF8FF; border: none;">
+        </div>
+        <div class="mb-4">
+            <label for="InputPassword1" class="form-label" style="font-size: 24px;">Введите пароль</label>
+            <input type="password" name="password" class="form-control form-control-lg rounded" id="InputPassword1" required style="background-color: #FDF8FF; border: none;">
+            <div class="invalid-feedback">Пожалуйста, введите пароль.</div>
+        </div>
+
+        <div class="mb-4">
+            <button type="submit" class="btn btn-lg w-100 rounded" style="background-color: #C5A8EA; color: #300E36;">Зарегистрироваться</button>
+        </div>
+    </form>
+    <div class="mt-4">
+        <span>Уже есть аккаунт? </span>
+        <a href="@Url.Action("Enter", "Home")" class="btn btn-link">Войти</a>
+    </div>
+</div>
+
+<style>
+    .containerenter {
+        max-width: 500px;
+        margin: auto;
+        background-color: #DBCEF6;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+    }
+
+    .form-control {
+        border-radius: 10px;
+        background-color: #FDF8FF;
+        border: none;
+    }
+
+    .btn-link {
+        color: #300E36;
+        text-decoration: none;
+    }
+
+    .btn-link:hover {
+        text-decoration: underline;
+    }
+
+    .role-button {
+        border: none;
+        padding: 15px 0; /* Увеличим вертикальный отступ */
+        font-size: 18px;
+        margin: 0 5px; /* Убираем боковые отступы между кнопками */
+        cursor: pointer;
+        width: 48%; /* Зададим ширину кнопок */
+    }
+</style>
+
+<script>
+    const teacherBtn = document.getElementById('teacherBtn');
+    const studentBtn = document.getElementById('studentBtn');
+
+    teacherBtn.onclick = function () {
+        teacherBtn.style.backgroundColor = '#C5A8EA';
+        studentBtn.style.backgroundColor = '#FDF8FF';
+    }
+
+    studentBtn.onclick = function () {
+        studentBtn.style.backgroundColor = '#C5A8EA';
+        teacherBtn.style.backgroundColor = '#FDF8FF';
+    }
+</script>
