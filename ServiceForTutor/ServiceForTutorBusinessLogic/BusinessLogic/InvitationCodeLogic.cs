@@ -14,20 +14,28 @@ namespace ServiceForTutorBusinessLogic.BusinessLogic
     public class InvitationCodeLogic : IInvitationCodeLogic
     {
         private readonly IInvitationCodeStorage _invitationCodeStorage;
+        private readonly Random _random = new Random();
         public InvitationCodeLogic(IInvitationCodeStorage invitationCodeStorage)
         {
             _invitationCodeStorage = invitationCodeStorage;
         }
-        public bool Create(InvitationCodeBindingModel model)
+
+        private string GenerateRandomInvitationCode(int length)
+        {
+            const string chars = "ABCDEFGHJKLMNOPQRSTUVWXYZ0123456789";
+            return new string(Enumerable.Repeat(chars, length)
+                .Select(s => s[_random.Next(s.Length)]).ToArray());
+        }
+
+
+        public int? Create(InvitationCodeBindingModel model)
         {
             CheckModel(model);
-            var result = _invitationCodeStorage.Insert(model);
+            model.CodeValue = GenerateRandomInvitationCode(8);
+            model.DateTimeEnd = DateTime.Now.AddHours(1).ToUniversalTime();
+            var codeId = _invitationCodeStorage.Insert(model);
 
-            if (result == null)
-            {
-                return false;
-            }
-            return true;
+            return codeId;
         }
 
         public InvitationCodeViewModel? ReadElement(InvitationCodeSearchModel model)

@@ -20,7 +20,6 @@ namespace ServiceForTutorBusinessLogic.BusinessLogic
         }
         public bool Create(TariffPlanBindingModel model)
         {
-            CheckModel(model);
             var result = _tariffPlanStorage.Insert(model);
 
             if (result == null)
@@ -46,7 +45,7 @@ namespace ServiceForTutorBusinessLogic.BusinessLogic
 
         public List<TariffPlanViewModel>? ReadList(TariffPlanSearchModel? model)
         {
-            var list = _tariffPlanStorage.GetFullList();
+            var list = model == null ? _tariffPlanStorage.GetFullList() : _tariffPlanStorage.GetFilteredList(model);
             if (list == null)
             {
                 return null;
@@ -56,33 +55,11 @@ namespace ServiceForTutorBusinessLogic.BusinessLogic
 
         public bool Update(TariffPlanBindingModel model)
         {
-            CheckModel(model);
             if (_tariffPlanStorage.Update(model) == null)
             {
                 return false;
             }
             return true;
-        }
-        private void CheckModel(TariffPlanBindingModel model, bool withParams = true)
-        {
-            if (model == null)
-            {
-                throw new ArgumentNullException(nameof(model));
-            }
-            if (!withParams)
-            {
-                return;
-            }
-
-            var element = _tariffPlanStorage.GetElement(new TariffPlanSearchModel
-            {
-                Id = model.Id,
-            });
-
-            if (element != null && element.Id != model.Id)
-            {
-                throw new InvalidOperationException("");
-            }
         }
     }
 }

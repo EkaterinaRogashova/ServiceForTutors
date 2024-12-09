@@ -1,4 +1,75 @@
-﻿@page
-@model ServiceForTutorClientApp.Views.Home.TariffPlansModel
+﻿@using ServiceForTutorContracts.ViewModels
+@model List<TariffPlanViewModel>
 @{
+    ViewData["Title"] = "Тарифы";
 }
+
+<div class="container mt-5">
+    <h2 class="text-center">@ViewData["Title"]</h2>
+    @if (APIClient.Client != null)
+    {
+        @if (APIClient.Client.Role == "Admin")
+        {
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <a href="@Url.Action("CreateTariffPlan", "Home")" class="nav-link btn rounded-pill btn-block" style="background-color: #DBCEF6; color: #300E36;">Создать тарифный план</a>
+                </div>
+                <div class="col-md-4">
+                    <form method="get" class="d-flex align-items-end">
+                        <div class="me-2">
+                            <label for="statusFilter" class="visually-hidden">Фильтр по статусу:</label>
+                            <select class="form-control" id="statusFilter" name="statusFilter">
+                                <option value="active">Активные</option>
+                                <option value="inactive">Неактивные</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Применить фильтр</button>
+                    </form>
+                </div>
+            </div>
+        }
+    }
+    <div class="row">
+        @foreach (var tariff in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">@tariff.Name</h5>
+                        <p class="card-text">@tariff.Description</p>
+                        <h6 class="card-subtitle mb-2 text-muted text-center">@tariff.Cost.ToString("C")</h6>
+                        <p class="text-center">Срок действия: @tariff.PeriodInDays дней</p>
+                        @if (APIClient.Client != null)
+                        {
+                            <div class="text-center">
+                                <a href="@Url.Action("Subscribe", new { planId = tariff.Id })" class="btn btn-primary">Оформить</a>
+                            </div>
+                            @if (APIClient.Client.Role == "Admin")
+                            {
+                                <div class="text-center">
+                                    <a href="@Url.Action("ChangeStatus", "Home", new { id = tariff.Id })" class="btn btn-primary" onclick="return confirm('Вы уверены, что хотите изменить статус?');" style="margin-top: 20px;">Изменить статус</a>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .card {
+        border-radius: 10px;
+    }
+
+    .card .card-body {
+        background-color: #f8f9fa; /* светлый фон для карточки */
+    }
+
+    .btn-primary {
+        background-color: #C5A8EA; /* Цвет кнопки */
+        border-color: #C5A8EA; /* Цвет границы кнопки */
+    }
+
+</style>

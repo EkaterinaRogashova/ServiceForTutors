@@ -27,7 +27,7 @@ namespace ServiceForTutorDatabaseImplements.Implements
             return context.InvitationCodes.Select(x => x.GetViewModel).ToList();
         }
 
-        public InvitationCodeViewModel? Insert(InvitationCodeBindingModel model)
+        public int? Insert(InvitationCodeBindingModel model)
         {
             using var context = new ServiceForTutorDatabase();
             var newElement = InvitationCode.Create(model);
@@ -37,7 +37,7 @@ namespace ServiceForTutorDatabaseImplements.Implements
             }
             context.InvitationCodes.Add(newElement);
             context.SaveChanges();
-            return newElement.GetViewModel;
+            return newElement.Id;
         }
     }
 }

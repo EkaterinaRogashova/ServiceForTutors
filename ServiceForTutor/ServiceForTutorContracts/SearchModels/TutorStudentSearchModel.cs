@@ -9,5 +9,7 @@ namespace ServiceForTutorContracts.SearchModels
     public class TutorStudentSearchModel
     {
         public int? Id { get; set; }
+        public int? Student_id { get; set; }
+        public int? Tutor_id { get; set; }
     }
 }

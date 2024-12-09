@@ -13,6 +13,6 @@ namespace ServiceForTutorContracts.StoragesContracts
     {
         List<InvitationCodeViewModel> GetFullList();
         InvitationCodeViewModel? GetElement(InvitationCodeSearchModel model);
-        InvitationCodeViewModel? Insert(InvitationCodeBindingModel model);
+        int? Insert(InvitationCodeBindingModel model);
     }
 }

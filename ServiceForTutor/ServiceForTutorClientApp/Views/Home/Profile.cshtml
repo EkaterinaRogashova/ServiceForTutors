@@ -45,12 +45,12 @@
                     <div class="d-flex justify-content-between mb-3">
                         @if (APIClient.Client.Role == "Tutor")
                         {
-                            <button class="btn" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px; width: 48%; height: 260px;">Мои ученики</button>
+                            <a class="btn" href="@Url.Action("MyStudents", "TutorStudent")" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px; width: 48%; height: 260px;">Мои ученики</a>
                             <button class="btn" style="background-color: #E0D1FE; color: #300E36; border-radius: 10px; width: 48%; height: 260px;">Расписание</button>
                         }
                         else if (APIClient.Client.Role == "Student")
                         {
-                            <button class="btn" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px; width: 48%; height: 230px;">Мои учителя</button>
+                            <a class="btn" href="@Url.Action("MyTutors", "TutorStudent")" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px; width: 48%; height: 230px;">Мои учителя</a>
                             <button class="btn" style="background-color: #E0D1FE; color: #300E36; border-radius: 10px; width: 48%; height: 230px;">Расписание</button>
                         }
                     </div>

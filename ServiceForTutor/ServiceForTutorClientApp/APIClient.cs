@@ -59,8 +59,7 @@ namespace ServiceForTutorClientApp
                 throw new Exception(result);
             }
 
-            // Попытка десериализовать результат, чтобы получить ID (например, ожидаем, что API возвращает объект с ID)
-            var createdVisitor = JsonConvert.DeserializeObject<UserBindingModel>(result);
+            var createdVisitor = JsonConvert.DeserializeObject<InvitationCodeBindingModel>(result);
             return createdVisitor.Id; // Предполагается, что у вас есть свойство Id в VisitorBindingModel
         }
     }

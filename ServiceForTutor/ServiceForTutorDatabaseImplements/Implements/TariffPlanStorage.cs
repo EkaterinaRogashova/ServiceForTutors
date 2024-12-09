@@ -21,6 +21,14 @@ namespace ServiceForTutorDatabaseImplements.Implements
             return null;
         }
 
+        public List<TariffPlanViewModel> GetFilteredList(TariffPlanSearchModel model)
+        {
+            using var context = new ServiceForTutorDatabase();
+            return context.TariffPlans
+                .Where(x => x.Status == model.Status).Select(x => x.GetViewModel).ToList();
+
+        }
+
         public List<TariffPlanViewModel> GetFullList()
         {
             using var context = new ServiceForTutorDatabase();

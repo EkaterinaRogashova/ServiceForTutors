@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using ServiceForTutorClientApp.Models;
 using ServiceForTutorContracts.BindingModels;
 using ServiceForTutorContracts.ViewModels;
+using System.Data;
 using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text;
@@ -159,6 +161,79 @@ namespace ServiceForTutorClientApp.Controllers
                 return RedirectToAction("EditProfile");
             }
             
+        }
+
+        public IActionResult TariffPlans(string statusFilter)
+        {
+            string Status = "Active";
+            var tariffPlans = APIClient.GetRequest<List<TariffPlanViewModel>>($"api/TariffPlan/GetActiveTariffPlanList?Status={Status}");
+            if (!string.IsNullOrEmpty(statusFilter))
+            {
+                if (statusFilter == "active")
+                {
+                    Status = "Active";
+                    tariffPlans = APIClient.GetRequest<List<TariffPlanViewModel>>($"api/TariffPlan/GetActiveTariffPlanList?Status={Status}");
+                }
+                else if (statusFilter == "inactive")
+                {
+                    Status = "Inactive";
+                    tariffPlans = APIClient.GetRequest<List<TariffPlanViewModel>>($"api/TariffPlan/GetActiveTariffPlanList?Status={Status}");
+                }
+            }
+            return View(tariffPlans);
+        }
+
+        public IActionResult CreateTariffPlan()
+        {
+            if (APIClient.Client == null)
+            {
+                return Redirect("~Home/Enter");
+            }
+            else
+            {
+                if (APIClient.Client.Role != "Admin")
+                {
+                    return Redirect("~Home/Enter");
+                }
+                return View();
+            }
+        }
+
+        [HttpPost]
+        public IActionResult CreateTariff(string name, string description, decimal cost, int periodInDays, string status)
+        {
+            APIClient.PostRequest("api/TariffPlan/CreateTariffPlan", new TariffPlanBindingModel
+            {
+                Name = name,
+                Description = description,
+                Cost = cost,
+                PeriodInDays = periodInDays,
+                Status = status
+            });
+
+            return RedirectToAction("TariffPlans");
+        }
+
+        public IActionResult ChangeStatus(int id)
+        {
+            var existingTariffPlan = APIClient.GetRequest<TariffPlanViewModel>($"api/TariffPlan/GetTariffPlan?TariffPlanId={id}");
+            if (existingTariffPlan.Status == "Active")
+            {
+                APIClient.PostRequest("api/TariffPlan/UpdateTariffPlan", new TariffPlanBindingModel
+                {
+                    Id = id,
+                    Status = "Inactive"
+                });
+            }
+            else
+            {
+                APIClient.PostRequest("api/TariffPlan/UpdateTariffPlan", new TariffPlanBindingModel
+                {
+                    Id = id,
+                    Status = "Active"
+                });
+            }
+            return RedirectToAction("TariffPlans");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

@@ -1,0 +1,80 @@
+﻿@using ServiceForTutorContracts.ViewModels
+@model List<UserViewModel>
+@{
+    ViewData["Title"] = "Мои репетиторы";
+}
+
+<div class="container mt-5">
+    <div class="text-center">
+        <h1 class="display-4">Мои репетиторы</h1>
+    </div>
+
+    <div class="text-center mt-4">
+        @{
+            <p>
+                <a class="btn btn-light" asp-action="EnterIvitationCode">Ввести код приглашения</a>
+            </p>
+            <table class="table table-striped table-bordered mt-4">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Фамилия</th>
+                        <th>Имя</th>
+                        <th>Отчество</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => item.Surname)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                            <td>@Html.DisplayFor(modelItem => item.LastName)</td>
+                            <td>
+                                <a class="btn btn btn-secondary btn-sm" asp-action="ViewEvent" asp-route-id="@item.Id">Посмотреть</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>
+
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .table {
+        margin-top: 20px;
+    }
+
+    .btn {
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-light {
+        background-color: #e9ecef; /* Светло-серый цвет */
+        color: #495057; /* Тёмный текст для контраста */
+    }
+
+        .btn-light:hover {
+            background-color: #d3d3d3; /* Более тёмный светло-серый при наведении */
+        }
+
+    .row {
+        display: flex; /* Включаем Flexbox */
+        flex-wrap: wrap; /* Разрешаем перенос на следующую строку при необходимости */
+        align-items: center; /* Выравнивание по вертикали */
+    }
+
+    .col-md-4 {
+        flex: 1; /* Делаем элементы одинаковой ширины */
+        margin-right: 10px; /* Добавляем отступ между элементами */
+    }
+
+    .btn-block {
+        width: 100%;
+        background-color: black;
+    }
+</style>

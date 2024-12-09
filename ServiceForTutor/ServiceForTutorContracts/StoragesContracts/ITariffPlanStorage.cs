@@ -11,6 +11,7 @@ namespace ServiceForTutorContracts.StoragesContracts
 {
     public interface ITariffPlanStorage
     {
+        List<TariffPlanViewModel> GetFilteredList(TariffPlanSearchModel model);
         List<TariffPlanViewModel> GetFullList();
         TariffPlanViewModel? GetElement(TariffPlanSearchModel model);
         TariffPlanViewModel? Insert(TariffPlanBindingModel model);

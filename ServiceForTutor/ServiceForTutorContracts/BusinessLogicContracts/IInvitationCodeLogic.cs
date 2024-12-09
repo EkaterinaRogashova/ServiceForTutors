@@ -13,6 +13,6 @@ namespace ServiceForTutorContracts.BusinessLogicContracts
     {
         List<InvitationCodeViewModel>? ReadList(InvitationCodeSearchModel? model);
         InvitationCodeViewModel? ReadElement(InvitationCodeSearchModel model);
-        bool Create(InvitationCodeBindingModel model);
+        int? Create(InvitationCodeBindingModel model);
     }
 }
