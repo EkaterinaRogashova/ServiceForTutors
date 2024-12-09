@@ -9,6 +9,7 @@
         <button id="studentBtn" class="role-button rounded rounded w-100 me-2" style="background-color: #FDF8FF;">Я ученик</button>
     </div>
     <form method="post" id="registrationForm" class="border p-4 rounded">
+        <input type="hidden" name="role" id="roleField" value="">
         <div class="mb-4">
             <label for="InputEmail1" class="form-label" style="font-size: 24px;">Введите e-mail</label>
             <input type="email" name="login" class="form-control form-control-lg rounded" id="InputEmail1" required style="background-color: #FDF8FF; border: none;">
@@ -86,10 +87,12 @@
     teacherBtn.onclick = function () {
         teacherBtn.style.backgroundColor = '#C5A8EA';
         studentBtn.style.backgroundColor = '#FDF8FF';
+        roleField.value = 'Tutor';
     }
 
     studentBtn.onclick = function () {
         studentBtn.style.backgroundColor = '#C5A8EA';
         teacherBtn.style.backgroundColor = '#FDF8FF';
+        roleField.value = 'Student';
     }
 </script>

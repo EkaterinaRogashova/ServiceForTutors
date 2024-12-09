@@ -1,4 +1,4 @@
-using ServiceForTutorBusinessLogic;
+using ServiceForTutorClientApp;
 using ServiceForTutorContracts.StoragesContracts;
 using ServiceForTutorDatabaseImplements.Implements;
 

@@ -9,6 +9,18 @@ builder.Logging.SetMinimumLevel(LogLevel.Trace);
 builder.Logging.AddLog4Net("log4net.config");
 
 // Add services to the container.
+builder.Services.AddControllers();
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "ServiceForTutorRestApi",
+        Version = "v1"
+    });
+});
+
 builder.Services.AddTransient<IAssignedTaskStorage, AssignedTaskStorage>();
 builder.Services.AddTransient<IInvitationCodeStorage, InvitationCodeStorage>();
 builder.Services.AddTransient<IPurchasedTariffPlanStorage, PurchasedTariffPlanStorage>();
@@ -33,17 +45,9 @@ builder.Services.AddTransient<ITariffPlanLogic, TariffPlanLogic>();
 builder.Services.AddTransient<ITaskLogic, TaskLogic>();
 builder.Services.AddTransient<ITutorStudentLogic, TutorStudentLogic>();
 builder.Services.AddTransient<IUserLogic, UserLogic>();
-builder.Services.AddControllers();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Title = "ServiceForTutorRestApi",
-        Version = "v1"
-    });
-});
+
 
 
 var app = builder.Build();

@@ -26,14 +26,28 @@
                             <a class="nav-link" href="@Url.Action("TariffPlans", "Home")" style="color: #300E36;">Тарифы</a>
                         </li>
                     </ul>
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item me-4">
-                            <a class="nav-link btn rounded-pill" href="@Url.Action("Enter", "Home")" style="background-color: #DBCEF6; color: #300E36;">Войти</a>
-                        </li>
-                        <li class="nav-item me-4">
-                            <a class="nav-link btn rounded-pill" href="@Url.Action("Register", "Home")" style="background-color: #DBCEF6; color: #300E36;">Зарегистрироваться</a>
-                        </li>
-                    </ul>
+                    @if (APIClient.Client != null)
+                    {
+                        <ul class="navbar-nav ms-auto">
+                            <li class="nav-item me-4">
+                                <a class="nav-link btn rounded-pill" href="@Url.Action("Profile", "Home")" style="background-color: #DBCEF6; color: #300E36;">Личный кабинет</a>
+                            </li>
+                            <li class="nav-item me-4">
+                                <a class="nav-link btn rounded-pill" href="@Url.Action("Exit", "Home")" style="background-color: #DBCEF6; color: #300E36;">Выход</a>
+                            </li>
+                        </ul>
+                    }
+                    else
+                    {
+                        <ul class="navbar-nav ms-auto">
+                            <li class="nav-item me-4">
+                                <a class="nav-link btn rounded-pill" href="@Url.Action("Enter", "Home")" style="background-color: #DBCEF6; color: #300E36;">Войти</a>
+                            </li>
+                            <li class="nav-item me-4">
+                                <a class="nav-link btn rounded-pill" href="@Url.Action("Register", "Home")" style="background-color: #DBCEF6; color: #300E36;">Зарегистрироваться</a>
+                            </li>
+                        </ul>
+                    }
                 </div>
             </div>
         </nav>

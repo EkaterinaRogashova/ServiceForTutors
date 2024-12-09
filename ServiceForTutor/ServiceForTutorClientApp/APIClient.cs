@@ -5,7 +5,7 @@ using System.Net.Http.Headers;
 
 using System.Text;
 
-namespace ServiceForTutorBusinessLogic
+namespace ServiceForTutorClientApp
 {
     public class APIClient
     {

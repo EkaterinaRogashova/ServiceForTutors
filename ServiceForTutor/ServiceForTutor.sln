@@ -11,9 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceForTutorBusinessLogi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceForTutorDatabaseImplements", "ServiceForTutorDatabaseImplements\ServiceForTutorDatabaseImplements.csproj", "{AE8E6DDB-0265-4245-BB37-A858E8F4486D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceForTutorRestApi", "ServiceForTutorRestApi\ServiceForTutorRestApi.csproj", "{9247E711-5673-46FF-880F-03163E277F36}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceForTutorRestApi", "ServiceForTutorRestApi\ServiceForTutorRestApi.csproj", "{9247E711-5673-46FF-880F-03163E277F36}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceForTutorClientApp", "ServiceForTutorClientApp\ServiceForTutorClientApp.csproj", "{E30DF6B7-A24E-42CD-A5E7-5F86F239C115}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceForTutorClientApp", "ServiceForTutorClientApp\ServiceForTutorClientApp.csproj", "{E30DF6B7-A24E-42CD-A5E7-5F86F239C115}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

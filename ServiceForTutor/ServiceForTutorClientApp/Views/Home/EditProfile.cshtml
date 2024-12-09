@@ -1,0 +1,59 @@
+﻿@using ServiceForTutorContracts.ViewModels
+@model UserViewModel
+@{
+    ViewData["Title"] = "Редактирование профиля";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center">@ViewData["Title"]</h2>
+
+    <div class="row">
+        <div class="col-md-6 d-flex flex-column">
+            <div class="p-4" style="background-color: #DBCEF6; border-radius: 10px; flex-grow: 1;">
+                <h3 class="text-center mt-3">Редактирование личной информации</h3>
+                <form asp-action="EditProfile" method="post">
+                    <div class="mb-3">
+                        <label for="userName" class="form-label">Имя</label>
+                        <input type="text" id="userName" class="form-control" asp-for="Name" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="userLastname" class="form-label">Отчество</label>
+                        <input type="text" id="userLastname" class="form-control" asp-for="LastName" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="userSurname" class="form-label">Фамилия</label>
+                        <input type="text" id="userSurname" class="form-control" asp-for="Surname" />
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px;">Сохранить изменения</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-md-6 d-flex flex-column">
+            <div class="p-4" style="background-color: #DBCEF6; border-radius: 10px; flex-grow: 1;">
+                <h3 class="text-center mt-3">Смена пароля</h3>
+                <form asp-action="ChangePassword" method="post">
+                    <div class="mb-3">
+                        <label for="currentPassword" class="form-label">Текущий пароль</label>
+                        <input type="password" id="currentPassword" class="form-control" name="currentPassword" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="newPassword" class="form-label">Новый пароль</label>
+                        <input type="password" id="newPassword" class="form-control" name="newPassword" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="confirmPassword" class="form-label">Подтверждение нового пароля</label>
+                        <input type="password" id="confirmPassword" class="form-control" name="confirmPassword" required />
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px;">Сменить пароль</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+

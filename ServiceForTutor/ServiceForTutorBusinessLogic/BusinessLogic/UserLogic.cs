@@ -80,7 +80,6 @@ namespace ServiceForTutorBusinessLogic.BusinessLogic
 
         public bool Update(UserBindingModel model)
         {
-            CheckModel(model);
             if (_userStorage.Update(model) == null)
             {
                 return false;
@@ -120,7 +119,7 @@ namespace ServiceForTutorBusinessLogic.BusinessLogic
             }
             if (string.IsNullOrEmpty(model.StatusActivity))
             {
-                throw new ArgumentNullException("Нет роли", nameof(model.StatusActivity));
+                throw new ArgumentNullException("Нет статуса", nameof(model.StatusActivity));
             }
             if (!Regex.IsMatch(model.Email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$", RegexOptions.IgnoreCase))
             {
