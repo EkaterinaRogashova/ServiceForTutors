@@ -37,6 +37,11 @@ namespace ServiceForTutorDatabaseImplements.Implements
         public List<QuestionViewModel> GetFilteredList(QuestionSearchModel model)
         {
             using var context = new ServiceForTutorDatabase();
+            if (model.TaskId.HasValue)
+            {
+                return context.Questions
+                .Where(x => x.TaskId == model.TaskId).Select(x => x.GetViewModel).ToList();
+            }
             return null;
         }
 

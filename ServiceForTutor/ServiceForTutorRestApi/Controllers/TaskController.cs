@@ -11,9 +11,11 @@ namespace ServiceForTutorRestApi.Controllers
     public class TaskController : Controller
     {
         private readonly ITaskLogic _logic;
-        public TaskController(ITaskLogic logic)
+        private readonly IQuestionLogic _questionLogic;
+        public TaskController(ITaskLogic logic, IQuestionLogic questionLogic)
         {
             _logic = logic;
+            _questionLogic = questionLogic;
         }
 
         [HttpGet]
@@ -58,6 +60,35 @@ namespace ServiceForTutorRestApi.Controllers
                 {
                     Id = taskId
                 });
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        [HttpGet]
+        public List<QuestionViewModel>? GetQuestionsByTask(int taskId)
+        {
+            try
+            {
+                return _questionLogic.ReadList(new QuestionSearchModel
+                {
+                    TaskId = taskId
+                });
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        [HttpPost]
+        public void CreateQuestion(QuestionBindingModel model)
+        {
+            try
+            {
+                _questionLogic.Create(model);
             }
             catch (Exception ex)
             {

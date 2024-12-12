@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ServiceForTutorContracts.BindingModels;
 using ServiceForTutorContracts.ViewModels;
+using System.Reflection.Emit;
 
 namespace ServiceForTutorClientApp.Controllers
 {
@@ -53,7 +54,30 @@ namespace ServiceForTutorClientApp.Controllers
                 return Redirect("~Home/Enter");
             }
             var taskDetails = APIClient.GetRequest<TaskViewModel>($"api/task/GetTask?TaskId={id}");
-            return View(taskDetails);
+            var taskQuestions = APIClient.GetRequest<List<QuestionViewModel>>($"api/task/GetQuestionsByTask?TaskId={id}");
+            var viewModel = new TaskViewModel // Замените TaskViewModel на вашу модель представления, которая содержит как задание, так и вопросы
+            {
+                Id = id,
+                Name = taskDetails.Name,
+                Topic = taskDetails.Topic,
+                Subject = taskDetails.Subject,
+                Questions = taskQuestions // Присваиваем вопросы
+            };
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        public IActionResult CreateQuestion(int id, string questionText, string questionType, string correctAnswer, float maxScore)
+        {
+            APIClient.PostRequest("api/Task/CreateQuestion", new QuestionBindingModel
+            {
+                TaskId = id,
+                TaskText = questionText,
+                TypeQuestion = questionType,
+                MaxScore = maxScore,
+                Answer = correctAnswer
+            });
+            return RedirectToAction("EditTask", new { id = id });
         }
     }
 }

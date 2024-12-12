@@ -10,87 +10,96 @@
     <div class="container mt-5">
         <h2 class="text-center" style="color: #300E36;">@ViewData["Title"]</h2>
 
-        <div class="row">
-            <!-- Карточка с заданием -->
-            <div class="col-md-6">
-                <div class="p-4" style="background-color: #DBCEF6; border-radius: 10px;">
-                    <h3 class="text-center mt-3" style="color: #300E36;">@Model.Name</h3>
-                    <p style="font-weight: bold;">Темa: @Model.Topic</p>
-                    <p style="font-weight: bold;">Предмет: @Model.Subject</p>
-                    <div class="text-right">
-                        <button class="btn" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px;" data-toggle="modal" data-target="#addQuestionModal">Добавить вопрос</button>
+        <div class="container">
+            <div class="row justify-content-center" style="margin-top: 20px;">
+                <div class="col-md-6">
+                    <div class="p-4" style="background-color: #DBCEF6; border-radius: 10px;">
+                        <h3 class="text-center mt-3" style="color: #300E36;">@Model.Name</h3>
+                        <p style="font-weight: bold;">Темa: @Model.Topic</p>
+                        <p style="font-weight: bold;">Предмет: @Model.Subject</p>
+                        <div class="text-right">
+                            <button class="btn" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px;" data-bs-toggle="modal" data-bs-target="#addQuestionModal">Добавить вопрос</button>
+                        </div>
                     </div>
+                </div>
+                <div class="col-md-6 text-center">
+                    <img src="https://cdn-icons-png.flaticon.com/512/5058/5058451.png" alt="" style="max-width: 40%; margin-left: -20px; height: auto; border-radius: 10px;">
                 </div>
             </div>
         </div>
-        @*
-        <!-- Список вопросов под карточкой с заданием -->
-        <div class="mt-4" id="questionsList">
-        <h4 class="text-center" style="color: #300E36;">Вопросы к заданию</h4>
-        @if (Model.Questions.Any())
-        {
-        foreach (var question in Model.Questions)
-        {
-        <div class="card mb-3" style="background-color: #DBCEF6; border-radius: 10px;">
-        <div class="card-body">
-        <h5 class="card-title">@question.Text</h5>
-        <p class="card-text">Тип: @question.QuestionType</p>
-        <p class="card-text">Максимальный балл: @question.MaxScore</p>
-        <div class="text-right">
-        <button class="btn btn-warning" data-toggle="modal" data-target="#editQuestionModal" data-question-id="@question.Id" data-question-text="@question.Text" data-question-type="@question.QuestionType" data-question-answer="@question.CorrectAnswer" data-question-maxscore="@question.MaxScore">Редактировать вопрос</button>
-        <button class="btn btn-danger" onclick="deleteQuestion(@question.Id)">Удалить вопрос</button>
-        </div>
-        </div>
-        </div>
-        }
-        }
-        else
-        {
-        <p class="text-center">Нет вопросов для отображения.</p>
-        }
-        </div> *@
-    </div>
 
-    <!-- Модальное окно для добавления вопроса -->
+
+        <div class="mt-4" id="questionsList">
+            <h4 class="text-center" style="color: #300E36;">Вопросы к заданию</h4>
+            @if (Model.Questions != null && Model.Questions.Any())
+            {
+                foreach (var question in Model.Questions)
+                {
+                    <div class="card mb-3" style="background-color: #DBCEF6; border-radius: 10px;">
+                        <div class="card-body">
+                            <h5 class="card-title">@question.TaskText</h5>
+                            <p class="card-text">Тип: @question.TypeQuestion</p>
+                            <p class="card-text">Максимальный балл: @question.MaxScore</p>
+                            <div class="text-right">
+                                <button class="btn btn-warning" data-toggle="modal" data-target="#editQuestionModal"
+                                        data-question-id="@question.Id"
+                                        data-question-text="@question.TaskText"
+                                        data-question-type="@question.TypeQuestion"
+                                        data-question-answer="@question.Answer"
+                                        data-question-maxscore="@question.MaxScore">
+                                    Редактировать вопрос
+                                </button>
+                                <button class="btn btn-danger" onclick="deleteQuestion(@question.Id)">Удалить вопрос</button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <p class="text-center">Нет вопросов для отображения.</p>
+            }
+        </div>
+
     <div class="modal fade" id="addQuestionModal" tabindex="-1" role="dialog" aria-labelledby="addQuestionModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
-            <div class="modal-content">
+            <div class="modal-content" style="border-radius: 15px;">
                 <div class="modal-header">
                     <h5 class="modal-title" id="addQuestionModalLabel">Добавить вопрос</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Закрыть">
-                        <span aria-hidden="true">&times;</span>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Закрыть" style="border: none; background: none;">
+                        <span aria-hidden="true" style="font-size: 1.5rem;">&times;</span>
                     </button>
                 </div>
+                <form asp-action="CreateQuestion" method="post">
                 <div class="modal-body">
-                    <form id="addQuestionForm">
+                        <input type="hidden" id="taskId" name="id" value="@Model.Id" />
                         <div class="mb-3">
                             <label for="questionText" class="form-label">Вопрос</label>
-                            <input type="text" class="form-control" id="questionText" required />
+                            <input type="text" class="form-control" id="questionText" name="questionText"/>
                         </div>
                         <div class="mb-3">
                             <label for="questionType" class="form-label">Тип задания</label>
-
-                            <input type="text" class="form-control" id="questionType" required />
+                            <input type="text" class="form-control" id="questionType" name="questionType"/>
                         </div>
                         <div class="mb-3">
                             <label for="correctAnswer" class="form-label">Ответ</label>
-                            <input type="text" class="form-control" id="correctAnswer" required />
+                            <input type="text" class="form-control" id="correctAnswer" name="correctAnswer" />
                         </div>
                         <div class="mb-3">
                             <label for="maxScore" class="form-label">Максимальный балл</label>
-                            <input type="number" class="form-control" id="maxScore" required />
+                            <input type="number" class="form-control" id="maxScore" name="maxScore" />
                         </div>
-                    </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
-                    <button type="button" class="btn btn-primary" id="saveQuestionButton">Сохранить</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 10px; background-color: #300E36 ; color: #C5A8EA;">Закрыть</button>
+                    <button type="submit" class="btn btn-primary" id="saveQuestionButton" style="border-radius: 10px; background-color: #C5A8EA; color: #300E36;">Сохранить</button>
                 </div>
+                </form>
             </div>
         </div>
     </div>
 
-    <!-- Модальное окно для редактирования вопроса -->
+
     <div class="modal fade" id="editQuestionModal" tabindex="-1" role="dialog" aria-labelledby="editQuestionModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -136,27 +145,7 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-    @* <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> *@
     <script>
-        // Функция для добавления вопроса
-        $('#saveQuestionButton').on('click', function () {
-            // Логика для сохранения вопроса через AJAX или другую логику
-            // Например: 
-            var questionText = $('#questionText').val();
-            var questionType = $('#questionType').val();
-            var correctAnswer = $('#correctAnswer').val();
-            var maxScore = $('#maxScore').val();
-
-            // Здесь можете добавить код для отправки данных на сервер
-
-            // После успешного добавления вопроса закройте модальное окно и обновите список вопросов
-            $('#addQuestionModal').modal('hide');
-            // Обновите список вопросов тут (например, добавив новый вопрос в список)
-        });
-
-        // ...
 
         // Функция для редактирования вопроса - используется при открытии модального окна редактирования
         $('#editQuestionModal').on('show.bs.modal', function (event) {
