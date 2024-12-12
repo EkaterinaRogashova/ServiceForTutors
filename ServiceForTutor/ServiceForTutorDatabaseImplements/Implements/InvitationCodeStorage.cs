@@ -18,6 +18,8 @@ namespace ServiceForTutorDatabaseImplements.Implements
             using var context = new ServiceForTutorDatabase();
             if (model.Id.HasValue)
                 return context.InvitationCodes.FirstOrDefault(x => x.Id == model.Id)?.GetViewModel;
+            if (model.CodeValue != null)
+                return context.InvitationCodes.FirstOrDefault(x => x.CodeValue == model.CodeValue)?.GetViewModel;
             return null;
         }
 

@@ -4,6 +4,7 @@ using ServiceForTutorContracts.BindingModels;
 using ServiceForTutorContracts.BusinessLogicContracts;
 using ServiceForTutorContracts.SearchModels;
 using ServiceForTutorContracts.ViewModels;
+using ServiceForTutorDatabaseImplements.Models;
 
 namespace ServiceForTutorRestApi.Controllers
 {
@@ -12,9 +13,11 @@ namespace ServiceForTutorRestApi.Controllers
     public class InvitationCodeController : Controller
     {
         private readonly IInvitationCodeLogic _logic;
-        public InvitationCodeController(IInvitationCodeLogic logic)
+        private readonly ITutorStudentLogic _tslogic;
+        public InvitationCodeController(IInvitationCodeLogic logic, ITutorStudentLogic tslogic)
         {
             _logic = logic;
+            _tslogic = tslogic;
         }
 
 
@@ -39,6 +42,35 @@ namespace ServiceForTutorRestApi.Controllers
             catch (Exception ex)
             {
                 throw;
+            }
+        }
+
+        [HttpGet]
+        public InvitationCodeViewModel? GetCodeValue(string codeValue)
+        {
+            try
+            {
+                return _logic.ReadElement(new InvitationCodeSearchModel
+                {
+                    CodeValue = codeValue
+                });
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        [HttpPost]
+        public void AddTutorToStudent(TutorStudentBindingModel model)
+        {
+            try
+            {
+                _tslogic.Create(model);
+            }
+            catch (Exception ex)
+            {
+                BadRequest(new { message = ex.Message });
             }
         }
 

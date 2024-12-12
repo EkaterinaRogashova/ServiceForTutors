@@ -1,0 +1,42 @@
+﻿@using ServiceForTutorContracts.ViewModels
+@model TaskViewModel
+@{
+    ViewData["Title"] = "Создание задания";
+}
+
+<div class="container mt-5">
+
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="p-4" style="background-color: #DBCEF6; border-radius: 10px;">
+                <h3 class="text-center mt-3" style="color: #300E36;">Создание нового задания</h3>
+                <form asp-action="CreateTask" method="post">
+                    <div class="mb-3">
+                        <label asp-for="Name" class="form-label">Название задания</label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Subject" class="form-label">Предмет</label>
+                        <input asp-for="Subject" class="form-control" />
+                        <span asp-validation-for="Subject" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Topic" class="form-label">Тема</label>
+                        <input asp-for="Topic" class="form-control" />
+                        <span asp-validation-for="Topic" class="text-danger"></span>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px;">Создать задание</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

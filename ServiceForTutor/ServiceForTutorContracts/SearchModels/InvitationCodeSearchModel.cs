@@ -9,5 +9,6 @@ namespace ServiceForTutorContracts.SearchModels
     public class InvitationCodeSearchModel
     {
         public int? Id { get; set; }
+        public string? CodeValue { get; set; }
     }
 }

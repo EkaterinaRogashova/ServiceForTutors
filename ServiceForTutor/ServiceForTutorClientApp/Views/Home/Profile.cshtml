@@ -45,19 +45,19 @@
                     <div class="d-flex justify-content-between mb-3">
                         @if (APIClient.Client.Role == "Tutor")
                         {
-                            <a class="btn" href="@Url.Action("MyStudents", "TutorStudent")" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px; width: 48%; height: 260px;">Мои ученики</a>
+                            <a class="btn d-flex align-items-center justify-content-center" href="@Url.Action("MyStudents", "TutorStudent")" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px; width: 48%; height: 260px;">Мои ученики</a>
                             <button class="btn" style="background-color: #E0D1FE; color: #300E36; border-radius: 10px; width: 48%; height: 260px;">Расписание</button>
                         }
                         else if (APIClient.Client.Role == "Student")
                         {
-                            <a class="btn" href="@Url.Action("MyTutors", "TutorStudent")" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px; width: 48%; height: 230px;">Мои учителя</a>
+                            <a class="btn d-flex align-items-center justify-content-center" href="@Url.Action("MyTutors", "TutorStudent")" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px; width: 48%; height: 230px;">Мои учителя</a>
                             <button class="btn" style="background-color: #E0D1FE; color: #300E36; border-radius: 10px; width: 48%; height: 230px;">Расписание</button>
                         }
                     </div>
                     @if (APIClient.Client.Role == "Tutor")
                     {
                         <div class="d-flex justify-content-between mb-3">
-                            <button class="btn" style="background-color: #E0D1FE; color: #300E36; border-radius: 10px; width: 48%; height: 260px;">Задания</button>
+                            <a class="btn d-flex align-items-center justify-content-center" href="@Url.Action("Tasks", "Task")" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px; width: 48%; height: 260px;">Задания</a>
                             <button class="btn" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px; width: 48%; height: 260px;">Назначенные задания</button>
                         </div>
                     }

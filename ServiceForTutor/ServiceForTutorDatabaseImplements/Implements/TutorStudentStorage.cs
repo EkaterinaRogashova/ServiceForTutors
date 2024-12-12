@@ -29,14 +29,32 @@ namespace ServiceForTutorDatabaseImplements.Implements
         public TutorStudentViewModel? GetElement(TutorStudentSearchModel model)
         {
             using var context = new ServiceForTutorDatabase();
-            if (model.Id.HasValue)
-                return context.TutorStudents.FirstOrDefault(x => x.Id == model.Id)?.GetViewModel;
+            if (model.StudentId.HasValue)
+            {
+                return context.TutorStudents.
+                FirstOrDefault(x => x.StudentId == model.StudentId)?.GetViewModel;
+            }
+            if (model.TutorId.HasValue)
+            {
+                return context.TutorStudents
+                .FirstOrDefault(x => x.TutorId == model.TutorId)?.GetViewModel;
+            }
             return null;
         }
 
         public List<TutorStudentViewModel> GetFilteredList(TutorStudentSearchModel model)
         {
             using var context = new ServiceForTutorDatabase();
+            if (model.StudentId.HasValue)
+            {
+                return context.TutorStudents
+                .Where(x => x.StudentId == model.StudentId).Select(x => x.GetViewModel).ToList();
+            }
+            if (model.TutorId.HasValue)
+            {
+                return context.TutorStudents
+                .Where(x => x.TutorId == model.TutorId).Select(x => x.GetViewModel).ToList();
+            }
             return null;
         }
 

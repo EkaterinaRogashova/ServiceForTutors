@@ -1,0 +1,200 @@
+﻿@using ServiceForTutorContracts.ViewModels
+@model TaskViewModel
+@{
+    ViewData["Title"] = "Редактирование задания";
+}
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center" style="color: #300E36;">@ViewData["Title"]</h2>
+
+        <div class="row">
+            <!-- Карточка с заданием -->
+            <div class="col-md-6">
+                <div class="p-4" style="background-color: #DBCEF6; border-radius: 10px;">
+                    <h3 class="text-center mt-3" style="color: #300E36;">@Model.Name</h3>
+                    <p style="font-weight: bold;">Темa: @Model.Topic</p>
+                    <p style="font-weight: bold;">Предмет: @Model.Subject</p>
+                    <div class="text-right">
+                        <button class="btn" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px;" data-toggle="modal" data-target="#addQuestionModal">Добавить вопрос</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @*
+        <!-- Список вопросов под карточкой с заданием -->
+        <div class="mt-4" id="questionsList">
+        <h4 class="text-center" style="color: #300E36;">Вопросы к заданию</h4>
+        @if (Model.Questions.Any())
+        {
+        foreach (var question in Model.Questions)
+        {
+        <div class="card mb-3" style="background-color: #DBCEF6; border-radius: 10px;">
+        <div class="card-body">
+        <h5 class="card-title">@question.Text</h5>
+        <p class="card-text">Тип: @question.QuestionType</p>
+        <p class="card-text">Максимальный балл: @question.MaxScore</p>
+        <div class="text-right">
+        <button class="btn btn-warning" data-toggle="modal" data-target="#editQuestionModal" data-question-id="@question.Id" data-question-text="@question.Text" data-question-type="@question.QuestionType" data-question-answer="@question.CorrectAnswer" data-question-maxscore="@question.MaxScore">Редактировать вопрос</button>
+        <button class="btn btn-danger" onclick="deleteQuestion(@question.Id)">Удалить вопрос</button>
+        </div>
+        </div>
+        </div>
+        }
+        }
+        else
+        {
+        <p class="text-center">Нет вопросов для отображения.</p>
+        }
+        </div> *@
+    </div>
+
+    <!-- Модальное окно для добавления вопроса -->
+    <div class="modal fade" id="addQuestionModal" tabindex="-1" role="dialog" aria-labelledby="addQuestionModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addQuestionModalLabel">Добавить вопрос</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Закрыть">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="addQuestionForm">
+                        <div class="mb-3">
+                            <label for="questionText" class="form-label">Вопрос</label>
+                            <input type="text" class="form-control" id="questionText" required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="questionType" class="form-label">Тип задания</label>
+
+                            <input type="text" class="form-control" id="questionType" required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="correctAnswer" class="form-label">Ответ</label>
+                            <input type="text" class="form-control" id="correctAnswer" required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="maxScore" class="form-label">Максимальный балл</label>
+                            <input type="number" class="form-control" id="maxScore" required />
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                    <button type="button" class="btn btn-primary" id="saveQuestionButton">Сохранить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно для редактирования вопроса -->
+    <div class="modal fade" id="editQuestionModal" tabindex="-1" role="dialog" aria-labelledby="editQuestionModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editQuestionModalLabel">Редактировать вопрос</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Закрыть">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="editQuestionForm">
+                        <input type="hidden" id="editQuestionId" />
+                        <div class="mb-3">
+                            <label for="editQuestionText" class="form-label">Вопрос</label>
+                            <input type="text" class="form-control" id="editQuestionText" required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="editQuestionType" class="form-label">Тип задания</label>
+                            <input type="text" class="form-control" id="editQuestionType" required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="editCorrectAnswer" class="form-label">Ответ</label>
+                            <input type="text" class="form-control" id="editCorrectAnswer" required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="editMaxScore" class="form-label">Максимальный балл</label>
+                            <input type="number" class="form-control" id="editMaxScore" required />
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                    <button type="button" class="btn btn-primary" id="saveEditQuestionButton">Сохранить изменения</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</body>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    @* <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> *@
+    <script>
+        // Функция для добавления вопроса
+        $('#saveQuestionButton').on('click', function () {
+            // Логика для сохранения вопроса через AJAX или другую логику
+            // Например: 
+            var questionText = $('#questionText').val();
+            var questionType = $('#questionType').val();
+            var correctAnswer = $('#correctAnswer').val();
+            var maxScore = $('#maxScore').val();
+
+            // Здесь можете добавить код для отправки данных на сервер
+
+            // После успешного добавления вопроса закройте модальное окно и обновите список вопросов
+            $('#addQuestionModal').modal('hide');
+            // Обновите список вопросов тут (например, добавив новый вопрос в список)
+        });
+
+        // ...
+
+        // Функция для редактирования вопроса - используется при открытии модального окна редактирования
+        $('#editQuestionModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // Кнопка, которая вызвала модальное окно
+            var questionId = button.data('question-id');           // Извлечь ID вопроса
+            var questionText = button.data('question-text');       // Извлечь текст вопроса
+            var questionType = button.data('question-type');       // Извлечь тип вопроса
+            var correctAnswer = button.data('question-answer');     // Извлечь правильный ответ
+            var maxScore = button.data('question-maxscore');       // Извлечь максимальный балл
+
+            var modal = $(this);
+            modal.find('#editQuestionId').val(questionId);
+            modal.find('#editQuestionText').val(questionText);
+            modal.find('#editQuestionType').val(questionType);
+            modal.find('#editCorrectAnswer').val(correctAnswer);
+            modal.find('#editMaxScore').val(maxScore);
+        });
+
+        // Функция для сохранения изменений вопроса
+        $('#saveEditQuestionButton').on('click', function () {
+            // Логика для сохранения изменений вопроса через AJAX или другую логику
+            // Например:
+            var questionId = $('#editQuestionId').val();
+            var questionText = $('#editQuestionText').val();
+            var questionType = $('#editQuestionType').val();
+            var correctAnswer = $('#editCorrectAnswer').val();
+            var maxScore = $('#editMaxScore').val();
+
+            // Здесь можете добавить код для отправки данных на сервер
+            // После успешного обновления вопроса закройте модальное окно и обновите список вопросов
+            $('#editQuestionModal').modal('hide');
+            // Обновите список вопросов тут (например, обновив текст вопроса в списке)
+        });
+
+        // Функция для удаления вопроса
+        function deleteQuestion(id) {
+            // Здесь добавьте логику для удаления вопроса через AJAX
+            // После успешного удаления обновите список вопросов
+        }
+    </script>
+}

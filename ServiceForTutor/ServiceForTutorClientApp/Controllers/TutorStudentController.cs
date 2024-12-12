@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ServiceForTutorContracts.BindingModels;
 using ServiceForTutorContracts.ViewModels;
+using ServiceForTutorDatabaseImplements.Models;
 using System.Data;
 using System.Numerics;
 using System.Xml.Linq;
@@ -29,6 +30,23 @@ namespace ServiceForTutorClientApp.Controllers
             return View("MyStudents");
         }
 
+        [HttpPost]
+        public IActionResult EnterInvitationCode(string invitationCode)
+        {
+            var code = APIClient.GetRequest<InvitationCodeViewModel>($"api/InvitationCode/GetCodeValue?CodeValue={invitationCode}");
+            if (APIClient.Client != null)
+            {
+                if (code != null)
+                {
+                    APIClient.PostRequest("api/InvitationCode/AddTutorToStudent", new TutorStudentBindingModel
+                    {
+                        TutorId = code.UserId,
+                        StudentId = APIClient.Client.Id
+                    });
+                }
+            }
+            return View("MyTutors");
+        }
 
         public IActionResult MyTutors()
         {

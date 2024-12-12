@@ -11,25 +11,25 @@
 
     <div class="text-center mt-4">
         @{
-            
-            <form asp-action="CreateInvitationCode" method="post">
-            <p>
-                
-                    <button type="submit" class="btn" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px;">Сформировать код приглашения</button>
-                
-            </p>
 
-            @if (ViewBag.InvitationCode != null)
-            {
-                <div class="mt-3">
-                    <p>
-                        Сгенерированный код приглашения:
-                        <span id="invitationCode">@ViewBag.InvitationCode</span>
-                        <button class="btn btn-secondary btn-sm" onclick="copyCode()">Скопировать</button>
-                    </p>
+            <div class="d-flex mt-4">
+                <div class="flex-shrink-0" style="width: 20%;">
+                    <form asp-action="CreateInvitationCode" method="post">
+                        <button type="submit" class="btn" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px; width: 100%;">Сформировать код приглашения</button>
+                    </form>
                 </div>
-            }
-            </form>
+
+                <div class="flex-grow-1 ms-3">
+                    @if (ViewBag.InvitationCode != null)
+                    {
+                        <p>
+                            Сгенерированный код приглашения:
+                            <span id="invitationCode">@ViewBag.InvitationCode</span>
+                            <button class="btn btn-secondary btn-sm" onclick="copyCode()">Скопировать</button>
+                        </p>
+                    }
+                </div>
+            </div>
             if (Model == null)
             {
                 <h3 class="display-4">офофо</h3>
@@ -51,8 +51,8 @@
                             <td>@Html.DisplayFor(modelItem => item.Name)</td>
                             <td>@Html.DisplayFor(modelItem => item.LastName)</td>
                             <td>
-                                <a class="btn btn-danger btn-sm" asp-action="DeleteEvent" asp-route-id="@item.Id" onclick="return confirm('Вы уверены, что хотите удалить мероприятие?');">Удалить</a>
-                                <a class="btn btn btn-secondary btn-sm" asp-action="ViewEvent" asp-route-id="@item.Id">Посмотреть</a>
+                                <a class="btn btn-danger btn-sm" asp-action="DeleteStudent" asp-route-id="@item.Id" onclick="return confirm('Вы уверены, что хотите удалить ученика?');">Удалить</a>
+                                <a class="btn btn btn-secondary btn-sm" asp-action="ViewTasksForStudent" asp-route-id="@item.Id">Назначенные задания</a>
                             </td>
                         </tr>
                     }

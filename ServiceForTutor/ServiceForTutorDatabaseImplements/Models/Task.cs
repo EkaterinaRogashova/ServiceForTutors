@@ -35,7 +35,8 @@ namespace ServiceForTutorDatabaseImplements.Models
                 Id = model.Id,
                 Name = model.Name,
                 Subject = model.Subject,
-                Topic = model.Topic
+                Topic = model.Topic,
+                TutorId = model.TutorId
             };
         }
         public static Task Create(TaskViewModel model)
@@ -45,7 +46,8 @@ namespace ServiceForTutorDatabaseImplements.Models
                 Id = model.Id,
                 Name = model.Name,
                 Subject = model.Subject,
-                Topic = model.Topic
+                Topic = model.Topic,
+                TutorId = model.TutorId
             };
         }
         public void Update(TaskBindingModel model)
@@ -63,7 +65,8 @@ namespace ServiceForTutorDatabaseImplements.Models
             Id = Id,
             Name = Name,
             Subject = Subject,
-            Topic = Topic
+            Topic = Topic,
+            TutorId = TutorId   
         };
     }
 }

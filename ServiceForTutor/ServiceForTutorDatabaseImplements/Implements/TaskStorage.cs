@@ -38,6 +38,11 @@ namespace ServiceForTutorDatabaseImplements.Implements
         public List<TaskViewModel> GetFilteredList(TaskSearchModel model)
         {
             using var context = new ServiceForTutorDatabase();
+            if (model.TutorId.HasValue)
+            {
+                return context.Tasks
+                .Where(x => x.TutorId == model.TutorId).Select(x => x.GetViewModel).ToList();
+            }
             return null;
         }
 

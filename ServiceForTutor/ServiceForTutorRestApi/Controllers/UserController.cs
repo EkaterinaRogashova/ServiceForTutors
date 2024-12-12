@@ -85,7 +85,7 @@ namespace ServiceForTutorRestApi.Controllers
                 // Получаем список связей между репетиторами и студентом
                 var tutorStudentBindings = _tutorStudentLogic.ReadList(new TutorStudentSearchModel
                 {
-                    Student_id = studentId
+                    StudentId = studentId
                 });
 
                 // Проверяем есть ли у студента связанные репетиторы
@@ -126,7 +126,7 @@ namespace ServiceForTutorRestApi.Controllers
             {
                 var tutorStudentBindings = _tutorStudentLogic.ReadList(new TutorStudentSearchModel
                 {
-                    Tutor_id = tutorId
+                    TutorId = tutorId
                 });
 
                 if (tutorStudentBindings == null || !tutorStudentBindings.Any())
@@ -135,14 +135,14 @@ namespace ServiceForTutorRestApi.Controllers
                 }
 
                 var studentIds = tutorStudentBindings
-                    .Select(binding => binding.TutorId)
+                    .Select(binding => binding.StudentId)
                     .Distinct()
                     .ToList();
 
                 var students = new List<UserViewModel>();
                 foreach (var studentId in studentIds)
                 {
-                    var user = _logic.ReadElement(new UserSearchModel { Id = tutorId });
+                    var user = _logic.ReadElement(new UserSearchModel { Id = studentId });
                     if (user != null)
                     {
                         students.Add(user);
