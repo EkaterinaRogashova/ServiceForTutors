@@ -41,7 +41,7 @@
                             <p class="card-text">Тип: @question.TypeQuestion</p>
                             <p class="card-text">Максимальный балл: @question.MaxScore</p>
                             <div class="text-right">
-                                <button class="btn btn-warning" data-toggle="modal" data-target="#editQuestionModal"
+                                <button class="btn btn-warning" style="border-radius: 10px; background-color: #C5A8EA; color: #300E36;" data-bs-toggle="modal" data-bs-target="#editQuestionModal"
                                         data-question-id="@question.Id"
                                         data-question-text="@question.TaskText"
                                         data-question-type="@question.TypeQuestion"
@@ -49,7 +49,11 @@
                                         data-question-maxscore="@question.MaxScore">
                                     Редактировать вопрос
                                 </button>
-                                <button class="btn btn-danger" onclick="deleteQuestion(@question.Id)">Удалить вопрос</button>
+                                <form asp-action="DeleteQuestion" method="post">
+                                    <input type="hidden" id="taskId" name="taskId" value="@Model.Id" />
+                                    <input type="hidden" id="questionId" name="id" value="@question.Id" />
+                                    <button class="btn" type="submit" style="border-radius: 10px; background-color: #C5A8EA; color: #300E36;">Удалить вопрос</button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -109,31 +113,32 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body">
-                    <form id="editQuestionForm">
-                        <input type="hidden" id="editQuestionId" />
+                <form asp-action="EditQuestion" method="post">
+                    <div class="modal-body">
+                        <input type="hidden" id="taskId" name="taskId" value="@Model.Id" />
+                        <input type="hidden" id="editQuestionId" name="editQuestionId" />
                         <div class="mb-3">
                             <label for="editQuestionText" class="form-label">Вопрос</label>
-                            <input type="text" class="form-control" id="editQuestionText" required />
+                            <input type="text" class="form-control" id="editQuestionText" name="editQuestionText" required />
                         </div>
                         <div class="mb-3">
                             <label for="editQuestionType" class="form-label">Тип задания</label>
-                            <input type="text" class="form-control" id="editQuestionType" required />
+                            <input type="text" class="form-control" id="editQuestionType" name="editQuestionType" required />
                         </div>
                         <div class="mb-3">
                             <label for="editCorrectAnswer" class="form-label">Ответ</label>
-                            <input type="text" class="form-control" id="editCorrectAnswer" required />
+                            <input type="text" class="form-control" id="editCorrectAnswer" name="editCorrectAnswer" />
                         </div>
                         <div class="mb-3">
                             <label for="editMaxScore" class="form-label">Максимальный балл</label>
-                            <input type="number" class="form-control" id="editMaxScore" required />
+                            <input type="number" class="form-control" id="editMaxScore" name="editMaxScore" />
                         </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
-                    <button type="button" class="btn btn-primary" id="saveEditQuestionButton">Сохранить изменения</button>
-                </div>
+                    </div>
+                    <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 10px; background-color: #300E36 ; color: #C5A8EA;">Закрыть</button>
+                            <button type="submit" class="btn btn-primary" id="saveQuestionButton" style="border-radius: 10px; background-color: #C5A8EA; color: #300E36;">Сохранить изменения</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -146,8 +151,6 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
     <script>
-
-        // Функция для редактирования вопроса - используется при открытии модального окна редактирования
         $('#editQuestionModal').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget); // Кнопка, которая вызвала модальное окно
             var questionId = button.data('question-id');           // Извлечь ID вопроса
@@ -163,27 +166,5 @@
             modal.find('#editCorrectAnswer').val(correctAnswer);
             modal.find('#editMaxScore').val(maxScore);
         });
-
-        // Функция для сохранения изменений вопроса
-        $('#saveEditQuestionButton').on('click', function () {
-            // Логика для сохранения изменений вопроса через AJAX или другую логику
-            // Например:
-            var questionId = $('#editQuestionId').val();
-            var questionText = $('#editQuestionText').val();
-            var questionType = $('#editQuestionType').val();
-            var correctAnswer = $('#editCorrectAnswer').val();
-            var maxScore = $('#editMaxScore').val();
-
-            // Здесь можете добавить код для отправки данных на сервер
-            // После успешного обновления вопроса закройте модальное окно и обновите список вопросов
-            $('#editQuestionModal').modal('hide');
-            // Обновите список вопросов тут (например, обновив текст вопроса в списке)
-        });
-
-        // Функция для удаления вопроса
-        function deleteQuestion(id) {
-            // Здесь добавьте логику для удаления вопроса через AJAX
-            // После успешного удаления обновите список вопросов
-        }
     </script>
 }

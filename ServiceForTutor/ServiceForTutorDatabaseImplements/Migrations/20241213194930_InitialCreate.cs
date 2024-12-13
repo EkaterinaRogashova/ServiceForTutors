@@ -126,7 +126,7 @@ namespace ServiceForTutorDatabaseImplements.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     TutorId = table.Column<int>(type: "integer", nullable: false),
-                    StudentId = table.Column<int>(type: "integer", nullable: false),
+                    StudentId = table.Column<int>(type: "integer", nullable: true),
                     DateTimeStart = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     DateTimeEnd = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Status = table.Column<string>(type: "text", nullable: false)
@@ -138,8 +138,7 @@ namespace ServiceForTutorDatabaseImplements.Migrations
                         name: "FK_Schedules_Users_StudentId",
                         column: x => x.StudentId,
                         principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Schedules_Users_TutorId",
                         column: x => x.TutorId,

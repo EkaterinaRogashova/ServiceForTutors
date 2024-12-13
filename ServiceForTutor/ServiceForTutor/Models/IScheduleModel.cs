@@ -10,7 +10,7 @@ namespace ServiceForTutorDataModels.Models
     public interface IScheduleModel: IId
     {
         int TutorId { get; set; }
-        int StudentId { get; set; }
+        int? StudentId { get; set; }
         DateTime DateTimeStart { get; set; }
         DateTime DateTimeEnd { get; set; }
         string Status { get; set; }

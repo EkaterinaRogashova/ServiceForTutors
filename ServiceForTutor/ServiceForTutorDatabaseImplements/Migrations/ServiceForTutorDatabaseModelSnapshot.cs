@@ -187,7 +187,7 @@ namespace ServiceForTutorDatabaseImplements.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("StudentId")
+                    b.Property<int?>("StudentId")
                         .HasColumnType("integer");
 
                     b.Property<int>("TutorId")
@@ -432,9 +432,7 @@ namespace ServiceForTutorDatabaseImplements.Migrations
                 {
                     b.HasOne("ServiceForTutorDatabaseImplements.Models.User", "Student")
                         .WithMany()
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("StudentId");
 
                     b.HasOne("ServiceForTutorDatabaseImplements.Models.User", "Tutor")
                         .WithMany()

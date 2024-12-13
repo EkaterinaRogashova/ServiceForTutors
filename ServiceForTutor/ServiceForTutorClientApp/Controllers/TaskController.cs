@@ -61,7 +61,7 @@ namespace ServiceForTutorClientApp.Controllers
                 Name = taskDetails.Name,
                 Topic = taskDetails.Topic,
                 Subject = taskDetails.Subject,
-                Questions = taskQuestions // Присваиваем вопросы
+                Questions = taskQuestions
             };
             return View(viewModel);
         }
@@ -78,6 +78,30 @@ namespace ServiceForTutorClientApp.Controllers
                 Answer = correctAnswer
             });
             return RedirectToAction("EditTask", new { id = id });
+        }
+
+        [HttpPost]
+        public IActionResult EditQuestion(int editQuestionId, string editQuestionText, string editQuestionType, string editCorrectAnswer, float editMaxScore, int taskId)
+        {
+            APIClient.PostRequest("api/Task/UpdateQuestion", new QuestionBindingModel
+            {
+                Id = editQuestionId,
+                TaskText = editQuestionText,
+                TypeQuestion = editQuestionType,
+                MaxScore = editMaxScore,
+                Answer = editCorrectAnswer
+            });
+            return RedirectToAction("EditTask", new { id = taskId });
+        }
+
+        [HttpPost]
+        public IActionResult DeleteQuestion(int id, int taskId)
+        {
+            APIClient.PostRequest("api/Task/DeleteQuestion", new QuestionBindingModel
+            {
+                Id = id
+            });
+            return RedirectToAction("EditTask", new { id = taskId });
         }
     }
 }

@@ -12,7 +12,7 @@ using ServiceForTutorDatabaseImplements;
 namespace ServiceForTutorDatabaseImplements.Migrations
 {
     [DbContext(typeof(ServiceForTutorDatabase))]
-    [Migration("20241207191831_InitialCreate")]
+    [Migration("20241213194930_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -190,7 +190,7 @@ namespace ServiceForTutorDatabaseImplements.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("StudentId")
+                    b.Property<int?>("StudentId")
                         .HasColumnType("integer");
 
                     b.Property<int>("TutorId")
@@ -435,9 +435,7 @@ namespace ServiceForTutorDatabaseImplements.Migrations
                 {
                     b.HasOne("ServiceForTutorDatabaseImplements.Models.User", "Student")
                         .WithMany()
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("StudentId");
 
                     b.HasOne("ServiceForTutorDatabaseImplements.Models.User", "Tutor")
                         .WithMany()

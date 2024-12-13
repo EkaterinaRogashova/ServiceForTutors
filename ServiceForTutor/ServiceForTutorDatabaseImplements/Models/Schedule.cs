@@ -16,7 +16,7 @@ namespace ServiceForTutorDatabaseImplements.Models
     {
         [Required]
         public int TutorId { get; set; }
-        public int StudentId { get; set; }
+        public int? StudentId { get; set; }
         [Required]
         public DateTime DateTimeStart { get; set; }
         [Required]

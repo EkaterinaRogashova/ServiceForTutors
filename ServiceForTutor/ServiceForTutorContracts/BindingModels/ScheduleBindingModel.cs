@@ -10,7 +10,7 @@ namespace ServiceForTutorContracts.BindingModels
     public class ScheduleBindingModel : IScheduleModel
     {
         public int TutorId { get; set; }
-        public int StudentId { get; set; }
+        public int? StudentId { get; set; }
         public DateTime DateTimeStart { get; set; }
         public DateTime DateTimeEnd { get; set; }
         public string Status { get; set; } = string.Empty;

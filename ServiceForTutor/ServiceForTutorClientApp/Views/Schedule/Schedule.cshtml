@@ -1,0 +1,164 @@
+﻿@using ServiceForTutorContracts.ViewModels
+@model List<ScheduleViewModel>
+
+@{
+    ViewData["Title"] = "Расписание";
+}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>@ViewData["Title"]</h1>
+        <button class="btn btn-success"
+                data-bs-toggle="modal"
+                data-bs-target="#addTimeSlotModal" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px; margin-right: 40px; margin-bottom: 20px; margin-top: 10px;">
+            Добавить время
+        </button>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Время</th>
+                    @foreach (var day in Model.Select(m => m.DateTimeStart.ToString("yyyy-MM-dd")).Distinct())
+                    {
+                        <th>@(Convert.ToDateTime(day).ToString("dd MMMM"))</th> <!-- Формат дня и месяца -->
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @for (int hour = 9; hour < 21; hour++)
+                {
+                    for (int minute = 0; minute < 60; minute += 30)
+                    {
+                        <tr>
+                            <td>@hour:@minute.ToString("D2")</td>
+                            @foreach (var day in Model.Select(m => m.DateTimeStart.ToString("yyyy-MM-dd")).Distinct())
+                            {
+                                var timeSlot = Model.FirstOrDefault(m => m.DateTimeStart.Hour == hour && m.DateTimeStart.Minute == minute && m.DateTimeStart.Date == DateTime.Parse(day));
+
+                                if (timeSlot != null)
+                                {
+                                    var duration = (timeSlot.DateTimeEnd - timeSlot.DateTimeStart).TotalMinutes; // Длительность в минутах
+                                    var buttonHeight = duration * 20; // Высота кнопки в пикселях
+
+                                    <td>
+                                        <button class="time-slot-button" style="height: @buttonHeight px;" onclick="alert('Занято: @timeSlot.DateTimeStart.ToString("dd MMMM HH:mm")')">
+                                            Занято
+                                        </button>
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td></td>
+                                }
+                            }
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+
+
+        <div class="modal fade" id="addTimeSlotModal" tabindex="-1" role="dialog" aria-labelledby="addTimeSlotModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addTimeSlotModalLabel">Добавить время</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Закрыть">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form asp-action="AddTimeSlot" method="post">
+                        <input type="hidden" id="slotStatus" name="status" value="Available" />
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="slotDate">Выбор даты</label>
+                                <input type="date" class="form-control" id="slotDate" name="date" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="slotStartTime">Время начала</label>
+                                <input type="time" class="form-control" id="slotStartTime" name="timeStart" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="duration">Продолжительность занятия</label>
+                                <select class="form-control" id="duration" name="duration" required>
+                                    <option value="0.5">30 минут</option>
+                                    <option value="1">1 час</option>
+                                    <option value="1.5">1,5 часа</option>
+                                    <option value="2">2 часа</option>
+                                    <option value="2.5">2,5 часа</option>
+                                    <option value="3">3 часа</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="slotEndTime">Время окончания</label>
+                                <input type="time" class="form-control" id="slotEndTime" name="endTime" readonly />
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                            <button type="submit" class="btn" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px;">Сохранить</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+
+</html>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const startTimeInput = document.getElementById('slotStartTime');
+        const durationSelect = document.getElementById('duration');
+        const endTimeInput = document.getElementById('slotEndTime');
+
+        // Функция для вычисления времени окончания
+        function calculateEndTime() {
+            const startTime = startTimeInput.value;
+            const durationHours = parseFloat(durationSelect.value);
+
+            if (startTime) {
+                // Получаем часы и минуты начала занятия
+                const [hours, minutes] = startTime.split(':').map(Number);
+                // Конвертируем все в минуты
+                const totalMinutes = hours * 60 + minutes + (durationHours * 60);
+                // Вычисляем окончание занятия
+                const endHours = Math.floor(totalMinutes / 60) % 24; // Учтем 24 часа
+                const endMinutes = totalMinutes % 60;
+
+                // Устанавливаем время окончания
+                endTimeInput.value = `${String(endHours).padStart(2, '0')}:${String(endMinutes).padStart(2, '0')}`;
+            }
+        }
+
+        // Добавляем обработчики событий
+        startTimeInput.addEventListener('change', calculateEndTime);
+        durationSelect.addEventListener('change', calculateEndTime);
+    });
+</script>
+
+           <style>
+               .time-slot-button {
+    width: 60px;
+    background-color: red;
+    color: white;
+    border: none;
+    cursor: pointer;
+    min-height: 30px; /* Минимальная высота кнопки для видимости */
+    transition: height 0.3s; /* Плавный переход высоты, если требуется */
+}
+
+.time-slot-button:hover {
+    background-color: darkred; /* Цвет при наведении для улучшения UX */
+}
+
+           </style>

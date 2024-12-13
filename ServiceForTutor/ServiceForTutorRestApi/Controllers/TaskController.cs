@@ -95,5 +95,31 @@ namespace ServiceForTutorRestApi.Controllers
                 throw;
             }
         }
+
+        [HttpPost]
+        public void UpdateQuestion(QuestionBindingModel model)
+        {
+            try
+            {
+                _questionLogic.Update(model);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        [HttpPost]
+        public void DeleteQuestion(QuestionBindingModel model)
+        {
+            try
+            {
+                _questionLogic.Delete(model);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
     }
 }
