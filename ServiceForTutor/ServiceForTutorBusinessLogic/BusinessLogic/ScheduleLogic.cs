@@ -55,7 +55,7 @@ namespace ServiceForTutorBusinessLogic.BusinessLogic
 
         public List<ScheduleViewModel>? ReadList(ScheduleSearchModel? model)
         {
-            var list = _scheduleStorage.GetFullList();
+            var list = model == null ? _scheduleStorage.GetFullList() : _scheduleStorage.GetFilteredList(model);
             if (list == null)
             {
                 return null;

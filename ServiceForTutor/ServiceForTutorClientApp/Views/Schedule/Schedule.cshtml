@@ -12,57 +12,116 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewData["Title"]</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .time-slot-button {
+            width: 100%;
+            box-sizing: border-box;
+        }
+    </style>
 </head>
 <body>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
     <div class="container mt-4">
         <h1>@ViewData["Title"]</h1>
-        <button class="btn btn-success"
-                data-bs-toggle="modal"
-                data-bs-target="#addTimeSlotModal" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px; margin-right: 40px; margin-bottom: 20px; margin-top: 10px;">
-            Добавить время
-        </button>
-        <table class="table table-bordered">
+        @if (APIClient.Client.Role == "Tutor")
+        {
+            <button class="btn btn-success"
+                    data-bs-toggle="modal"
+                    data-bs-target="#addTimeSlotModal" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px; margin-right: 40px; margin-bottom: 20px; margin-top: 10px;">
+                Добавить время
+            </button>
+        }
+        <div class="btn-group" role="group" aria-label="Basic example">
+            <button type="button" class="btn btn-secondary" onclick="previousWeek()">Предыдущая неделя</button>
+            <button type="button" class="btn btn-secondary" onclick="nextWeek()">Следующая неделя</button>
+        </div>
+        <script>
+            function previousWeek() {
+                alert("Функция 'previousWeek' еще не реализована.  Нужен AJAX запрос.");
+            }
+
+            function nextWeek() {
+                alert("Функция 'nextWeek' еще не реализована. Нужен AJAX запрос.");
+            }
+        </script>
+        @{
+            DateTime currentDate = DateTime.Today;
+            var datesOfWeek = GetDatesOfWeek(DateTime.Today);
+            var uniqueTimes = new HashSet<DateTime>(Model.Select(x => x.DateTimeStart));
+
+        }
+        <table class="table table-bordered" id="scheduleTable">
             <thead>
                 <tr>
                     <th>Время</th>
-                    @foreach (var day in Model.Select(m => m.DateTimeStart.ToString("yyyy-MM-dd")).Distinct())
+                    @foreach (var day in datesOfWeek)
                     {
-                        <th>@(Convert.ToDateTime(day).ToString("dd MMMM"))</th> <!-- Формат дня и месяца -->
+                        <th>@(day.ToString("dd MMMM")) <span style="font-size:smaller;">(@day.ToString("ddd"))</span></th>
                     }
                 </tr>
             </thead>
             <tbody>
-                @for (int hour = 9; hour < 21; hour++)
+    @foreach (var day in datesOfWeek)
+    {
+        foreach (var time in uniqueTimes.Where(t => t.Date == day))
+        {
+            <tr>
+                <td>@time.ToString("HH:mm")</td>
+                @foreach (var d in datesOfWeek)
                 {
-                    for (int minute = 0; minute < 60; minute += 30)
+                    var timeSlot = Model.FirstOrDefault(m => m.DateTimeStart == time && m.DateTimeStart.Date == d);
+                    if (timeSlot != null)
                     {
-                        <tr>
-                            <td>@hour:@minute.ToString("D2")</td>
-                            @foreach (var day in Model.Select(m => m.DateTimeStart.ToString("yyyy-MM-dd")).Distinct())
+                        var duration = (timeSlot.DateTimeEnd - timeSlot.DateTimeStart).TotalMinutes;
+                        var buttonHeight = Math.Max(20, (int)duration * 20);
+                        <td>
+                            @if (APIClient.Client.Role == "Student")
                             {
-                                var timeSlot = Model.FirstOrDefault(m => m.DateTimeStart.Hour == hour && m.DateTimeStart.Minute == minute && m.DateTimeStart.Date == DateTime.Parse(day));
-
-                                if (timeSlot != null)
-                                {
-                                    var duration = (timeSlot.DateTimeEnd - timeSlot.DateTimeStart).TotalMinutes; // Длительность в минутах
-                                    var buttonHeight = duration * 20; // Высота кнопки в пикселях
-
-                                    <td>
-                                        <button class="time-slot-button" style="height: @buttonHeight px;" onclick="alert('Занято: @timeSlot.DateTimeStart.ToString("dd MMMM HH:mm")')">
-                                            Занято
-                                        </button>
-                                    </td>
-                                }
-                                else
-                                {
-                                    <td></td>
-                                }
+                                            <button class="time-slot-button" data-bs-toggle="modal" data-bs-target="#reservation"
+                                        data-id="@timeSlot.Id"
+                                        data-date="@timeSlot.DateTimeStart.ToString("yyyy-MM-dd")"
+                                        data-start-time="@timeSlot.DateTimeStart.ToString("HH:mm")"
+                                        data-end-time="@timeSlot.DateTimeEnd.ToString("HH:mm")"
+                                        data-tutor-id="@timeSlot.TutorId"
+                                        data-status="@timeSlot.Status">
+                                    @timeSlot.Status
+                                </button>
+                            } else{
+                                            <button class="time-slot-button" data-bs-toggle="modal" data-bs-target="#viewTimeSlot"
+                                        data-id="@timeSlot.Id"
+                                        data-date="@timeSlot.DateTimeStart.ToString("yyyy-MM-dd")"
+                                        data-start-time="@timeSlot.DateTimeStart.ToString("HH:mm")"
+                                        data-end-time="@timeSlot.DateTimeEnd.ToString("HH:mm")"
+                                        data-tutor-id="@timeSlot.TutorId"
+                                        data-status="@timeSlot.Status">
+                                     @timeSlot.Status
+                                </button>
                             }
-                        </tr>
+                        </td>
+                    }
+                    else
+                    {
+                        <td></td>
                     }
                 }
-            </tbody>
+            </tr>
+        }
+    }
+</tbody>
         </table>
+        @functions {
+            List<DateTime> GetDatesOfWeek(DateTime date)
+            {
+                List<DateTime> dates = new List<DateTime>();
+                DateTime firstDay = date.AddDays(-((int)date.DayOfWeek == 0 ? 6 : (int)date.DayOfWeek - 1));
+                for (int i = 0; i < 7; i++)
+                {
+                    dates.Add(firstDay.AddDays(i));
+                }
+                return dates;
+            }
+        }
 
 
         <div class="modal fade" id="addTimeSlotModal" tabindex="-1" role="dialog" aria-labelledby="addTimeSlotModalLabel" aria-hidden="true">
@@ -110,9 +169,166 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="reservation" tabindex="-1" role="dialog" aria-labelledby="reservationLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="reservationLabel">Бронирование</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form asp-action="Reservation" method="post">
+
+                    <div class="modal-body">
+                        <input type="hidden" id="modalId" name="id" />
+                        <input type="hidden" id="modalTutorId" name="tutorId" />
+                        <div class="mb-3">
+                            <label>Дата:</label>
+                            <p id="modalDate"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label>День недели:</label>
+                            <p id="modalDayOfWeek"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label>Время начала:</label>
+                            <p id="modalStartTime"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label>Время окончания:</label>
+                            <p id="modalEndTime"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label>ФИО репетитора:</label>
+                            <p id="modalTutorId" name="tutorId"></p>
+                        </div>
+                        <div class="form-group">
+                            <label>Статус:</label>
+                            <p id="modalStatus"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label for="duration">Продолжительность занятия:</label>
+                            <p id="modalDuration"></p>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                        <div id="actionButtons"></div>
+                        <button type="submit" class="btn" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px;">Забронировать</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="viewTimeSlot" tabindex="-1" role="dialog" aria-labelledby="viewTimeSlotLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewTimeSlotLabel">Бронирование</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form asp-action="DeleteBook" method="post">
+                    <div class="modal-body">
+                        <input type="hidden" id="modalId" name="id" />
+                        <input type="hidden" id="modalTutorId" name="tutorId" />
+                        <div class="mb-3">
+                            <label>Дата:</label>
+                            <p id="modalDate"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label>День недели:</label>
+                            <p id="modalDayOfWeek"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label>Время начала:</label>
+                            <p id="modalStartTime"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label>Время окончания:</label>
+                            <p id="modalEndTime"></p>
+                        </div>
+                        <div class="form-group">
+                            <label>Статус:</label>
+                            <p id="modalStatus"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label for="duration">Продолжительность занятия:</label>
+                            <p id="modalDuration"></p>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                        <button id="cancelButton" type="submit" class="btn" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px;">Отменить занятие</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
 </body>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        $('#reservation').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var id = button.data('id');
+            var date = button.data('date');
+            var startTime = button.data('start-time');
+            var endTime = button.data('end-time');
+            var tutorId = button.data('tutor-id');
+            var status = button.data('status');
+            var dayOfWeek = new Date(date).toLocaleDateString('ru-RU', { weekday: 'long' });
+            var duration = (new Date(`2000-01-01 ${endTime}`) - new Date(`2000-01-01 ${startTime}`)) / (1000 * 60);
 
+            var modal = $(this);
+            modal.find('#modalId').val(id);
+            modal.find('#modalDate').text(date);
+            modal.find('#modalDayOfWeek').text(dayOfWeek);
+            modal.find('#modalStartTime').text(startTime);
+            modal.find('#modalEndTime').text(endTime);
+            modal.find('#modalTutorId').val(tutorId);
+            modal.find('#modalStatus').text(status);
+            modal.find('#modalDuration').text(duration / 60 + " часа");
 
+            $('#actionButtons').empty();
+
+            if (status === "Booked") {
+                $('#actionButtons').append('');
+            }
+        });
+
+        $('#viewTimeSlot').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var id = button.data('id');
+            var date = button.data('date');
+            var startTime = button.data('start-time');
+            var endTime = button.data('end-time');
+            var tutorId = button.data('tutor-id');
+            var status = button.data('status');
+            var dayOfWeek = new Date(date).toLocaleDateString('ru-RU', { weekday: 'long' });
+            var duration = (new Date(`2000-01-01 ${endTime}`) - new Date(`2000-01-01 ${startTime}`)) / (1000 * 60);
+
+            var modal = $(this);
+            modal.find('#modalId').val(id);
+            modal.find('#modalDate').text(date);
+            modal.find('#modalDayOfWeek').text(dayOfWeek);
+            modal.find('#modalStartTime').text(startTime);
+            modal.find('#modalEndTime').text(endTime);
+            modal.find('#modalTutorId').val(tutorId);
+            modal.find('#modalStatus').text(status);
+            modal.find('#modalDuration').text(duration / 60 + " часа");
+
+            if (status === "Booked") {
+                $('#cancelButton').prop('disabled', false); // Активируем кнопку
+            } else {
+                $('#cancelButton').prop('disabled', true); // Деактивируем кнопку
+            }
+        });
+    </script>
+}
 </html>
 
 <script>
@@ -146,10 +362,12 @@
     });
 </script>
 
-           <style>
-               .time-slot-button {
-    width: 60px;
-    background-color: red;
+
+
+<style>
+.time-slot-button {
+    width: 90px;
+    background-color: plum;
     color: white;
     border: none;
     cursor: pointer;
@@ -158,7 +376,6 @@
 }
 
 .time-slot-button:hover {
-    background-color: darkred; /* Цвет при наведении для улучшения UX */
+    background-color: mediumorchid; /* Цвет при наведении для улучшения UX */
 }
-
-           </style>
+</style>

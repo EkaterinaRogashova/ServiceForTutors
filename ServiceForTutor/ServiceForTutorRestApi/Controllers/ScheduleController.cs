@@ -17,18 +17,32 @@ namespace ServiceForTutorRestApi.Controllers
         }
 
         [HttpGet]
-        public List<ScheduleViewModel>? GetScheduleList(int? tutorId)
+        public List<ScheduleViewModel>? GetScheduleList(int? tutorId, int? studentId)
         {
             try
             {
-                if (tutorId == null)
+                List<ScheduleViewModel> schedule;
+                if (tutorId != null && studentId == null)
                 {
-                    return _logic.ReadList(null);
+                    schedule = _logic.ReadList(new ScheduleSearchModel { TutorId = tutorId });
                 }
-                return _logic.ReadList(new ScheduleSearchModel
+                else if (tutorId == null && studentId != null)
                 {
-                    TutorId = tutorId
-                });
+                    schedule = _logic.ReadList(new ScheduleSearchModel { StudentId = studentId });
+                }
+                else
+                {
+                    schedule = _logic.ReadList(new ScheduleSearchModel { StudentId = studentId, TutorId = tutorId });
+                }
+
+                // Преобразование дат в UTC
+                foreach (var item in schedule)
+                {
+                    item.DateTimeStart = item.DateTimeStart.ToUniversalTime();
+                    item.DateTimeEnd = item.DateTimeEnd.ToUniversalTime();
+                }
+
+                return schedule;
             }
             catch (Exception ex)
             {
@@ -43,6 +57,19 @@ namespace ServiceForTutorRestApi.Controllers
             try
             {
                 _logic.Create(model);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        [HttpPost]
+        public void UpdateSchedule(ScheduleBindingModel model)
+        {
+            try
+            {
+                _logic.Update(model);
             }
             catch (Exception ex)
             {

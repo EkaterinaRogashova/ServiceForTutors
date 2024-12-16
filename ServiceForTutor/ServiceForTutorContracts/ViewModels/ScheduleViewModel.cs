@@ -14,7 +14,7 @@ namespace ServiceForTutorContracts.ViewModels
         public DateTime DateTimeStart { get; set; }
         public DateTime DateTimeEnd { get; set; }
         public string Status { get; set; } = string.Empty;
-
+        public UserViewModel Tutor { get; set; }
         public int Id { get; set; }
     }
 }

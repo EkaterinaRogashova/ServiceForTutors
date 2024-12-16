@@ -37,6 +37,21 @@ namespace ServiceForTutorDatabaseImplements.Implements
         public List<ScheduleViewModel> GetFilteredList(ScheduleSearchModel model)
         {
             using var context = new ServiceForTutorDatabase();
+            if (model.TutorId.HasValue && model.StudentId.HasValue)
+            {
+                return context.Schedules
+                .Where(x => x.TutorId == model.TutorId && x.StudentId == model.StudentId).Select(x => x.GetViewModel).ToList();
+            }
+            if (model.TutorId.HasValue )
+            {
+                return context.Schedules
+                .Where(x => x.TutorId == model.TutorId).Select(x => x.GetViewModel).ToList();
+            }
+            if (model.StudentId.HasValue)
+            {
+                return context.Schedules
+                .Where(x => x.StudentId == model.StudentId).Select(x => x.GetViewModel).ToList();
+            }
             return null;
         }
 
