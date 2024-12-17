@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using ServiceForTutorClientApp.Models;
 using ServiceForTutorContracts.BindingModels;
 using ServiceForTutorContracts.ViewModels;
+using ServiceForTutorDatabaseImplements.Models;
 using System.Data;
 using System.Diagnostics;
 using System.Security.Cryptography;
@@ -80,7 +81,21 @@ namespace ServiceForTutorClientApp.Controllers
                 return Redirect("~/Home/Enter");
             }
             var userDetails = APIClient.GetRequest<UserViewModel>($"api/user/GetUser?UserId={APIClient.Client.Id}");
+            if (APIClient.Client.Role == "Admin")
+            {
+                var reviews = APIClient.GetRequest<List<ReviewViewModel>>($"api/review/GetReviewList");
 
+                var combinedViewModel = new UserViewModel
+                {
+                    Email = userDetails.Email,
+                    Name = userDetails.Name,
+                    Surname=userDetails.Surname,
+                    LastName = userDetails.LastName,
+                    Role = userDetails.Role,
+                    Reviews = reviews
+                };
+                return View(combinedViewModel);
+            }
             return View(userDetails);
         }
 

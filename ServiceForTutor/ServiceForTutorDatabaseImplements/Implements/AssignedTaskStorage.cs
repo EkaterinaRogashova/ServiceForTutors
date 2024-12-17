@@ -56,6 +56,39 @@ namespace ServiceForTutorDatabaseImplements.Implements
                 })
                 .ToList();
             }
+            if (model.StudentId.HasValue)
+            {
+                return context.AssignedTasks.Where(at => at.StudentId == model.StudentId).Select(at => new AssignedTaskViewModel
+                {
+                    Id = at.Id,
+                    TaskId = at.TaskId,
+                    StudentId = at.StudentId,
+                    StudentFIO = at.Student.Name + " " + at.Student.Name,
+                    DateTimeStart = at.DateTimeStart,
+                    DateTimeEnd = at.DateTimeEnd,
+                    Grade = at.Grade,
+                    TaskName = at.Task.Name,
+                    TaskTopic = at.Task.Topic,
+                    Status = at.Status
+                })
+                .ToList();
+            }
+            if (model.TaskId.HasValue)
+            {
+                return context.AssignedTasks.Where(x => x.TaskId == model.TaskId).Select(at => new AssignedTaskViewModel
+                {
+                    Id = at.Id,
+                    TaskId = at.TaskId,
+                    StudentId = at.StudentId,
+                    StudentFIO = at.Student.Name + " " + at.Student.Name,
+                    DateTimeStart = at.DateTimeStart,
+                    DateTimeEnd = at.DateTimeEnd,
+                    Grade = at.Grade,
+                    TaskName = at.Task.Name,
+                    TaskTopic = at.Task.Topic,
+                    Status = at.Status
+                }).ToList();
+            }
             return null;
         }
 

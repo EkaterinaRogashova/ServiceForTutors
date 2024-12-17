@@ -41,9 +41,12 @@
                         <p class="text-center">Срок действия: @tariff.PeriodInDays дней</p>
                         @if (APIClient.Client != null)
                         {
-                            <div class="text-center">
-                                <a href="@Url.Action("Subscribe", new { planId = tariff.Id })" class="btn btn-primary">Оформить</a>
-                            </div>
+                            if(APIClient.Client.Role == "Tutor")
+                            {
+                                <div class="text-center">
+                                    <a href="@Url.Action("Subscribe", new { planId = tariff.Id })" class="btn btn-primary">Оформить</a>
+                                </div>
+                            }
                             @if (APIClient.Client.Role == "Admin")
                             {
                                 <div class="text-center">

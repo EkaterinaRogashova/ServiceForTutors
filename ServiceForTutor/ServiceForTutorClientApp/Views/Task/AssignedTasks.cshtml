@@ -19,23 +19,41 @@
                     <tr>
                         <th>Название</th>
                         <th>Тема</th>
-                        <th>Ученик</th>
+                        @if (APIClient.Client.Role == "Tutor")
+                        {
+                            <th>Ученик</th>
+                        }
                         <th>Статус</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var item in Model)
                     {
-                        <tr>
-                            <td>@Html.DisplayFor(modelItem => item.TaskName)</td>
-                            <td>@Html.DisplayFor(modelItem => item.TaskTopic)</td>
-                            <td>@Html.DisplayFor(modelItem => item.StudentFIO)</td>
-                            <td>@Html.DisplayFor(modelItem => item.Status)</td>
+                        @if (APIClient.Client.Role == "Tutor")
+                        {
+                            <tr>
+                                <td>@Html.DisplayFor(modelItem => item.TaskName)</td>
+                                <td>@Html.DisplayFor(modelItem => item.TaskTopic)</td>
+                                <td>@Html.DisplayFor(modelItem => item.StudentFIO)</td>
+                                <td>@Html.DisplayFor(modelItem => item.Status)</td>
+                                <td>
+                                    <a class="btn btn-sm" asp-action="RemoveTask" asp-route-id="@item.Id" onclick="return confirm('Вы уверены, что хотите снять назначение?');">Снять назначение</a>
+                                    <a class="btn btn-sm" asp-action="EditTask" asp-route-id="@item.Id">Проверить</a>
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            <tr>
+                                <td>@Html.DisplayFor(modelItem => item.TaskName)</td>
+                                <td>@Html.DisplayFor(modelItem => item.TaskTopic)</td>
+                                <td>@Html.DisplayFor(modelItem => item.Status)</td>
                             <td>
-                                <a class="btn btn-danger btn-sm" asp-action="RemoveTask" asp-route-id="@item.Id" onclick="return confirm('Вы уверены, что хотите снять назначение?');">Снять назначение</a>
-                                <a class="btn btn btn-secondary btn-sm" asp-action="EditTask" asp-route-id="@item.Id">Проверить</a>
+                                <a class="btn btn-sm" asp-action="CompletingTask" asp-route-id="@item.Id">Выполнить</a>
+                                <a class="btn btn-sm" asp-action="" asp-route-id="@item.Id">Результат проверки</a>
                             </td>
-                        </tr>
+                            </tr>
+                        }
                     }
                 </tbody>
             </table>

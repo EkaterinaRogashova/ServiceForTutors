@@ -155,7 +155,12 @@ namespace ServiceForTutorClientApp.Controllers
             {
                 return Redirect("~Home/Enter");
             }
-            var tasks = APIClient.GetRequest<List<AssignedTaskViewModel>>($"api/task/GetAssignedTaskList?TutorId={APIClient.Client.Id}");
+            var tasks = APIClient.GetRequest<List<AssignedTaskViewModel>>($"api/task/GetAssignedTaskList?StudentId={APIClient.Client.Id}");
+            if (APIClient.Client.Role == "Tutor") 
+            {
+                tasks = APIClient.GetRequest<List<AssignedTaskViewModel>>($"api/task/GetAssignedTaskList?TutorId={APIClient.Client.Id}");
+                return View(tasks);
+            }
             return View(tasks);
         }
 
@@ -167,6 +172,26 @@ namespace ServiceForTutorClientApp.Controllers
                 Status = "Remove"
             });
             return RedirectToAction("AssignedTasks");
+        }
+
+        public IActionResult CompletingTask(int id)
+        {
+            if (APIClient.Client == null)
+            {
+                return Redirect("~Home/Enter");
+            }
+            var test = APIClient.GetRequest<AssignedTaskViewModel>($"api/task/GetAssignedTask?TaskId={id}");
+            var taskDetails = APIClient.GetRequest<TaskViewModel>($"api/task/GetTask?TaskId={test.TaskId}");
+            var taskQuestions = APIClient.GetRequest<List<QuestionViewModel>>($"api/task/GetQuestionsByTask?TaskId={test.TaskId}");
+            var viewModel = new TaskViewModel
+            {
+                Id = id,
+                Name = taskDetails.Name,
+                Topic = taskDetails.Topic,
+                Subject = taskDetails.Subject,
+                Questions = taskQuestions
+            };
+            return View(viewModel);
         }
     }
 }

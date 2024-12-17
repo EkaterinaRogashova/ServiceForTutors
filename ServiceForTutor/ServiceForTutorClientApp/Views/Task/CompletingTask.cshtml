@@ -1,0 +1,49 @@
+﻿@using ServiceForTutorContracts.ViewModels
+@model TaskViewModel
+@{
+    ViewData["Title"] = "Выполнение задания";
+}
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center" style="color: #300E36;">@ViewData["Title"]</h2>
+
+        <div class="container">
+            <div class="row justify-content-center" style="margin-top: 20px;">
+                <div class="col-md-6">
+                    <div class="p-4" style="background-color: #DBCEF6; border-radius: 10px;">
+                        <h3 class="text-center mt-3" style="color: #300E36;">@Model.Name</h3>
+                        <p style="font-weight: bold;">Темa: @Model.Topic</p>
+                        <p style="font-weight: bold;">Предмет: @Model.Subject</p>
+                    </div>
+                </div>
+                <div class="col-md-6 text-center">
+                    <img src="https://cdn-icons-png.flaticon.com/512/5058/5058451.png" alt="" style="max-width: 40%; margin-left: -20px; height: auto; border-radius: 10px;">
+                </div>
+            </div>
+        </div>
+
+
+        <div class="mt-4" id="questionsList">
+            <h4 class="text-center" style="color: #300E36;">Вопросы к заданию</h4>
+            @if (Model.Questions != null && Model.Questions.Any())
+            {
+                foreach (var question in Model.Questions)
+                {
+                    <div class="card mb-3" style="background-color: #DBCEF6; border-radius: 10px;">
+                        <div class="card-body">
+                            <h5 class="card-title">@question.TaskText</h5>
+                            <p class="card-text">Максимальный балл: @question.MaxScore</p>
+                            <input type="text" class="form-control" id="answer" name="answer" />
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <p class="text-center">Нет вопросов</p>
+            }
+        </div>
+</body>

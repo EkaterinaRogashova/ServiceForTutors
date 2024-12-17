@@ -27,7 +27,7 @@ namespace ServiceForTutorClientApp.Controllers
             var code = APIClient.GetRequest<InvitationCodeViewModel>($"api/InvitationCode/GetCode?CodeId={codeId}");
             ViewBag.InvitationCode = code.CodeValue;
 
-            return View("MyStudents");
+            return RedirectToAction("MyStudents", new { invitationCode = code.CodeValue });
         }
 
         [HttpPost]
@@ -45,7 +45,7 @@ namespace ServiceForTutorClientApp.Controllers
                     });
                 }
             }
-            return View("MyTutors");
+            return RedirectToAction("MyTutors");
         }
 
         public IActionResult MyTutors()
@@ -54,9 +54,10 @@ namespace ServiceForTutorClientApp.Controllers
             return View(tutors);
         }
 
-        public IActionResult MyStudents()
+        public IActionResult MyStudents(string invitationCode)
         {
             var students = APIClient.GetRequest<List<UserViewModel>>($"api/user/GetStudents?TutorId={APIClient.Client.Id}");
+            ViewBag.InvitationCode = invitationCode;
             return View(students);
         }
     }

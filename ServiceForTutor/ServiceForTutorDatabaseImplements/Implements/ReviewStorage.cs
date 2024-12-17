@@ -1,4 +1,5 @@
-﻿using ServiceForTutorContracts.BindingModels;
+﻿using Microsoft.EntityFrameworkCore;
+using ServiceForTutorContracts.BindingModels;
 using ServiceForTutorContracts.SearchModels;
 using ServiceForTutorContracts.StoragesContracts;
 using ServiceForTutorContracts.ViewModels;
@@ -22,7 +23,16 @@ namespace ServiceForTutorDatabaseImplements.Implements
         public List<ReviewViewModel> GetFullList()
         {
             using var context = new ServiceForTutorDatabase();
-            return context.Reviews.Select(x => x.GetViewModel).ToList();
+            return context.Reviews
+                  .Include(r => r.Tutor)
+                  .Select(r => new ReviewViewModel
+                  {
+                      TutorEmail = r.Tutor.Email,
+                      DateTimeCreated = r.DateTimeCreated,
+                      Rating = r.Rating,
+                      Content = r.Content
+                  })
+                  .ToList();
         }
 
         public ReviewViewModel? Insert(ReviewBindingModel model)

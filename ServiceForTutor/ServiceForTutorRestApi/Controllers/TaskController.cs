@@ -152,13 +152,17 @@ namespace ServiceForTutorRestApi.Controllers
         }
 
         [HttpGet]
-        public List<AssignedTaskViewModel>? GetAssignedTaskList(int? tutorId)
+        public List<AssignedTaskViewModel>? GetAssignedTaskList(int? tutorId, int? studentId)
         {
             try
             {
-                if (tutorId == null)
+
+                if (studentId != null)
                 {
-                    return _assignTaskLogic.ReadList(null);
+                    return _assignTaskLogic.ReadList(new AssignedTaskSearchModel
+                    {
+                        StudentId = studentId
+                    });
                 }
                 return _assignTaskLogic.ReadList(new AssignedTaskSearchModel
                 {
@@ -177,6 +181,22 @@ namespace ServiceForTutorRestApi.Controllers
             try
             {
                 _assignTaskLogic.Update(model);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        [HttpGet]
+        public AssignedTaskViewModel? GetAssignedTask(int taskId)
+        {
+            try
+            {
+                return _assignTaskLogic.ReadElement(new AssignedTaskSearchModel
+                {
+                    Id = taskId
+                });
             }
             catch (Exception ex)
             {

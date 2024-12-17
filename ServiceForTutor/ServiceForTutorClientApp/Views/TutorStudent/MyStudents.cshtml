@@ -5,62 +5,61 @@
 }
 
 <div class="container mt-5">
-    <div class="text-center">
-        <h1 class="display-4">Мои ученики</h1>
+    <div class="d-flex justify-content-between align-items-center">
+        <button class="btn btn-light" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px;" onclick="window.history.back();">
+            <i class="fas fa-arrow-left"></i>Назад
+        </button>
+        <h2 class="text-center">@ViewData["Title"]</h2>
     </div>
 
     <div class="text-center mt-4">
-        @{
-
-            <div class="d-flex mt-4">
-                <div class="flex-shrink-0" style="width: 20%;">
-                    <form asp-action="CreateInvitationCode" method="post">
-                        <button type="submit" class="btn" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px; width: 100%;">Сформировать код приглашения</button>
-                    </form>
-                </div>
-
-                <div class="flex-grow-1 ms-3">
-                    @if (ViewBag.InvitationCode != null)
-                    {
-                        <p>
-                            Сгенерированный код приглашения:
-                            <span id="invitationCode">@ViewBag.InvitationCode</span>
-                            <button class="btn btn-secondary btn-sm" onclick="copyCode()">Скопировать</button>
-                        </p>
-                    }
-                </div>
+        <div class="d-flex align-items-center mt-4">
+            <div class="flex-shrink-0" style="width: 20%;">
+                <form asp-action="CreateInvitationCode" method="post">
+                    <button type="submit" class="btn" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px; width: 100%;">Сформировать код приглашения</button>
+                </form>
             </div>
-            if (Model == null)
-            {
-                <h3 class="display-4">Нет прикрепленных учеников</h3>
-                return;
-            }
-            else
-            {
-                <table class="table table-striped table-bordered mt-4">
-                    <thead class="thead-light">
+            <div class="flex-grow-1 ms-3">
+                @if (ViewBag.InvitationCode != null)
+                {
+                    <p>
+                        Сгенерированный код приглашения:
+                        <span id="invitationCode" style="font-size: 1.5em; font-weight: bold;">@ViewBag.InvitationCode</span>
+                    </p>
+                }
+            </div>
+        </div>
+
+        @if (Model != null && Model.Any())
+        {
+            <table class="table table-striped table-bordered mt-4">
+                <thead>
+                    <tr>
+                        <th>Фамилия</th>
+                        <th>Имя</th>
+                        <th>Отчество</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
                         <tr>
-                            <th>Фамилия</th>
-                            <th>Имя</th>
-                            <th>Отчество</th>
+                            <td>@item.Surname</td>
+                            <td>@item.Name</td>
+                            <td>@item.LastName</td>
+                            <td>
+                                <a class="btn btn-danger btn-sm" asp-action="DeleteStudent" asp-route-id="@item.Id" onclick="return confirm('Вы уверены, что хотите удалить ученика?');">Удалить</a>
+                                <a class="btn btn-secondary btn-sm" asp-action="ViewTasksForStudent" asp-route-id="@item.Id">Назначенные задания</a>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model)
-                        {
-                            <tr>
-                                <td>@Html.DisplayFor(modelItem => item.Surname)</td>
-                                <td>@Html.DisplayFor(modelItem => item.Name)</td>
-                                <td>@Html.DisplayFor(modelItem => item.LastName)</td>
-                                <td>
-                                    <a class="btn btn-danger btn-sm" asp-action="DeleteStudent" asp-route-id="@item.Id" onclick="return confirm('Вы уверены, что хотите удалить ученика?');">Удалить</a>
-                                    <a class="btn btn btn-secondary btn-sm" asp-action="ViewTasksForStudent" asp-route-id="@item.Id">Назначенные задания</a>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
+                    }
+                </tbody>
             </table>
-            }
+        }
+        else
+        {
+            <h3 class="display-4 mt-4">Нет прикрепленных учеников</h3>
         }
     </div>
 </div>

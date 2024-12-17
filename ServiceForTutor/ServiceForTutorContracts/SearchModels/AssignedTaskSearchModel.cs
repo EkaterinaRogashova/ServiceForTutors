@@ -10,6 +10,8 @@ namespace ServiceForTutorContracts.SearchModels
     {
         public int? Id { get; set; }
         public int? TutorId { get; set; }
+        public int? StudentId { get; set; }
+        public int? TaskId { get; set; }
         public string? Status { get; set; }
     }
 }

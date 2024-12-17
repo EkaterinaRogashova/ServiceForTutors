@@ -13,6 +13,7 @@ namespace ServiceForTutorContracts.ViewModels
         public int Rating { get; set; }
         public DateTime DateTimeCreated { get; set; }
         public string Content { get; set; } = string.Empty;
+        public string TutorEmail { get; set; } = string.Empty;
 
         public int Id { get; set; }
     }
