@@ -12,7 +12,7 @@ using ServiceForTutorDatabaseImplements;
 namespace ServiceForTutorDatabaseImplements.Migrations
 {
     [DbContext(typeof(ServiceForTutorDatabase))]
-    [Migration("20241213194930_InitialCreate")]
+    [Migration("20241217115100_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -41,6 +41,10 @@ namespace ServiceForTutorDatabaseImplements.Migrations
 
                     b.Property<float>("Grade")
                         .HasColumnType("real");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<int>("StudentId")
                         .HasColumnType("integer");

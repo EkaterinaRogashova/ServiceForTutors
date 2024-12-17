@@ -205,7 +205,8 @@ namespace ServiceForTutorDatabaseImplements.Migrations
                     StudentId = table.Column<int>(type: "integer", nullable: false),
                     DateTimeStart = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     DateTimeEnd = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Grade = table.Column<float>(type: "real", nullable: false)
+                    Grade = table.Column<float>(type: "real", nullable: false),
+                    Status = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {

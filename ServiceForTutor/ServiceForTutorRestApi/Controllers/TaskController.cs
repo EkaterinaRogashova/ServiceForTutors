@@ -12,10 +12,12 @@ namespace ServiceForTutorRestApi.Controllers
     {
         private readonly ITaskLogic _logic;
         private readonly IQuestionLogic _questionLogic;
-        public TaskController(ITaskLogic logic, IQuestionLogic questionLogic)
+        private readonly IAssignedTaskLogic _assignTaskLogic;
+        public TaskController(ITaskLogic logic, IQuestionLogic questionLogic, IAssignedTaskLogic assignTaskLogic)
         {
             _logic = logic;
             _questionLogic = questionLogic;
+            _assignTaskLogic = assignTaskLogic;
         }
 
         [HttpGet]
@@ -115,6 +117,66 @@ namespace ServiceForTutorRestApi.Controllers
             try
             {
                 _questionLogic.Delete(model);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+
+        [HttpPost]
+        public void DeleteTask(TaskBindingModel model)
+        {
+            try
+            {
+                _logic.Delete(model);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        [HttpPost]
+        public void CreateAssignTask(AssignedTaskBindingModel model)
+        {
+            try
+            {
+                _assignTaskLogic.Create(model);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        [HttpGet]
+        public List<AssignedTaskViewModel>? GetAssignedTaskList(int? tutorId)
+        {
+            try
+            {
+                if (tutorId == null)
+                {
+                    return _assignTaskLogic.ReadList(null);
+                }
+                return _assignTaskLogic.ReadList(new AssignedTaskSearchModel
+                {
+                    TutorId = tutorId
+                });
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        [HttpPost]
+        public void RemoveTask(AssignedTaskBindingModel model)
+        {
+            try
+            {
+                _assignTaskLogic.Update(model);
             }
             catch (Exception ex)
             {

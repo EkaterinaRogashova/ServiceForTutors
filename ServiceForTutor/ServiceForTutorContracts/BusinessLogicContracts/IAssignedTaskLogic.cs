@@ -15,5 +15,6 @@ namespace ServiceForTutorContracts.BusinessLogicContracts
         AssignedTaskViewModel? ReadElement(AssignedTaskSearchModel model);
         bool Create(AssignedTaskBindingModel model);
         bool Delete(AssignedTaskBindingModel model);
+        bool Update(AssignedTaskBindingModel model);
     }
 }

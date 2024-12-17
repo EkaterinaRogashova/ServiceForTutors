@@ -14,6 +14,10 @@ namespace ServiceForTutorContracts.ViewModels
         public DateTime DateTimeStart { get; set; }
         public DateTime DateTimeEnd { get; set; }
         public float Grade { get; set; }
+        public string TaskName { get; set; }
+        public string TaskTopic { get; set; }
+        public string StudentFIO { get; set; }
+        public string Status { get; set; }
 
         public int Id { get; set; }
     }

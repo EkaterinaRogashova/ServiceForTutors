@@ -40,6 +40,16 @@ namespace ServiceForTutorBusinessLogic.BusinessLogic
             return true;
         }
 
+        public bool Update(AssignedTaskBindingModel model)
+        {
+            CheckModel(model);
+            if (_assignedTaskStorage.Update(model) == null)
+            {
+                return false;
+            }
+            return true;
+        }
+
         public AssignedTaskViewModel? ReadElement(AssignedTaskSearchModel model)
         {
             if (model == null)
@@ -56,7 +66,7 @@ namespace ServiceForTutorBusinessLogic.BusinessLogic
 
         public List<AssignedTaskViewModel>? ReadList(AssignedTaskSearchModel? model)
         {
-            var list = _assignedTaskStorage.GetFullList();
+            var list = model == null ? _assignedTaskStorage.GetFullList() : _assignedTaskStorage.GetFilteredList(model);
             if (list == null)
             {
                 return null;

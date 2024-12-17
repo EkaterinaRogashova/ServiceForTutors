@@ -14,5 +14,6 @@ namespace ServiceForTutorDataModels.Models
         DateTime DateTimeStart { get; set; }
         DateTime DateTimeEnd { get; set; }
         float Grade { get; set; }
+        string Status { get; set; }
     }
 }

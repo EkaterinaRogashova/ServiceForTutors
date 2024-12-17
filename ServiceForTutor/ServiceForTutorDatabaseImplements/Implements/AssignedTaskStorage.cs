@@ -39,6 +39,23 @@ namespace ServiceForTutorDatabaseImplements.Implements
         public List<AssignedTaskViewModel> GetFilteredList(AssignedTaskSearchModel model)
         {
             using var context = new ServiceForTutorDatabase();
+            if (model.TutorId.HasValue)
+            {
+                return context.AssignedTasks.Include(at => at.Task).Where(at => at.Task.TutorId == model.TutorId).Select(at => new AssignedTaskViewModel
+                {
+                    Id = at.Id,
+                    TaskId = at.TaskId,
+                    StudentId = at.StudentId,
+                    StudentFIO = at.Student.Name + " " + at.Student.Name,
+                    DateTimeStart = at.DateTimeStart,
+                    DateTimeEnd = at.DateTimeEnd,
+                    Grade = at.Grade,
+                    TaskName = at.Task.Name,
+                    TaskTopic = at.Task.Topic,
+                    Status = at.Status
+                })
+                .ToList();
+            }
             return null;
         }
 
@@ -59,6 +76,19 @@ namespace ServiceForTutorDatabaseImplements.Implements
             context.AssignedTasks.Add(newElement);
             context.SaveChanges();
             return newElement.GetViewModel;
+        }
+
+        public AssignedTaskViewModel? Update(AssignedTaskBindingModel model)
+        {
+            using var context = new ServiceForTutorDatabase();
+            var assignTask = context.AssignedTasks.FirstOrDefault(x => x.Id == model.Id);
+            if (assignTask == null)
+            {
+                return null;
+            }
+            assignTask.Update(model);
+            context.SaveChanges();
+            return assignTask.GetViewModel;
         }
     }
 }

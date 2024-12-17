@@ -1,0 +1,97 @@
+﻿@using ServiceForTutorContracts.ViewModels
+@model TaskViewModel
+@{
+    ViewData["Title"] = "Просмотр задания";
+}
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center" style="color: #300E36;">@ViewData["Title"]</h2>
+
+        <div class="container">
+            <div class="row justify-content-center" style="margin-top: 20px;">
+                <div class="col-md-6">
+                    <div class="p-4" style="background-color: #DBCEF6; border-radius: 10px;">
+                        <h3 class="text-center mt-3" style="color: #300E36;">@Model.Name</h3>
+                        <p style="font-weight: bold;">Темa: @Model.Topic</p>
+                        <p style="font-weight: bold;">Предмет: @Model.Subject</p>
+                        <div class="text-right">
+                            <button class="btn" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px;" data-bs-toggle="modal" data-bs-target="#assignTaskModal">Назначить ученика</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 text-center">
+                    <img src="https://cdn-icons-png.flaticon.com/512/5058/5058451.png" alt="" style="max-width: 40%; margin-left: -20px; height: auto; border-radius: 10px;">
+                </div>
+            </div>
+        </div>
+
+
+        <div class="mt-4" id="questionsList">
+            <h4 class="text-center" style="color: #300E36;">Вопросы к заданию</h4>
+            @if (Model.Questions != null && Model.Questions.Any())
+            {
+                foreach (var question in Model.Questions)
+                {
+                    <div class="card mb-3" style="background-color: #DBCEF6; border-radius: 10px;">
+                        <div class="card-body">
+                            <h5 class="card-title">@question.TaskText</h5>
+                            <p class="card-text">Тип: @question.TypeQuestion</p>
+                            <p class="card-text">Максимальный балл: @question.MaxScore</p>
+                            <div class="text-right">
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <p class="text-center">Нет вопросов для отображения.</p>
+            }
+        </div>
+
+        <div class="modal fade" id="assignTaskModal" tabindex="-1" role="dialog" aria-labelledby="assignTaskModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content" style="border-radius: 15px;">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="assignTaskModalLabel">Добавить вопрос</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Закрыть" style="border: none; background: none;">
+                            <span aria-hidden="true" style="font-size: 1.5rem;">&times;</span>
+                        </button>
+                    </div>
+                    <form asp-action="AssignTask" method="post">
+                        <div class="modal-body">
+                            <input type="hidden" id="taskId" name="id" value="@Model.Id" />
+                            <div class="mb-3">
+                                <label for="studentSelect">Выберите ученика</label>
+                                <select id="studentSelect" name="studentId" class="form-select" required>
+                                    <option value="" disabled selected>-- Выберите ученика --</option>
+                                    @foreach (var student in ViewBag.Students)
+                                    {
+                                        <option value="@student.Id">@student.Name @student.Surname</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="startDate">Дата и время начала</label>
+                                <input type="datetime-local" id="startDate" name="startDate" class="form-control" required />
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="endDate">Дата и время окончания</label>
+                                <input type="datetime-local" id="endDate" name="endDate" class="form-control" required />
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 10px; background-color: #300E36 ; color: #C5A8EA;">Закрыть</button>
+                            <button type="submit" class="btn btn-primary" id="saveQuestionButton" style="border-radius: 10px; background-color: #C5A8EA; color: #300E36;">Назначить задание</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+</body>
+

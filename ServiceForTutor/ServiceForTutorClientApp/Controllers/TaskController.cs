@@ -103,5 +103,70 @@ namespace ServiceForTutorClientApp.Controllers
             });
             return RedirectToAction("EditTask", new { id = taskId });
         }
+
+
+        public IActionResult DeleteTask(int id)
+        {
+            APIClient.PostRequest("api/Task/DeleteTask", new TaskBindingModel
+            {
+                Id = id
+            });
+            return RedirectToAction("Tasks", new { tutorId = APIClient.Client.Id });
+        }
+
+        public IActionResult ViewTask(int id)
+        {
+            if (APIClient.Client == null)
+            {
+                return Redirect("~Home/Enter");
+            }
+            var taskDetails = APIClient.GetRequest<TaskViewModel>($"api/task/GetTask?TaskId={id}");
+            var taskQuestions = APIClient.GetRequest<List<QuestionViewModel>>($"api/task/GetQuestionsByTask?TaskId={id}");
+            var viewModel = new TaskViewModel // Замените TaskViewModel на вашу модель представления, которая содержит как задание, так и вопросы
+            {
+                Id = id,
+                Name = taskDetails.Name,
+                Topic = taskDetails.Topic,
+                Subject = taskDetails.Subject,
+                Questions = taskQuestions
+            };
+            var students = APIClient.GetRequest<List<UserViewModel>>($"api/user/GetStudents?TutorId={APIClient.Client.Id}");
+            ViewBag.Students = students;
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        public IActionResult AssignTask(int id, int studentId, DateTime dateStart, DateTime dateEnd)
+        {
+            APIClient.PostRequest("api/Task/CreateAssignTask", new AssignedTaskBindingModel
+            {
+                TaskId = id,
+                StudentId = studentId,
+                DateTimeEnd = dateEnd.ToUniversalTime(),
+                DateTimeStart = dateStart.ToUniversalTime(),
+                Status = "Assign"
+            });
+            return RedirectToAction("ViewTask", new { id = id });
+        }
+
+        public IActionResult AssignedTasks()
+        {
+            if (APIClient.Client == null)
+            {
+                return Redirect("~Home/Enter");
+            }
+            var tasks = APIClient.GetRequest<List<AssignedTaskViewModel>>($"api/task/GetAssignedTaskList?TutorId={APIClient.Client.Id}");
+            return View(tasks);
+        }
+
+        public IActionResult RemoveTask(int id)
+        {
+            APIClient.PostRequest("api/Task/RemoveTask", new AssignedTaskBindingModel
+            {
+                Id = id,
+                Status = "Remove"
+            });
+            return RedirectToAction("AssignedTasks");
+        }
     }
 }

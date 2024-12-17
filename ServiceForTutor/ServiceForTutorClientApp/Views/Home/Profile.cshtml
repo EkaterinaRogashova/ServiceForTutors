@@ -58,7 +58,7 @@
                     {
                         <div class="d-flex justify-content-between mb-3">
                             <a class="btn d-flex align-items-center justify-content-center" href="@Url.Action("Tasks", "Task")" style="background-color: #E0D1FE; color: #300E36; border-radius: 10px; width: 48%; height: 260px;">Задания</a>
-                            <button class="btn" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px; width: 48%; height: 260px;">Назначенные задания</button>
+                            <a class="btn d-flex align-items-center justify-content-center" href="@Url.Action("AssignedTasks", "Task")" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px; width: 48%; height: 260px;">Назначенные задания</a>
                         </div>
                     }
                     else if (APIClient.Client.Role == "Student")

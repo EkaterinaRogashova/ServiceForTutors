@@ -39,6 +39,10 @@ namespace ServiceForTutorDatabaseImplements.Migrations
                     b.Property<float>("Grade")
                         .HasColumnType("real");
 
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<int>("StudentId")
                         .HasColumnType("integer");
 

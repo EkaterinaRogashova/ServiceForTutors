@@ -16,5 +16,7 @@ namespace ServiceForTutorContracts.StoragesContracts
         AssignedTaskViewModel? GetElement(AssignedTaskSearchModel model);
         AssignedTaskViewModel? Insert(AssignedTaskBindingModel model);
         AssignedTaskViewModel? Delete(AssignedTaskBindingModel model);
+        AssignedTaskViewModel? Update(AssignedTaskBindingModel model);
+
     }
 }

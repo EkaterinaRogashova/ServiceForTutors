@@ -21,6 +21,8 @@ namespace ServiceForTutorDatabaseImplements.Models
         public DateTime DateTimeStart { get; set; }
         public DateTime DateTimeEnd { get; set; }
         public float Grade { get; set; }
+        [Required]
+        public string Status { get; set; } = string.Empty;
 
         public int Id { get; set; }
 
@@ -40,7 +42,8 @@ namespace ServiceForTutorDatabaseImplements.Models
                 StudentId = model.StudentId,
                 DateTimeStart = model.DateTimeStart,
                 DateTimeEnd = model.DateTimeEnd,
-                Grade = model.Grade
+                Grade = model.Grade,
+                Status = model.Status
             };
         }
 
@@ -53,8 +56,18 @@ namespace ServiceForTutorDatabaseImplements.Models
                 StudentId = model.StudentId,
                 DateTimeStart = model.DateTimeStart,
                 DateTimeEnd = model.DateTimeEnd,
-                Grade = model.Grade
+                Grade = model.Grade,
+                Status = model.Status
             };
+        }
+
+        public void Update(AssignedTaskBindingModel model)
+        {
+            if (model == null)
+            {
+                return;
+            }
+            Status = model.Status;
         }
 
         public AssignedTaskViewModel GetViewModel => new()
@@ -64,7 +77,8 @@ namespace ServiceForTutorDatabaseImplements.Models
             StudentId = StudentId,
             DateTimeStart = DateTimeStart,
             DateTimeEnd = DateTimeEnd,
-            Grade = Grade
+            Grade = Grade,
+            Status = Status
         };
     }
 }
