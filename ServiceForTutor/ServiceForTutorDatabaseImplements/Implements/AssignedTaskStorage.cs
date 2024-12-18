@@ -39,57 +39,37 @@ namespace ServiceForTutorDatabaseImplements.Implements
         public List<AssignedTaskViewModel> GetFilteredList(AssignedTaskSearchModel model)
         {
             using var context = new ServiceForTutorDatabase();
+            var query = context.AssignedTasks.Include(at => at.Task)
+            .Where(at => at.Status != "Remove");
+
             if (model.TutorId.HasValue)
             {
-                return context.AssignedTasks.Include(at => at.Task).Where(at => at.Task.TutorId == model.TutorId).Select(at => new AssignedTaskViewModel
-                {
-                    Id = at.Id,
-                    TaskId = at.TaskId,
-                    StudentId = at.StudentId,
-                    StudentFIO = at.Student.Name + " " + at.Student.Name,
-                    DateTimeStart = at.DateTimeStart,
-                    DateTimeEnd = at.DateTimeEnd,
-                    Grade = at.Grade,
-                    TaskName = at.Task.Name,
-                    TaskTopic = at.Task.Topic,
-                    Status = at.Status
-                })
-                .ToList();
+                query = query.Where(at => at.Task.TutorId == model.TutorId);
             }
+
             if (model.StudentId.HasValue)
             {
-                return context.AssignedTasks.Where(at => at.StudentId == model.StudentId).Select(at => new AssignedTaskViewModel
-                {
-                    Id = at.Id,
-                    TaskId = at.TaskId,
-                    StudentId = at.StudentId,
-                    StudentFIO = at.Student.Name + " " + at.Student.Name,
-                    DateTimeStart = at.DateTimeStart,
-                    DateTimeEnd = at.DateTimeEnd,
-                    Grade = at.Grade,
-                    TaskName = at.Task.Name,
-                    TaskTopic = at.Task.Topic,
-                    Status = at.Status
-                })
-                .ToList();
+                query = query.Where(at => at.StudentId == model.StudentId);
             }
+
             if (model.TaskId.HasValue)
             {
-                return context.AssignedTasks.Where(x => x.TaskId == model.TaskId).Select(at => new AssignedTaskViewModel
-                {
-                    Id = at.Id,
-                    TaskId = at.TaskId,
-                    StudentId = at.StudentId,
-                    StudentFIO = at.Student.Name + " " + at.Student.Name,
-                    DateTimeStart = at.DateTimeStart,
-                    DateTimeEnd = at.DateTimeEnd,
-                    Grade = at.Grade,
-                    TaskName = at.Task.Name,
-                    TaskTopic = at.Task.Topic,
-                    Status = at.Status
-                }).ToList();
+                query = query.Where(x => x.TaskId == model.TaskId);
             }
-            return null;
+
+            return query.Select(at => new AssignedTaskViewModel
+            {
+                Id = at.Id,
+                TaskId = at.TaskId,
+                StudentId = at.StudentId,
+                StudentFIO = at.Student.Name + " " + at.Student.Surname,
+                DateTimeStart = at.DateTimeStart,
+                DateTimeEnd = at.DateTimeEnd,
+                Grade = at.Grade,
+                TaskName = at.Task.Name,
+                TaskTopic = at.Task.Topic,
+                Status = at.Status
+            }).ToList();
         }
 
         public List<AssignedTaskViewModel> GetFullList()

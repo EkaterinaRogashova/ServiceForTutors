@@ -54,7 +54,14 @@
         @{
             DateTime currentDate = DateTime.Today;
             var datesOfWeek = GetDatesOfWeek(DateTime.Today);
-            var uniqueTimes = new HashSet<DateTime>(Model.Select(x => x.DateTimeStart));
+            var uniqueTimes = Model
+            .Select(x => x.DateTimeStart.TimeOfDay)
+            .Distinct()
+            .ToList();
+
+            var sortedUniqueTimes = uniqueTimes
+            .OrderBy(t => t)
+            .ToList();
 
         }
         <table class="table table-bordered" id="scheduleTable">
@@ -68,15 +75,13 @@
                 </tr>
             </thead>
             <tbody>
-    @foreach (var day in datesOfWeek)
+    @foreach (var time in sortedUniqueTimes)
     {
-        foreach (var time in uniqueTimes.Where(t => t.Date == day))
-        {
             <tr>
-                <td>@time.ToString("HH:mm")</td>
+                <td>@time.ToString(@"hh\:mm")</td>
                 @foreach (var d in datesOfWeek)
                 {
-                    var timeSlot = Model.FirstOrDefault(m => m.DateTimeStart == time && m.DateTimeStart.Date == d);
+                    var timeSlot = Model.FirstOrDefault(m => m.DateTimeStart.TimeOfDay == time && m.DateTimeStart.Date == d);
                     if (timeSlot != null)
                     {
                         var duration = (timeSlot.DateTimeEnd - timeSlot.DateTimeStart).TotalMinutes;
@@ -112,7 +117,7 @@
                     }
                 }
             </tr>
-        }
+        
     }
 </tbody>
         </table>
