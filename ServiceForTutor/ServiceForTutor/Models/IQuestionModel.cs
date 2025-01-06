@@ -13,6 +13,7 @@ namespace ServiceForTutorDataModels.Models
         string TypeQuestion { get; set; }
         string TaskText { get; set; }
         float MaxScore { get; set; }
-        string Answer { get; set; }
+        string Answers { get; set; }
+        string CorrectAnswers { get; set; }
     }
 }

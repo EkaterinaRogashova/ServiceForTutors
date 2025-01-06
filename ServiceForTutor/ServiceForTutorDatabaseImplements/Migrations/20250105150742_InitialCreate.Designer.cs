@@ -12,7 +12,7 @@ using ServiceForTutorDatabaseImplements;
 namespace ServiceForTutorDatabaseImplements.Migrations
 {
     [DbContext(typeof(ServiceForTutorDatabase))]
-    [Migration("20241217115100_InitialCreate")]
+    [Migration("20250105150742_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -123,7 +123,11 @@ namespace ServiceForTutorDatabaseImplements.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Answer")
+                    b.Property<string>("Answers")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("CorrectAnswers")
                         .IsRequired()
                         .HasColumnType("text");
 

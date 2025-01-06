@@ -235,7 +235,8 @@ namespace ServiceForTutorDatabaseImplements.Migrations
                     TypeQuestion = table.Column<string>(type: "text", nullable: false),
                     TaskText = table.Column<string>(type: "text", nullable: false),
                     MaxScore = table.Column<float>(type: "real", nullable: false),
-                    Answer = table.Column<string>(type: "text", nullable: false)
+                    Answers = table.Column<string>(type: "text", nullable: false),
+                    CorrectAnswers = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {

@@ -45,16 +45,41 @@
                             <h5 class="card-title">@question.TaskText</h5>
                             <p class="card-text">Тип: @question.TypeQuestion</p>
                             <p class="card-text">Максимальный балл: @question.MaxScore</p>
+                            <h6 class="card-subtitle mb-2 text-muted">Варианты ответов:</h6>
+                            <ul class="list-group list-group-flush">
+                                @if (question.Answers != null && question.Answers.Any())
+                                {
+                                    foreach (var answer in question.GetAnswers())
+                                    {
+                                        <li class="list-group-item">
+                                            @answer
+                                            @if (question.GetCorrectAnswers().Contains(answer))
+                                            {
+                                                <span class="badge bg-success ms-2">Правильный ответ</span>
+                                            }
+                                        </li>
+                                    }
+                                }
+                                else
+                                {
+                                    <li class="list-group-item">Вариантов ответов нет</li>
+                                }
+                            </ul>
+
                             <div class="text-right">
-                                <button class="btn btn-warning" style="border-radius: 10px; background-color: #C5A8EA; color: #300E36;" data-bs-toggle="modal" data-bs-target="#editQuestionModal"
+                                <button class="btn" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px;"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#editQuestionModal"
                                         data-question-id="@question.Id"
                                         data-question-text="@question.TaskText"
                                         data-question-type="@question.TypeQuestion"
-                                        data-question-answer="@question.Answer"
-                                        data-question-maxscore="@question.MaxScore">
-                                    Редактировать вопрос
+                                        data-question-maxscore="@question.MaxScore"
+                                        data-answers='@Html.Raw(System.Text.Json.JsonSerializer.Serialize(question.Answers))'
+                                        data-correct-answers='@Html.Raw(System.Text.Json.JsonSerializer.Serialize(question.CorrectAnswers))'>
+                                    Редактировать
                                 </button>
-                                <form asp-action="DeleteQuestion" method="post">
+
+                                <form asp-action="DeleteQuestion" method="post" style="display:inline;">
                                     <input type="hidden" id="taskId" name="taskId" value="@Model.Id" />
                                     <input type="hidden" id="questionId" name="id" value="@question.Id" />
                                     <button class="btn" type="submit" style="border-radius: 10px; background-color: #C5A8EA; color: #300E36;">Удалить вопрос</button>
@@ -88,12 +113,39 @@
                         </div>
                         <div class="mb-3">
                             <label for="questionType" class="form-label">Тип задания</label>
-                            <input type="text" class="form-control" id="questionType" name="questionType"/>
+                            <select class="form-select" id="questionType" name="questionType" onchange="toggleFields()">
+                                <option value="">Выберите тип задания</option>
+                                <option value="Краткий ответ">Задание с кратким ответом</option>
+                                <option value="Развернутый ответ">Задание с развернутым ответом</option>
+                                <option value="Единичный выбор">Задание с единичным выбором</option>
+                                <option value="Множественный выбор">Задание с множественным выбором</option>
+                                <option value="Прикрепление файла">Задание с прикреплением файла</option>
+                            </select>
                         </div>
-                        <div class="mb-3">
+
+                        <div class="mb-3" id="answersContainer" style="display: none;">
+                            <label for="answers" class="form-label">Варианты ответов</label>
+                            <div id="answerFields">
+                                <div class="input-group mb-2">
+                                    <input type="text" class="form-control" name="Answers[]" placeholder="Введите вариант ответа" />
+                                    <button class="btn btn-danger" type="button" onclick="removeAnswer(this)">-</button>
+                                </div>
+                            </div>
+                            <button class="btn" type="button" style="border-radius: 10px; background-color: #C5A8EA; color: #300E36;" onclick="addAnswer()">+</button>
+                        </div>
+
+                        <div class="mb-3" id="correctAnswersContainer" style="display: none;">
+                            <label for="correctAnswers" class="form-label">Выберите правильные варианты ответа</label>
+                            <div id="correctAnswersFields">
+                                <!-- Здесь будут добавляться чекбоксы для правильных ответов -->
+                            </div>
+                        </div>
+
+                        <div class="mb-3" id="correctAnswer" style="display: none;">
                             <label for="correctAnswer" class="form-label">Ответ</label>
-                            <input type="text" class="form-control" id="correctAnswer" name="correctAnswer" />
+                            <input type="text" class="form-control" name="correctAnswers" />
                         </div>
+
                         <div class="mb-3">
                             <label for="maxScore" class="form-label">Максимальный балл</label>
                             <input type="number" class="form-control" id="maxScore" name="maxScore" />
@@ -122,31 +174,52 @@
                     <div class="modal-body">
                         <input type="hidden" id="taskId" name="taskId" value="@Model.Id" />
                         <input type="hidden" id="editQuestionId" name="editQuestionId" />
+
                         <div class="mb-3">
                             <label for="editQuestionText" class="form-label">Вопрос</label>
                             <input type="text" class="form-control" id="editQuestionText" name="editQuestionText" required />
                         </div>
+
                         <div class="mb-3">
                             <label for="editQuestionType" class="form-label">Тип задания</label>
-                            <input type="text" class="form-control" id="editQuestionType" name="editQuestionType" required />
+                            <select class="form-control" id="editQuestionType" name="editQuestionType" required>
+                                <option value="">Выберите тип задания</option>
+                                <option value="Краткий ответ">Задание с кратким ответом</option>
+                                <option value="Развернутый ответ">Задание с развернутым ответом</option>
+                                <option value="Единичный выбор">Задание с единичным выбором</option>
+                                <option value="Множественный выбор">Задание с множественным выбором</option>
+                                <option value="Прикрепление файла">Задание с прикреплением файла</option>
+                            </select>
                         </div>
-                        <div class="mb-3">
-                            <label for="editCorrectAnswer" class="form-label">Ответ</label>
-                            <input type="text" class="form-control" id="editCorrectAnswer" name="editCorrectAnswer" />
+
+                        <div id="answerFields" class="mb-3">
+                            <label class="form-label">Варианты ответов</label>
+                            <div class="input-group mb-2">
+                                <input type="text" class="form-control" name="Answers[]" placeholder="Введите вариант ответа" />
+                                <button class="btn btn-danger" type="button" onclick="removeAnswer(this)">-</button>
+                            </div>
                         </div>
+                        <button type="button" class="btn" style="border-radius: 10px; background-color: #C5A8EA; color: #300E36;" onclick="addAnswer()">+</button>
+
+                        <div class="mb-3" id="correctAnswersFields">
+                            <label class="form-label">Правильные ответы</label>
+                            <!-- Здесь правильные ответы будут динамически добавлены -->
+                        </div>
+
                         <div class="mb-3">
                             <label for="editMaxScore" class="form-label">Максимальный балл</label>
                             <input type="number" class="form-control" id="editMaxScore" name="editMaxScore" />
                         </div>
                     </div>
                     <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 10px; background-color: #300E36 ; color: #C5A8EA;">Закрыть</button>
-                            <button type="submit" class="btn btn-primary" id="saveQuestionButton" style="border-radius: 10px; background-color: #C5A8EA; color: #300E36;">Сохранить изменения</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                        <button type="submit" class="btn btn-primary">Сохранить изменения</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+
     
 </body>
 
@@ -161,15 +234,141 @@
             var questionId = button.data('question-id');           // Извлечь ID вопроса
             var questionText = button.data('question-text');       // Извлечь текст вопроса
             var questionType = button.data('question-type');       // Извлечь тип вопроса
-            var correctAnswer = button.data('question-answer');     // Извлечь правильный ответ
             var maxScore = button.data('question-maxscore');       // Извлечь максимальный балл
 
+            // Извлечь варианты ответов как массив
+            var answers = JSON.parse(button.data('answers'));      // Теперь это массив
+            var correctAnswers = JSON.parse(button.data('correct-answers')); // Правильные ответы
+            document.getElementById("editQuestionType").addEventListener("change", updateCorrectAnswerOptions);
             var modal = $(this);
             modal.find('#editQuestionId').val(questionId);
             modal.find('#editQuestionText').val(questionText);
             modal.find('#editQuestionType').val(questionType);
-            modal.find('#editCorrectAnswer').val(correctAnswer);
             modal.find('#editMaxScore').val(maxScore);
+
+            // Очистить предыдущие варианты ответов
+            var answerFields = modal.find('#answerFields');
+            answerFields.empty(); // Очищаем существующие элементы
+
+            // Добавить каждый ответ как элемент ввода
+            answers.forEach(function (answer) {
+                var newDiv = $('<div class="input-group mb-2"></div>');
+                newDiv.append('<input type="text" class="form-control" name="Answers[]" value="' + answer + '" placeholder="Введите вариант ответа" />');
+                newDiv.append('<button class="btn btn-danger" type="button" onclick="removeAnswer(this)">-</button>');
+                answerFields.append(newDiv);
+            });
+
+            // Обновить правильные ответы
+            var correctAnswersContainer = modal.find('#correctAnswersFields');
+            correctAnswersContainer.empty(); // Очистить предыдущие правильные ответы
+
+            answers.forEach(function (answer, index) {
+                var isChecked = correctAnswers.includes(answer) ? 'checked' : '';
+                var answerDiv = $('<div></div>');
+                if (questionType === "Единичный выбор") {
+                    answerDiv.append('<input type="radio" name="correctAnswers" value="' + answer + '" id="correctAnswer' + index + '" ' + isChecked + ' />');
+                    answerDiv.append('<label for="correctAnswer' + index + '">' + answer + '</label>');
+                } else if (questionType === "Множественный выбор") {
+                    answerDiv.append('<input type="checkbox" name="correctAnswers[]" value="' + answer + '" id="correctAnswer' + index + '" ' + isChecked + ' />');
+                    answerDiv.append('<label for="correctAnswer' + index + '">' + answer + '</label>');
+                }
+                correctAnswersContainer.append(answerDiv);
+            });
         });
+    </script>
+
+    <script>
+        function toggleFields() {
+            var questionType = document.getElementById("questionType").value;
+
+            var answersContainer = document.getElementById("answersContainer");
+            var correctAnswersContainer = document.getElementById("correctAnswersContainer");
+
+            // Скрытие или отображение полей
+            switch (questionType) {
+                case "Краткий ответ":
+                    answersContainer.style.display = "none";
+                    correctAnswer.style.display = "block";
+                    break;
+                case "Развернутый ответ":
+                case "Прикрепление файла":
+                    answersContainer.style.display = "none";
+                    correctAnswersContainer.style.display = "none";
+                    correctAnswer.style.display = "none";
+                    break;
+                case "Единичный выбор":
+                case "Множественный выбор":
+                    answersContainer.style.display = "block";
+                    correctAnswersContainer.style.display = "block";
+                    correctAnswer.style.display = "none";
+                    break;
+                default:
+                    answersContainer.style.display = "none";
+                    correctAnswersContainer.style.display = "none";
+                    correctAnswer.style.display = "none";
+            }
+
+            // Обновить варианты правильных ответов при изменении типа задания
+            if (questionType === "Единичный выбор" || questionType === "Множественный выбор") {
+                updateCorrectAnswerOptions(questionType);
+            }
+        }
+
+        function addAnswer() {
+            var answerFields = document.getElementById('answerFields');
+
+            // Создадим новое поле ввода и кнопку для удаления
+            var newDiv = document.createElement('div');
+            newDiv.className = 'input-group mb-2';
+
+            newDiv.innerHTML = `
+                <input type="text" class="form-control" name="Answers[]" placeholder="Введите вариант ответа" />
+                <button class="btn btn-danger" type="button" onclick="removeAnswer(this)">-</button>
+            `;
+            answerFields.appendChild(newDiv);
+
+            // Обновить варианты правильных ответов при добавлении нового
+            var questionType = document.getElementById("questionType").value;
+            updateCorrectAnswerOptions(questionType);
+        }
+
+        function removeAnswer(button) {
+            var answerFields = document.getElementById('answerFields');
+            answerFields.removeChild(button.parentElement);
+
+            // Обновить варианты правильных ответов при удалении
+            var questionType = document.getElementById("questionType").value;
+            updateCorrectAnswerOptions(questionType);
+        }
+
+        function updateCorrectAnswerOptions(questionType) {
+            var answerFields = document.getElementsByName('Answers[]');
+            var correctAnswersContainer = document.getElementById('correctAnswersFields');
+            var correctAnswer = document.getElementById('correctAnswer');
+            correctAnswer.innerHTML = '';
+            // Очищаем предыдущие варианты правильных ответов
+            correctAnswersContainer.innerHTML = '';
+
+            for (var i = 0; i < answerFields.length; i++) {
+                var answerValue = answerFields[i].value.trim();
+                // Проверяем, не пустое ли значение
+                if (answerValue !== "") {
+                    var answerDiv = document.createElement('div');
+                    if (questionType === "Единичный выбор") {
+                        answerDiv.innerHTML = `
+                            <input type="radio" name="correctAnswers" value="${answerValue}" id="correctAnswer${i}" />
+                            <label for="correctAnswer${i}">${answerValue}</label>
+                        `;
+                    } else if (questionType === "Множественный выбор") {
+                        answerDiv.innerHTML = `
+                            <input type="checkbox" name="correctAnswers" value="${answerValue}" id="correctAnswer${i}" />
+                            <label for="correctAnswer${i}">${answerValue}</label>
+                        `;
+                    }
+                    correctAnswersContainer.appendChild(answerDiv);
+                }
+            }
+        }
+
     </script>
 }

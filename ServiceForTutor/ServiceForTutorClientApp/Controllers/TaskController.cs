@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using ServiceForTutorContracts.BindingModels;
 using ServiceForTutorContracts.ViewModels;
 using System.Reflection.Emit;
@@ -55,6 +56,12 @@ namespace ServiceForTutorClientApp.Controllers
             }
             var taskDetails = APIClient.GetRequest<TaskViewModel>($"api/task/GetTask?TaskId={id}");
             var taskQuestions = APIClient.GetRequest<List<QuestionViewModel>>($"api/task/GetQuestionsByTask?TaskId={id}");
+            foreach (var question in taskQuestions)
+            {
+                // Извлекаем ответы как списки строк, вызывая ваши методы
+                question.SetAnswers(JsonConvert.DeserializeObject<List<string>>(question.Answers));
+                question.SetCorrectAnswers(JsonConvert.DeserializeObject<List<string>>(question.CorrectAnswers));
+            }
             var viewModel = new TaskViewModel // Замените TaskViewModel на вашу модель представления, которая содержит как задание, так и вопросы
             {
                 Id = id,
@@ -67,7 +74,7 @@ namespace ServiceForTutorClientApp.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateQuestion(int id, string questionText, string questionType, string correctAnswer, float maxScore)
+        public IActionResult CreateQuestion(int id, string questionText, string questionType, float maxScore, string[] Answers, string[] correctAnswers)
         {
             APIClient.PostRequest("api/Task/CreateQuestion", new QuestionBindingModel
             {
@@ -75,7 +82,8 @@ namespace ServiceForTutorClientApp.Controllers
                 TaskText = questionText,
                 TypeQuestion = questionType,
                 MaxScore = maxScore,
-                Answer = correctAnswer
+                Answers = JsonConvert.SerializeObject(Answers), // Преобразуем массив в JSON
+                CorrectAnswers = JsonConvert.SerializeObject(correctAnswers) // Преобразуем массив в JSON
             });
             return RedirectToAction("EditTask", new { id = id });
         }
@@ -89,7 +97,7 @@ namespace ServiceForTutorClientApp.Controllers
                 TaskText = editQuestionText,
                 TypeQuestion = editQuestionType,
                 MaxScore = editMaxScore,
-                Answer = editCorrectAnswer
+                Answers = editCorrectAnswer
             });
             return RedirectToAction("EditTask", new { id = taskId });
         }

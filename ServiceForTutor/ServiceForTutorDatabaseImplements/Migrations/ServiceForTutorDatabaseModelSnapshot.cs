@@ -120,7 +120,11 @@ namespace ServiceForTutorDatabaseImplements.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Answer")
+                    b.Property<string>("Answers")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("CorrectAnswers")
                         .IsRequired()
                         .HasColumnType("text");
 
