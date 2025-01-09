@@ -12,11 +12,11 @@
             <button class="btn btn-light" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px;" onclick="window.history.back();">
                 <i class="fas fa-arrow-left"></i>Назад
             </button>
-            <h2 class="text-center" style="color: #300E36;">@ViewData["Title"]</h2>
+            <h1 class="display-4">Редактирование задания</h1>
         </div>
 
         <div class="container">
-            <div class="row justify-content-center" style="margin-top: 20px;">
+            <div class="row" style="margin-top: 20px;">
                 <div class="col-md-6">
                     <div class="p-4" style="background-color: #DBCEF6; border-radius: 10px;">
                         <h3 class="text-center mt-3" style="color: #300E36;">@Model.Name</h3>
@@ -40,34 +40,54 @@
             {
                 foreach (var question in Model.Questions)
                 {
-                    <div class="card mb-3" style="background-color: #DBCEF6; border-radius: 10px;">
-                        <div class="card-body">
-                            <h5 class="card-title">@question.TaskText</h5>
-                            <p class="card-text">Тип: @question.TypeQuestion</p>
-                            <p class="card-text">Максимальный балл: @question.MaxScore</p>
-                            <h6 class="card-subtitle mb-2 text-muted">Варианты ответов:</h6>
-                            <ul class="list-group list-group-flush">
-                                @if (question.Answers != null && question.Answers.Any())
-                                {
-                                    foreach (var answer in question.GetAnswers())
-                                    {
-                                        <li class="list-group-item">
-                                            @answer
-                                            @if (question.GetCorrectAnswers().Contains(answer))
-                                            {
-                                                <span class="badge bg-success ms-2">Правильный ответ</span>
-                                            }
-                                        </li>
-                                    }
-                                }
-                                else
-                                {
-                                    <li class="list-group-item">Вариантов ответов нет</li>
-                                }
-                            </ul>
+                    <div class="d-flex mb-3" style="width: 100%;">
+                        <!-- Контейнер для карточки вопроса с фиксированной шириной -->
+                        <div class="flex-fill" style="min-width: 70%; max-width: 90%; /* Задайте фиксированную ширину */">
+                            <div class="card" style="background-color: #F5F4FF; border-radius: 0;">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <h5 class="card-title mb-0">@question.TaskText</h5>
+                                        <span style="font-size: 0.9rem; color: #6c757d;">Тип: @question.TypeQuestion</span>
+                                    </div>
+                                    <hr />
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <p class="mb-0">Максимальный балл: <strong>@question.MaxScore</strong></p>
+                                    </div>
 
-                            <div class="text-right">
-                                <button class="btn" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px;"
+                                    @if (question.TypeQuestion == "Краткий ответ")
+                                    {
+                                        <p class="card-text mt-3">Правильный ответ: <strong>@question.GetCorrectAnswers().FirstOrDefault()</strong></p>
+                                    }
+                                    else
+                                    {
+                                        <ul class="list-group list-group-flush">
+                                            @if (question.Answers != null && question.Answers.Any())
+                                            {
+                                                foreach (var answer in question.GetAnswers())
+                                                {
+                                                    if (answer != null)
+                                                    {
+                                                        <li class="list-group-item d-flex justify-content-between align-items-center border-bottom">
+                                                            <!-- Добавлена граница -->
+                                                            <span>@answer</span>
+                                                            @if (question.GetCorrectAnswers().Contains(answer))
+                                                            {
+                                                                <span class="badge bg-success ms-2">Правильный ответ</span>
+                                                            }
+                                                        </li>
+                                                    }
+                                                }
+                                            }
+                                        </ul>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Контейнер для кнопок -->
+                        <div style="min-width: 20%; max-width: 50%; /* Задайте фиксированную ширину */">
+                            <div style="display: flex; flex-direction: column; height: 100%; margin-left: 20px; align-self: center;">
+                                <button class="btn" style="background-color: #DBCEF6; color: #300E36; border-radius: 10px; margin-bottom: 10px;"
                                         data-bs-toggle="modal"
                                         data-bs-target="#editQuestionModal"
                                         data-question-id="@question.Id"
@@ -79,13 +99,16 @@
                                     Редактировать
                                 </button>
 
-                                <form asp-action="DeleteQuestion" method="post" style="display:inline;">
+                                <form asp-action="DeleteQuestion" method="post" style="margin-top: 10px;">
                                     <input type="hidden" id="taskId" name="taskId" value="@Model.Id" />
                                     <input type="hidden" id="questionId" name="id" value="@question.Id" />
-                                    <button class="btn" type="submit" style="border-radius: 10px; background-color: #C5A8EA; color: #300E36;">Удалить вопрос</button>
+                                    <button class="btn" type="submit" style="border-radius: 10px; background-color: #DBCEF6; color: #300E36; width: 100%;">
+                                        Удалить вопрос
+                                    </button>
                                 </form>
                             </div>
                         </div>
+
                     </div>
                 }
             }
@@ -94,6 +117,7 @@
                 <p class="text-center">Нет вопросов для отображения.</p>
             }
         </div>
+
 
     <div class="modal fade" id="addQuestionModal" tabindex="-1" role="dialog" aria-labelledby="addQuestionModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
