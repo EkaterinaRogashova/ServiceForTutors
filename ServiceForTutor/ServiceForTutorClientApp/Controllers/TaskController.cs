@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using ServiceForTutorContracts.BindingModels;
 using ServiceForTutorContracts.ViewModels;
 using System.Reflection.Emit;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ServiceForTutorClientApp.Controllers
 {
@@ -200,6 +201,81 @@ namespace ServiceForTutorClientApp.Controllers
                 Questions = taskQuestions
             };
             return View(viewModel);
+        }
+
+        [HttpPost]
+        public IActionResult CreateStudentAnswer(int taskId, IFormCollection form)
+        {
+            // Логирование ключей для отладки
+            foreach (var key in form.Keys)
+            {
+                // Запись в логи или вывод значений
+                Console.WriteLine($"Key: {key} - Value: {form[key]}");
+            }
+
+            foreach (var questionId in form.Keys)
+            {
+                // Проверяем, соответствует ли ключ формату questionId
+                if (questionId.StartsWith("answer[") && questionId.EndsWith("]"))
+                {
+                    // Извлекаем числовую часть questionId
+                    var extractedId = questionId.Substring(7, questionId.Length - 8); // Получаем идентификатор без "answer[" и "]"
+
+                    if (int.TryParse(extractedId, out int parsedQuestionId))
+                    {
+                        var selectedAnswers = form[questionId];
+                        var userAnswerList = selectedAnswers.ToList();
+
+                        if (userAnswerList.Any())
+                        {
+                            var studentAnswer = new StudentAnswerBindingModel
+                            {
+                                AssignedTaskId = taskId,
+                                QuestionId = parsedQuestionId,
+                                Answer = JsonConvert.SerializeObject(userAnswerList),
+                                Score = CalculateScoreForQuestion(userAnswerList, parsedQuestionId)
+                            };
+
+                            APIClient.PostRequest("api/Task/CreateStudentAnswer", studentAnswer);
+                        }
+                    }
+                    else
+                    {
+                        // Логика обработки ошибки при неверном идентификаторе вопроса
+                        Console.WriteLine($"Invalid questionId: {questionId}");
+                    }
+                }
+            }
+            return RedirectToAction("AssignedTasks");
+        }
+
+
+        private float CalculateScoreForQuestion(List<string> userAnswers, int questionId)
+        {
+            // Получаем вопрос
+            var question = APIClient.GetRequest<QuestionViewModel>($"api/task/GetQuestion?QuestionId={questionId}");
+
+            // Получаем корректные ответы
+            var correctAnswers = question.GetCorrectAnswers();
+
+            if (correctAnswers != null)
+            {
+                // Считаем количество правильных ответов
+                int totalCorrectAnswers = correctAnswers.Count;
+                if (totalCorrectAnswers == 0)
+                    return 0;
+
+                // Считаем количество правильных ответов среди пользовательских
+                int userCorrectCount = userAnswers.Count(answer => correctAnswers.Contains(answer));
+
+                // Вычисляем баллы
+                float scorePerCorrectAnswer = question.MaxScore / totalCorrectAnswers; // Баллы за один правильный ответ
+                float totalScore = userCorrectCount * scorePerCorrectAnswer; // Общий балл
+
+                return totalScore;
+            }
+
+            return 0; // Если корректные ответы не заданы, возвращаем 0
         }
     }
 }

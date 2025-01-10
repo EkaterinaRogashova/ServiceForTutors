@@ -8,7 +8,7 @@
 </head>
 <body>
     <div class="container mt-5">
-        <h2 class="text-center" style="color: #300E36;">@ViewData["Title"]</h2>
+        <h1 class="display-4">@ViewData["Title"]</h1>
 
         <div class="container">
             <div class="row justify-content-center" style="margin-top: 20px;">
@@ -35,12 +35,45 @@
             {
                 foreach (var question in Model.Questions)
                 {
-                    <div class="card mb-3" style="background-color: #DBCEF6; border-radius: 10px;">
-                        <div class="card-body">
-                            <h5 class="card-title">@question.TaskText</h5>
-                            <p class="card-text">Тип: @question.TypeQuestion</p>
-                            <p class="card-text">Максимальный балл: @question.MaxScore</p>
-                            <div class="text-right">
+                    <div class="d-flex mb-3" style="width: 100%;">
+                        <div class="flex-fill" style="min-width: 70%; max-width: 90%; /* Задайте фиксированную ширину */">
+                            <div class="card" style="background-color: #F5F4FF; border-radius: 0;">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <h5 class="card-title mb-0">@question.TaskText</h5>
+                                        <span style="font-size: 0.9rem; color: #6c757d;">Тип: @question.TypeQuestion</span>
+                                    </div>
+                                    <hr />
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <p class="mb-0">Максимальный балл: <strong>@question.MaxScore</strong></p>
+                                    </div>
+
+                                    @if (question.TypeQuestion == "Краткий ответ")
+                                    {
+                                        <p class="card-text mt-3">Правильный ответ: <strong>@question.GetCorrectAnswers().FirstOrDefault()</strong></p>
+                                    }
+                                    else
+                                    {
+                                        <ul class="list-group list-group-flush">
+                                            @if (question.Answers != null && question.Answers.Any())
+                                            {
+                                                foreach (var answer in question.GetAnswers())
+                                                {
+                                                    if (answer != null)
+                                                    {
+                                                        <li class="list-group-item d-flex justify-content-between align-items-center border-bottom">
+                                                            <span>@answer</span>
+                                                            @if (question.GetCorrectAnswers().Contains(answer))
+                                                            {
+                                                                <span class="badge bg-success ms-2">Правильный ответ</span>
+                                                            }
+                                                        </li>
+                                                    }
+                                                }
+                                            }
+                                        </ul>
+                                    }
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -93,5 +126,6 @@
                 </div>
             </div>
         </div>
+    </div>
 </body>
 

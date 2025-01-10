@@ -1,4 +1,5 @@
-﻿using ServiceForTutorDataModels.Models;
+﻿using Newtonsoft.Json;
+using ServiceForTutorDataModels.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,5 +16,15 @@ namespace ServiceForTutorContracts.BindingModels
         public float Score { get; set; }
 
         public int Id { get; set; }
+
+        public void SetAnswer(object answers)
+        {
+            Answer = JsonConvert.SerializeObject(answers);
+        }
+
+        public List<string> GetAnswer()
+        {
+            return JsonConvert.DeserializeObject<List<string>>(Answer);
+        }
     }
 }

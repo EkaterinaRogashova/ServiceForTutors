@@ -8,7 +8,7 @@
 </head>
 <body>
     <div class="container mt-5">
-        <h2 class="text-center" style="color: #300E36;">@ViewData["Title"]</h2>
+        <h1 class="display-4">@ViewData["Title"]</h1>
 
         <div class="container">
             <div class="row justify-content-center" style="margin-top: 20px;">
@@ -26,25 +26,99 @@
         </div>
 
 
-        <div class="mt-4" id="questionsList">
-            <h4 class="text-center" style="color: #300E36;">Вопросы к заданию</h4>
-            @if (Model.Questions != null && Model.Questions.Any())
+    <div class="mt-4" id="questionsList">
+    <h4 class="text-center" style="color: #300E36;">Вопросы к заданию</h4>
+    <form method="post" action="@Url.Action("CreateStudentAnswer", "Task")">
+        <input type="hidden" name="taskId" value="@Model.Id" />
+        @if (Model.Questions != null && Model.Questions.Any())
+        {
+            foreach (var question in Model.Questions)
             {
-                foreach (var question in Model.Questions)
-                {
-                    <div class="card mb-3" style="background-color: #DBCEF6; border-radius: 10px;">
-                        <div class="card-body">
-                            <h5 class="card-title">@question.TaskText</h5>
-                            <p class="card-text">Максимальный балл: @question.MaxScore</p>
-                            <input type="text" class="form-control" id="answer" name="answer" />
+                <div class="d-flex mb-3" style="width: 100%;">
+                    <div class="flex-fill" style="min-width: 70%; max-width: 90%;">
+                        <div class="card" style="background-color: #F5F4FF; border-radius: 0;">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <h5 class="card-title mb-0">@question.TaskText</h5>
+                                    <span style="font-size: 0.9rem; color: #6c757d;">Тип: @question.TypeQuestion</span>
+                                </div>
+                                <hr />
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <p class="mb-0">Максимальный балл: <strong>@question.MaxScore</strong></p>
+                                </div>
+
+                                @if (question.TypeQuestion == "Краткий ответ")
+                                {
+                                    <div class="mb-3">
+                                        <label for="shortAnswer_@question.Id" class="form-label">Ваш ответ:</label>
+                                        <input type="text" class="form-control" id="shortAnswer_@question.Id" name="answer[@question.Id]" />
+                                    </div>
+                                }
+                                else if (question.TypeQuestion == "Развернутый ответ")
+                                {
+                                    <div class="mb-3">
+                                        <label for="longAnswer_@question.Id" class="form-label">Ваш ответ:</label>
+                                        <textarea class="form-control" id="longAnswer_@question.Id" name="answer[@question.Id]" rows="5"></textarea>
+                                    </div>
+                                }
+                                else if (question.TypeQuestion == "Единичный выбор")
+                                {
+                                    <div class="mb-3">
+                                        <label class="form-label">Выберите один вариант:</label>
+                                        @if (question.Answers != null && question.Answers.Any())
+                                        {
+                                            foreach (var answer in question.GetAnswers())
+                                            {
+                                                if (answer != null)
+                                                {
+                                                    <div class="form-check">
+
+                                                        <input class="form-check-input" type="radio" name="answer[@question.Id]" id="radio_@answer" value="@answer" />
+                                                        <label class="form-check-label" for="radio_@answer">@answer</label>
+                                                    </div>
+                                                }
+                                            }
+                                        }
+                                    </div>
+                                }
+                                else if (question.TypeQuestion == "Множественный выбор")
+                                {
+                                    <div class="mb-3">
+                                        <label class="form-label">Выберите несколько вариантов:</label>
+                                        @if (question.Answers != null && question.Answers.Any())
+                                        {
+                                            foreach (var answer in question.GetAnswers())
+                                            {
+                                                if (answer != null)
+                                                {
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" name="answer[@question.Id]" id="checkbox_@answer" value="@answer" />
+                                                        <label class="form-check-label" for="checkbox_@answer">@answer</label>
+                                                    </div>
+                                                }
+                                            }
+                                        }
+                                    </div>
+                                }
+                                else if (question.TypeQuestion == "Прикрепление файла")
+                                {
+                                    <div class="mb-3">
+                                        <label class="form-label">Прикрепите файл:</label>
+                                        <input class="form-control" type="file" name="fileAttachment[@question.Id]" id="fileUpload_@question.Id" />
+                                    </div>
+                                }
+
+                            </div>
                         </div>
                     </div>
-                }
+                </div>
             }
-            else
-            {
-                <p class="text-center">Нет вопросов</p>
-            }
-            <button type="submit" class="btn" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px;">Отправить на проверку</button>
-        </div>
+        }
+        else
+        {
+            <p class="text-center">Нет вопросов для отображения.</p>
+        }
+        <button type="submit" class="btn" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px;">Отправить на проверку</button>
+        </form>
+    </div>
 </body>

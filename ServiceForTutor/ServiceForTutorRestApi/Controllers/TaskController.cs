@@ -13,11 +13,13 @@ namespace ServiceForTutorRestApi.Controllers
         private readonly ITaskLogic _logic;
         private readonly IQuestionLogic _questionLogic;
         private readonly IAssignedTaskLogic _assignTaskLogic;
-        public TaskController(ITaskLogic logic, IQuestionLogic questionLogic, IAssignedTaskLogic assignTaskLogic)
+        private readonly IStudentAnswerLogic _answerLogic;
+        public TaskController(ITaskLogic logic, IQuestionLogic questionLogic, IAssignedTaskLogic assignTaskLogic, IStudentAnswerLogic answerLogic)
         {
             _logic = logic;
             _questionLogic = questionLogic;
             _assignTaskLogic = assignTaskLogic;
+            _answerLogic = answerLogic;
         }
 
         [HttpGet]
@@ -196,6 +198,35 @@ namespace ServiceForTutorRestApi.Controllers
                 return _assignTaskLogic.ReadElement(new AssignedTaskSearchModel
                 {
                     Id = taskId
+                });
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        [HttpPost]
+        public void CreateStudentAnswer(StudentAnswerBindingModel model)
+        {
+            try
+            {
+                _answerLogic.Create(model);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        [HttpGet]
+        public QuestionViewModel? GetQuestion(int questionId)
+        {
+            try
+            {
+                return _questionLogic.ReadElement(new QuestionSearchModel
+                {
+                    Id = questionId
                 });
             }
             catch (Exception ex)
