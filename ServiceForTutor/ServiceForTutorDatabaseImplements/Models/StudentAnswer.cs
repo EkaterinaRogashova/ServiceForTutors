@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
@@ -50,6 +51,16 @@ namespace ServiceForTutorDatabaseImplements.Models
                 Answer = model.Answer,
                 Score = model.Score
             };
+        }
+
+        public void Update(StudentAnswerBindingModel model)
+        {
+            if (model == null)
+            {
+                return;
+            }
+            Score = model.Score;
+            Answer = model.Answer;
         }
 
         public StudentAnswerViewModel GetViewModel => new()

@@ -2,6 +2,8 @@
 using Newtonsoft.Json;
 using ServiceForTutorContracts.BindingModels;
 using ServiceForTutorContracts.ViewModels;
+using ServiceForTutorDatabaseImplements.Models;
+using System.Numerics;
 using System.Reflection.Emit;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -206,20 +208,21 @@ namespace ServiceForTutorClientApp.Controllers
         [HttpPost]
         public IActionResult CreateStudentAnswer(int taskId, IFormCollection form)
         {
-            // Логирование ключей для отладки
+            var action = form["action"];
             foreach (var key in form.Keys)
             {
-                // Запись в логи или вывод значений
                 Console.WriteLine($"Key: {key} - Value: {form[key]}");
             }
 
+            float totalScore = 0;
+            var answers = APIClient.GetRequest<List<StudentAnswerViewModel>>($"api/task/GetStudentAnswers?AssignedTaskId={taskId}");
+            var existingAnswers = answers?.ToDictionary(answer => answer.QuestionId);
+
             foreach (var questionId in form.Keys)
             {
-                // Проверяем, соответствует ли ключ формату questionId
                 if (questionId.StartsWith("answer[") && questionId.EndsWith("]"))
                 {
-                    // Извлекаем числовую часть questionId
-                    var extractedId = questionId.Substring(7, questionId.Length - 8); // Получаем идентификатор без "answer[" и "]"
+                    var extractedId = questionId.Substring(7, questionId.Length - 8);
 
                     if (int.TryParse(extractedId, out int parsedQuestionId))
                     {
@@ -235,17 +238,35 @@ namespace ServiceForTutorClientApp.Controllers
                                 Answer = JsonConvert.SerializeObject(userAnswerList),
                                 Score = CalculateScoreForQuestion(userAnswerList, parsedQuestionId)
                             };
+                            totalScore += studentAnswer.Score;
 
-                            APIClient.PostRequest("api/Task/CreateStudentAnswer", studentAnswer);
+                            if (existingAnswers != null && existingAnswers.TryGetValue(parsedQuestionId, out var existingAnswer))
+                            {
+                                studentAnswer.Id = existingAnswer.Id;
+                                APIClient.PostRequest("api/Task/UpdateStudentAnswer", studentAnswer);
+                            }
+                            else
+                            {
+                                APIClient.PostRequest("api/Task/CreateStudentAnswer", studentAnswer);
+                            }
                         }
                     }
                     else
                     {
-                        // Логика обработки ошибки при неверном идентификаторе вопроса
                         Console.WriteLine($"Invalid questionId: {questionId}");
                     }
                 }
             }
+            if (action == "finish")
+            {
+                APIClient.PostRequest("api/Task/UpdateAssignedTask", new AssignedTaskBindingModel
+                {
+                    Id = taskId,
+                    Status = "Completed",
+                    Grade = totalScore
+                });
+            }
+
             return RedirectToAction("AssignedTasks");
         }
 
@@ -272,10 +293,74 @@ namespace ServiceForTutorClientApp.Controllers
                 float scorePerCorrectAnswer = question.MaxScore / totalCorrectAnswers; // Баллы за один правильный ответ
                 float totalScore = userCorrectCount * scorePerCorrectAnswer; // Общий балл
 
-                return totalScore;
+                return (float)Math.Round(totalScore, 2);
             }
 
             return 0; // Если корректные ответы не заданы, возвращаем 0
+        }
+
+        public IActionResult CheckTask(int id)
+        {
+            if (APIClient.Client == null)
+            {
+                return Redirect("~Home/Enter");
+            }
+            var test = APIClient.GetRequest<AssignedTaskViewModel>($"api/task/GetAssignedTask?TaskId={id}");
+            var taskDetails = APIClient.GetRequest<TaskViewModel>($"api/task/GetTask?TaskId={test.TaskId}");
+            var taskQuestions = APIClient.GetRequest<List<QuestionViewModel>>($"api/task/GetQuestionsByTask?TaskId={test.TaskId}");
+            var answers = APIClient.GetRequest<List<StudentAnswerViewModel>>($"api/task/GetStudentAnswers?AssignedTaskId={id}");
+            var viewModel = new AssignedTaskViewModel
+            {
+                Id = id,
+                Status = test.Status,
+                TaskId = test.TaskId,
+                StudentId = test.StudentId,
+                DateTimeStart = test.DateTimeStart,
+                DateTimeEnd = test.DateTimeEnd,
+                Grade = test.Grade,
+                TaskName = taskDetails.Name,
+                TaskTopic = taskDetails.Topic,
+                StudentFIO = test.StudentFIO,
+                Answers = answers,
+                Questions = taskQuestions
+            };
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        public IActionResult SaveGrades(int taskId, IFormCollection form)
+        {
+            // Получаем все ответы студентов по идентификатору задания
+            var studentAnswers = APIClient.GetRequest<List<StudentAnswerViewModel>>($"api/task/GetStudentAnswers?AssignedTaskId={taskId}");
+
+            // Обновляем оценки для каждого вопроса
+            foreach (var question in studentAnswers)
+            {
+                // Получаем строковое значение оценок из формы
+                var scoreString = form[$"grades[{question.QuestionId}]"];
+
+                // Пробуем преобразовать строку в float, если это не удается, оценка не будет обновлена
+                if (float.TryParse(scoreString, out var score))
+                {
+                    question.Score = score;
+                }
+
+                // Обновляем каждую оценку студента через API
+                APIClient.PostRequest("api/Task/UpdateStudentAnswer", question);
+            }
+
+            // Суммируем оценки для вычисления общей оценки
+            var totalScore = studentAnswers.Sum(a => a.Score);
+
+            // Обновляем задание с общей оценкой
+            APIClient.PostRequest("api/Task/UpdateAssignedTask", new AssignedTaskBindingModel
+            {
+                Id = taskId,
+                Status = "Checked",
+                Grade = totalScore
+            });
+
+            return RedirectToAction("AssignedTasks");
         }
     }
 }

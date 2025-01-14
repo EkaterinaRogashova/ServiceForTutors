@@ -53,6 +53,16 @@ namespace ServiceForTutorBusinessLogic.BusinessLogic
             }
             return list;
         }
+
+        public bool Update(StudentAnswerBindingModel model)
+        {
+            if (_studentAnswerStorage.Update(model) == null)
+            {
+                return false;
+            }
+            return true;
+        }
+
         private void CheckModel(StudentAnswerBindingModel model, bool withParams = true)
         {
             if (model == null)

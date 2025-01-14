@@ -9,5 +9,6 @@ namespace ServiceForTutorContracts.SearchModels
     public class StudentAnswerSearchModel
     {
         public int? Id { get; set; }
+        public int? AssignedTaskId { get; set; }
     }
 }

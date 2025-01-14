@@ -234,5 +234,47 @@ namespace ServiceForTutorRestApi.Controllers
                 throw;
             }
         }
+
+        [HttpPost]
+        public void UpdateAssignedTask(AssignedTaskBindingModel model)
+        {
+            try
+            {
+                _assignTaskLogic.Update(model);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        [HttpGet]
+        public List<StudentAnswerViewModel>? GetStudentAnswers(int assignedTaskId)
+        {
+            try
+            {
+                return _answerLogic.ReadList(new StudentAnswerSearchModel
+                {
+                    AssignedTaskId = assignedTaskId
+                });
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        [HttpPost]
+        public void UpdateStudentAnswer(StudentAnswerBindingModel model)
+        {
+            try
+            {
+                _answerLogic.Update(model);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
     }
 }

@@ -45,7 +45,7 @@
                                     else if (item.Status == "Completed")
                                     {
                                         <a class="btn btn-sm disabled">Снять назначение</a>
-                                        <a class="btn btn-sm" asp-action="EditTask" asp-route-id="@item.Id">Проверить</a>
+                                        <a class="btn btn-sm" asp-action="CheckTask" asp-route-id="@item.Id">Проверить</a>
                                     }
                                     else if (item.Status == "Checked")
                                     {

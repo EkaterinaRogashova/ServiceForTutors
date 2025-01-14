@@ -14,5 +14,6 @@ namespace ServiceForTutorContracts.StoragesContracts
         List<StudentAnswerViewModel> GetFilteredList(StudentAnswerSearchModel model);
         StudentAnswerViewModel? GetElement(StudentAnswerSearchModel model);
         StudentAnswerViewModel? Insert(StudentAnswerBindingModel model);
+        StudentAnswerViewModel? Update(StudentAnswerBindingModel model);
     }
 }

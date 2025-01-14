@@ -18,6 +18,8 @@ namespace ServiceForTutorContracts.ViewModels
         public string TaskTopic { get; set; }
         public string StudentFIO { get; set; }
         public string Status { get; set; }
+        public List<StudentAnswerViewModel> Answers { get; set; }
+        public List<QuestionViewModel> Questions { get; set; }
 
         public int Id { get; set; }
     }
