@@ -50,7 +50,7 @@
                                     else if (item.Status == "Checked")
                                     {
                                         <a class="btn btn-sm disabled">Снять назначение</a>
-                                        <a class="btn btn-sm" asp-action="Result" asp-route-id="@item.Id">Просмотреть результат</a>
+                                        <a class="btn btn-sm" asp-action="ResultCheck" asp-route-id="@item.Id">Просмотреть результат</a>
                                     }
                                 </td>
                             </tr>
@@ -75,7 +75,7 @@
                                     else if (item.Status == "Checked")
                                     {
                                         <a class="btn btn-sm disabled">Выполнить</a>
-                                        <a class="btn btn-sm" asp-action="Result" asp-route-id="@item.Id">Просмотреть результат</a>
+                                        <a class="btn btn-sm" asp-action="ResultCheck" asp-route-id="@item.Id">Просмотреть результат</a>
                                     }
                                 </td>
                             </tr>

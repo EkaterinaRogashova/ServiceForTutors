@@ -330,6 +330,7 @@ namespace ServiceForTutorClientApp.Controllers
         [HttpPost]
         public IActionResult SaveGrades(int taskId, IFormCollection form)
         {
+            var action = form["action"];
             // Получаем все ответы студентов по идентификатору задания
             var studentAnswers = APIClient.GetRequest<List<StudentAnswerViewModel>>($"api/task/GetStudentAnswers?AssignedTaskId={taskId}");
 
@@ -353,14 +354,49 @@ namespace ServiceForTutorClientApp.Controllers
             var totalScore = studentAnswers.Sum(a => a.Score);
 
             // Обновляем задание с общей оценкой
-            APIClient.PostRequest("api/Task/UpdateAssignedTask", new AssignedTaskBindingModel
+            if (action == "finish")
             {
-                Id = taskId,
-                Status = "Checked",
-                Grade = totalScore
-            });
+                APIClient.PostRequest("api/Task/UpdateAssignedTask", new AssignedTaskBindingModel
+                {
+                    Id = taskId,
+                    Status = "Checked",
+                    Grade = totalScore
+                });
+            }
 
             return RedirectToAction("AssignedTasks");
+        }
+
+        public IActionResult ResultCheck(int id)
+        {
+            if (APIClient.Client == null)
+            {
+                return Redirect("~Home/Enter");
+            }
+            var test = APIClient.GetRequest<AssignedTaskViewModel>($"api/task/GetAssignedTask?TaskId={id}");
+            var taskDetails = APIClient.GetRequest<TaskViewModel>($"api/task/GetTask?TaskId={test.TaskId}");
+            var taskQuestions = APIClient.GetRequest<List<QuestionViewModel>>($"api/task/GetQuestionsByTask?TaskId={test.TaskId}");
+            var answers = APIClient.GetRequest<List<StudentAnswerViewModel>>($"api/task/GetStudentAnswers?AssignedTaskId={id}");
+
+            var maxGrade = taskQuestions.Sum(q => q.MaxScore);
+
+            var viewModel = new AssignedTaskViewModel
+            {
+                Id = id,
+                Status = test.Status,
+                TaskId = test.TaskId,
+                StudentId = test.StudentId,
+                DateTimeStart = test.DateTimeStart,
+                DateTimeEnd = test.DateTimeEnd,
+                Grade = test.Grade,
+                TaskName = taskDetails.Name,
+                TaskTopic = taskDetails.Topic,
+                StudentFIO = test.StudentFIO,
+                Answers = answers,
+                Questions = taskQuestions,
+                MaxGrade = maxGrade
+            };
+            return View(viewModel);
         }
     }
 }

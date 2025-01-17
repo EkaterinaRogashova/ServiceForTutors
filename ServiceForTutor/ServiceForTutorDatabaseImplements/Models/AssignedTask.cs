@@ -68,6 +68,7 @@ namespace ServiceForTutorDatabaseImplements.Models
                 return;
             }
             Status = model.Status;
+            Grade = model.Grade;
         }
 
         public AssignedTaskViewModel GetViewModel => new()

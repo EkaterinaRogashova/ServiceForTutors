@@ -190,7 +190,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="editQuestionModalLabel">Редактировать вопрос</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Закрыть">
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Закрыть">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -198,22 +198,14 @@
                     <div class="modal-body">
                         <input type="hidden" id="taskId" name="taskId" value="@Model.Id" />
                         <input type="hidden" id="editQuestionId" name="editQuestionId" />
+                        <div class="mb-3">
+                            <label for="editQuestionType" class="form-label">Тип вопроса:</label>
+                            <input type="text" class="form-control" id="editQuestionType" name="editQuestionType" required readonly/>
+                        </div>
 
                         <div class="mb-3">
                             <label for="editQuestionText" class="form-label">Вопрос</label>
                             <input type="text" class="form-control" id="editQuestionText" name="editQuestionText" required />
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="editQuestionType" class="form-label">Тип задания</label>
-                            <select class="form-control" id="editQuestionType" name="editQuestionType" required>
-                                <option value="">Выберите тип задания</option>
-                                <option value="Краткий ответ">Задание с кратким ответом</option>
-                                <option value="Развернутый ответ">Задание с развернутым ответом</option>
-                                <option value="Единичный выбор">Задание с единичным выбором</option>
-                                <option value="Множественный выбор">Задание с множественным выбором</option>
-                                <option value="Прикрепление файла">Задание с прикреплением файла</option>
-                            </select>
                         </div>
 
                         <div id="answerFields" class="mb-3">
@@ -227,7 +219,6 @@
 
                         <div class="mb-3" id="correctAnswersFields">
                             <label class="form-label">Правильные ответы</label>
-                            <!-- Здесь правильные ответы будут динамически добавлены -->
                         </div>
 
                         <div class="mb-3">
@@ -254,16 +245,46 @@
     }
     <script>
         $('#editQuestionModal').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget); // Кнопка, которая вызвала модальное окно
+            var button = $(event.relatedTarget);
             var questionId = button.data('question-id');           // Извлечь ID вопроса
             var questionText = button.data('question-text');       // Извлечь текст вопроса
             var questionType = button.data('question-type');       // Извлечь тип вопроса
             var maxScore = button.data('question-maxscore');       // Извлечь максимальный балл
 
-            // Извлечь варианты ответов как массив
-            var answers = JSON.parse(button.data('answers'));      // Теперь это массив
-            var correctAnswers = JSON.parse(button.data('correct-answers')); // Правильные ответы
-            document.getElementById("editQuestionType").addEventListener("change", updateCorrectAnswerOptions);
+            var answersData = button.data('answers');
+
+            // Проверяем данные
+            var answers = [];
+            if (typeof answersData === 'string' && answersData.trim() !== '') {
+                try {
+                    answers = JSON.parse(answersData);
+                    if (!Array.isArray(answers)) {
+                        console.error('answers is not an array:', answers);
+                        answers = [];
+                    }
+                } catch (e) {
+                    console.error('Error parsing answers:', e);
+                    answers = [];
+                }
+            } else if (Array.isArray(answersData)) {
+                answers = answersData; // если уже массив, просто присваиваем
+            }
+
+            var correctAnswersData = button.data('correct-answers');
+
+            var correctAnswers = [];
+            try {
+                if (typeof correctAnswersData === 'string' && correctAnswersData.trim() !== '') {
+                    correctAnswers = JSON.parse(correctAnswersData);
+                    if (!Array.isArray(correctAnswers)) {
+                        console.error('correctAnswers is not an array:', correctAnswers);
+                        correctAnswers = [];
+                    }
+                }
+            } catch (e) {
+                console.error('Error parsing correct answers:', e);
+            }
+
             var modal = $(this);
             modal.find('#editQuestionId').val(questionId);
             modal.find('#editQuestionText').val(questionText);
@@ -299,9 +320,7 @@
                 correctAnswersContainer.append(answerDiv);
             });
         });
-    </script>
 
-    <script>
         function toggleFields() {
             var questionType = document.getElementById("questionType").value;
 
