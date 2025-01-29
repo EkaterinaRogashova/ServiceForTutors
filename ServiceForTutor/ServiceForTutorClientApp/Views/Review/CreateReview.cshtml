@@ -2,74 +2,81 @@
     ViewData["Title"] = "Обратная связь";
 }
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
-    <title>Create Review</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создание отзыва</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
+        body {
+            background-color: #f8f9fa; /* Светлый фон */
+        }
+
         .profile-form {
-            background-color: #DBCEF6;
+            background-color: #E6D9F5; /* Цвет фона карточки */
             border-radius: 10px;
             padding: 20px;
             margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Добавление тени */
         }
 
-            .profile-form h2, .profile-form h3 {
-                text-align: center;
-                margin-top: 0;
-                margin-bottom: 15px;
-            }
+        .profile-form h2 {
+            text-align: center;
+            color: #300E36; /* Цвет заголовка */
+            margin-top: 0;
+        }
 
+        .profile-form label {
+            font-weight: bold;
+        }
 
-            .profile-form label {
-                font-weight: bold;
-            }
+        .btn-action {
+            background-color: #C5A8EA; /* Цвет кнопки */
+            color: #300E36; /* Цвет текста кнопки */
+            border-radius: 10px;
+            padding: 10px 20px;
+            width: 100%; /* Кнопка на всю ширину */
+            margin-top: 20px; /* Отступ сверху */
+            transition: background-color 0.3s;
+        }
 
-            .profile-form .btn-primary {
-                background-color: #C5A8EA;
-                color: #300E36;
-                border-radius: 10px;
-                padding: 10px 20px;
-                width: 100%; /* Make button full width */
-                margin-top: 20px; /* Add spacing above button */
-            }
+        .btn-primary:hover {
+            background-color: #A67CBB; /* Цвет кнопки при наведении */
+        }
 
         .rating {
-            direction: rtl; /* For right-to-left star display */
+            direction: rtl; /* Отображение звёзд справа налево */
             display: flex;
+            justify-content: center; /* Центрирование звёзд */
         }
 
-            .rating input {
-                display: none;
-            }
+        .rating input {
+            display: none;
+        }
 
-            .rating label {
-                font-size: 2em;
-                color: #ddd; /* More visible initial color */
-                cursor: pointer;
-            }
+        .rating label {
+            font-size: 2em;
+            color: white; /* Цвет звёзд по умолчанию */
+            cursor: pointer;
+        }
 
-            .rating input:checked ~ label {
-                color: gold;
-            }
-
-            .rating label:hover,
-            .rating input:checked ~ label {
-                color: gold;
-            }
+        .rating input:checked ~ label,
+        .rating label:hover,
+        .rating label:hover ~ label {
+            color: gold; /* Цвет звёзд при наведении и выбранной оценке */
+        }
     </style>
 </head>
 <body>
     <div class="container mt-5">
         <div class="card profile-form">
-            <!-- Added class for styling -->
             <div class="card-body">
                 <h2 class="card-title">Оставить отзыв</h2>
                 <form id="reviewForm" asp-action="CreateReview" method="post">
                     <input type="hidden" id="TutorId" name="TutorId" value="[Tutor ID]">
 
-                    <div class="form-group">
-                        <label for="Rating">Рейтинг:</label>
+                    <div class="form-group mt-4">
                         <div class="rating">
                             <input type="radio" id="star5" name="Rating" value="5">
                             <label for="star5" class="full"><i class="fas fa-star"></i></label>
@@ -80,21 +87,21 @@
                             <input type="radio" id="star2" name="Rating" value="2">
                             <label for="star2" class="full"><i class="fas fa-star"></i></label>
                             <input type="radio" id="star1" name="Rating" value="1">
+
                             <label for="star1" class="full"><i class="fas fa-star"></i></label>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label for="Content">Текст отзыва:</label>
-                        <textarea class="form-control" id="Content" name="content" rows="5"></textarea>
+                        <textarea class="form-control" id="Content" name="content" rows="5" placeholder="Введите ваш отзыв здесь..."></textarea>
                     </div>
 
-                    <button type="submit" class="btn btn-primary">Отправить</button> <!-- Changed to btn-primary -->
+                    <button type="submit" class="btn btn-action">Отправить</button>
                 </form>
             </div>
         </div>
     </div>
-    <script src="https://kit.fontawesome.com/c99de67db0.js" crossorigin="anonymous"></script>  <!-- Font Awesome Kit -->
-    <script src="script.js"></script>
+    <script src="https://kit.fontawesome.com/c99de67db0.js" crossorigin="anonymous"></script> <!-- Font Awesome Kit -->
 </body>
 </html>

@@ -147,14 +147,14 @@ namespace ServiceForTutorClientApp.Controllers
         }
 
         [HttpPost]
-        public IActionResult AssignTask(int id, int studentId, DateTime dateStart, DateTime dateEnd)
+        public IActionResult AssignTask(int id, int studentId, DateTime startDate, DateTime endDate)
         {
             APIClient.PostRequest("api/Task/CreateAssignTask", new AssignedTaskBindingModel
             {
                 TaskId = id,
                 StudentId = studentId,
-                DateTimeEnd = dateEnd.ToUniversalTime(),
-                DateTimeStart = dateStart.ToUniversalTime(),
+                DateTimeEnd = endDate.ToUniversalTime(),
+                DateTimeStart = startDate.ToUniversalTime(),
                 Status = "Assign"
             });
             return RedirectToAction("ViewTask", new { id = id });
