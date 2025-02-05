@@ -12,15 +12,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewData["Title"]</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
-    <div class="container mt-4" style="min-width: 120%;">
-        <div class="d-flex justify-content-between align-items-center">
+    <div class="container-fluid" style="margin-top: 2%">
+       
+        <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="display-4">Мое расписание</h1>
         </div>
-
         @functions {
             List<DateTime> GetDatesOfWeek(DateTime date)
             {
@@ -32,15 +34,6 @@
                 }
                 return dates;
             }
-        }
-
-        @if (APIClient.Client.Role == "Tutor")
-        {
-            <button class="btn btn-action"
-                    data-bs-toggle="modal"
-                    data-bs-target="#addTimeSlotModal" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px; margin-right: 40px; margin-bottom: 20px; margin-top: 10px;">
-                Добавить время
-            </button>
         }
 
         @{
@@ -56,25 +49,34 @@
             var uniqueTimesByDay = datesOfWeek.ToDictionary(d => d, d =>
             slotsByDate[d].Select(slot => slot.DateTimeStart.TimeOfDay).Distinct().OrderBy(t => t).ToList());
         }
-
-        <div class="btn-group" role="group" aria-label="Basic example">
-            <form method="post" action="@Url.Action("Schedule", "Schedule")">
-                <input type="hidden" name="currentDate" value="@currentDate.ToString("yyyy-MM-dd")" />
-                <button type="submit" class="btn btn-active" name="direction" value="back">Предыдущая неделя</button>
-                <button type="submit" class="btn btn-active" name="direction" value="forward">Следующая неделя</button>
-            </form>
+        <div class="d-flex justify-content-start mt-4 mb-3">
+            <div class="btn-group" role="group" aria-label="Basic example">
+                <form method="post" action="@Url.Action("Schedule", "Schedule")">
+                    <input type="hidden" name="currentDate" value="@currentDate.ToString("yyyy-MM-dd")" />
+                    <button type="submit" class="btn btn-active" name="direction" value="back">Предыдущая неделя</button>
+                    <button type="submit" class="btn btn-active" name="direction" value="forward">Следующая неделя</button>
+                </form>
+            </div>
+            @if (APIClient.Client.Role == "Tutor")
+            {
+                <button class="btn btn-action"
+                        data-bs-toggle="modal"
+                        data-bs-target="#addTimeSlotModal"
+                        style="background-color: #DBCEF6; color: #300E36; border-radius: 10px; margin-left: 50px;">
+                    Добавить время
+                </button>
+            }
         </div>
+        
 
         <div class="schedule-container">
+            <input type="date" id="datePicker" class="form-control mx-2" style="width: 200px;" />
             @foreach (var day in datesOfWeek)
             {
                 <div class="day-schedule">
                     <h5>@(day.ToString("dddd, dd MMMM"))</h5> <!-- Заголовок с днем недели -->
                     <table class="table">
                         <thead>
-                            <tr>
-                                <th>Временные слоты</th>
-                            </tr>
                         </thead>
                         <tbody>
                             @foreach (var time in uniqueTimesByDay[day]) // Используем уникальные времена для текущего дня
@@ -113,7 +115,7 @@
                 </div>
             }
         </div>
-        
+    </div>
 
 
         <div class="modal fade" id="addTimeSlotModal" tabindex="-1" role="dialog" aria-labelledby="addTimeSlotModalLabel" aria-hidden="true">
@@ -160,7 +162,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    
 
     <div class="modal fade" id="reservation" tabindex="-1" role="dialog" aria-labelledby="reservationLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -320,39 +322,57 @@
             }
         });
     </script>
+
+    <script>
+    $(function () {
+        $("#datePicker").datepicker({
+            dateFormat: "yy-mm-dd", // Формат даты
+            onSelect: function (dateText) {
+                var selectedDate = new Date(dateText);
+                var newDate = selectedDate.toISOString().split('T')[0]; // Получаем дату в формате yyyy-MM-dd
+                window.location.href = `@Url.Action("Schedule")?currentDate=${newDate}`; // Используйте обратные кавычки
+            }
+        }).datepicker("setDate", new Date()).datepicker("show"); // Установка текущей даты и открытие календаря
+    });
+</script>
+
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const startTimeInput = document.getElementById('slotStartTime');
+            const durationSelect = document.getElementById('duration');
+            const endTimeInput = document.getElementById('slotEndTime');
+
+            // Функция для вычисления времени окончания
+            function calculateEndTime() {
+                const startTime = startTimeInput.value;
+                const durationHours = parseFloat(durationSelect.value);
+
+                if (startTime) {
+                    // Получаем часы и минуты начала занятия
+                    const [hours, minutes] = startTime.split(':').map(Number);
+                    // Конвертируем все в минуты
+                    const totalMinutes = hours * 60 + minutes + (durationHours * 60);
+                    // Вычисляем окончание занятия
+                    const endHours = Math.floor(totalMinutes / 60) % 24; // Учтем 24 часа
+                    const endMinutes = totalMinutes % 60;
+
+                    // Устанавливаем время окончания
+                    endTimeInput.value = `${String(endHours).padStart(2, '0')}:${String(endMinutes).padStart(2, '0')}`;
+                }
+            }
+
+            // Добавляем обработчики событий
+            startTimeInput.addEventListener('change', calculateEndTime);
+            durationSelect.addEventListener('change', calculateEndTime);
+        });
+    </script>
+
 }
 </html>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const startTimeInput = document.getElementById('slotStartTime');
-        const durationSelect = document.getElementById('duration');
-        const endTimeInput = document.getElementById('slotEndTime');
 
-        // Функция для вычисления времени окончания
-        function calculateEndTime() {
-            const startTime = startTimeInput.value;
-            const durationHours = parseFloat(durationSelect.value);
-
-            if (startTime) {
-                // Получаем часы и минуты начала занятия
-                const [hours, minutes] = startTime.split(':').map(Number);
-                // Конвертируем все в минуты
-                const totalMinutes = hours * 60 + minutes + (durationHours * 60);
-                // Вычисляем окончание занятия
-                const endHours = Math.floor(totalMinutes / 60) % 24; // Учтем 24 часа
-                const endMinutes = totalMinutes % 60;
-
-                // Устанавливаем время окончания
-                endTimeInput.value = `${String(endHours).padStart(2, '0')}:${String(endMinutes).padStart(2, '0')}`;
-            }
-        }
-
-        // Добавляем обработчики событий
-        startTimeInput.addEventListener('change', calculateEndTime);
-        durationSelect.addEventListener('change', calculateEndTime);
-    });
-</script>
 
 
 
@@ -380,9 +400,23 @@
         border: 1px solid #ccc; /* Граница вокруг каждой таблицы */
         padding: 5px; /* Отступ внутри таблицы */
         border-radius: 5px; /* Закругленные углы */
-        max-width: 12%; /* Ограничиваем максимальную ширину таблицы */
+        max-width: 11%; /* Ограничиваем максимальную ширину таблицы */
     }
     .time-slot-button:hover {
         background-color: mediumorchid; /* Цвет при наведении для улучшения UX */
     }
+
+    .btn-active {
+        background-color: #C5A8EA;
+        color: #300E36;
+        border-radius: 10px;
+        border: none;
+    }
+
+    .btn-active:hover {
+       background-color: #A67CBB;
+    }
+
 </style>
+
+

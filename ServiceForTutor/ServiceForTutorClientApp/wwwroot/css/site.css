@@ -20,3 +20,13 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+h1 {
+    color: #300E36; 
+    font-family: 'Arial', sans-serif;
+}
+
+.btn-large {
+    font-size: 20px;
+    border-radius: 10px;
+}
