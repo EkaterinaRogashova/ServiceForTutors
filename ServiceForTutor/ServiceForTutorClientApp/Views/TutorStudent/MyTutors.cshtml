@@ -18,6 +18,13 @@
             </form>
         </div>
 
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger mt-4">
+                @TempData["ErrorMessage"]
+            </div>
+        }
+
         @if (Model == null || !Model.Any())
         {
             <h3 class="display-4 mt-4">Нет прикрепленных репетиторов</h3>

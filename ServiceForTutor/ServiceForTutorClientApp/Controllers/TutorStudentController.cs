@@ -36,13 +36,19 @@ namespace ServiceForTutorClientApp.Controllers
             var code = APIClient.GetRequest<InvitationCodeViewModel>($"api/InvitationCode/GetCodeValue?CodeValue={invitationCode}");
             if (APIClient.Client != null)
             {
-                if (code != null)
+                if (code != null && code.DateTimeEnd >= DateTime.Now)
                 {
                     APIClient.PostRequest("api/InvitationCode/AddTutorToStudent", new TutorStudentBindingModel
                     {
                         TutorId = code.UserId,
                         StudentId = APIClient.Client.Id
                     });
+                    return RedirectToAction("MyTutors");
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Код приглашения не верный";
+                    return RedirectToAction("MyTutors");
                 }
             }
             return RedirectToAction("MyTutors");

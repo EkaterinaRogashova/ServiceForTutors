@@ -13,27 +13,48 @@ namespace ServiceForTutorClientApp.Controllers
             _logger = logger;
         }
 
-        public IActionResult Schedule(int? tutorId)
+        public IActionResult Schedule(int? tutorId, string direction, string currentDate = null)
         {
+            DateTime date = string.IsNullOrEmpty(currentDate) ? DateTime.Today : DateTime.Parse(currentDate);
+            if (direction == "back")
+            {
+                date = date.AddDays(-7);
+            }
+            else if (direction == "forward")
+            {
+                date = date.AddDays(7);
+            }
+            // Вычисляем начало и конец недели
+            DateTime startOfWeek = date.AddDays(-(int)date.DayOfWeek);
+            DateTime endOfWeek = startOfWeek.AddDays(6);
+
             if (APIClient.Client == null)
             {
                 return Redirect("~Home/Enter");
             }
-            var schedule = APIClient.GetRequest<List<ScheduleViewModel>>($"api/schedule/GetScheduleList?TutorId={APIClient.Client.Id}");
+
+            // Изменяем запрос к API, передавая даты начала и конца недели
+            var schedule = APIClient.GetRequest<List<ScheduleViewModel>>($"api/schedule/GetScheduleList?TutorId={APIClient.Client.Id}&startDate={startOfWeek:yyyy-MM-dd}&endDate={endOfWeek:yyyy-MM-dd}");
+
             if (APIClient.Client.Role == "Tutor")
             {
-                schedule = APIClient.GetRequest<List<ScheduleViewModel>>($"api/schedule/GetScheduleList?TutorId={APIClient.Client.Id}");
+                schedule = APIClient.GetRequest<List<ScheduleViewModel>>($"api/schedule/GetScheduleList?TutorId={APIClient.Client.Id}&startDate={startOfWeek:yyyy-MM-dd}&endDate={endOfWeek:yyyy-MM-dd}");
             }
+
             if (APIClient.Client.Role == "Student")
             {
-                schedule = APIClient.GetRequest<List<ScheduleViewModel>>($"api/schedule/GetScheduleList?StudentId={APIClient.Client.Id}");
+                schedule = APIClient.GetRequest<List<ScheduleViewModel>>($"api/schedule/GetScheduleList?StudentId={APIClient.Client.Id}&startDate={startOfWeek:yyyy-MM-dd}&endDate={endOfWeek:yyyy-MM-dd}");
+
                 if (tutorId != null)
                 {
-                    schedule = APIClient.GetRequest<List<ScheduleViewModel>>($"api/schedule/GetScheduleList?TutorId={tutorId}");
+                    schedule = APIClient.GetRequest<List<ScheduleViewModel>>($"api/schedule/GetScheduleList?TutorId={tutorId}&startDate={startOfWeek:yyyy-MM-dd}&endDate={endOfWeek:yyyy-MM-dd}");
                 }
             }
+
+            ViewBag.CurrentDate = date;
             return View(schedule);
         }
+
 
         [HttpPost]
         public IActionResult AddTimeSlot(string date, string timeStart, string duration, string status)
@@ -90,6 +111,38 @@ namespace ServiceForTutorClientApp.Controllers
                 Status = "Available"
             });
             return Redirect($"/Schedule/Schedule?tutorId={tutorId}");
+        }
+
+        [HttpPost]
+        public IActionResult WeekBackOrForward(string currentDate, string direction)
+        {
+            DateTime date = DateTime.Parse(currentDate);
+
+            // Меняем дату в зависимости от нажатой кнопки
+            if (direction == "back")
+            {
+                date = date.AddDays(-7);
+            }
+            else if (direction == "forward")
+            {
+                date = date.AddDays(7);
+            }
+
+            // Получаем расписание для новой даты
+            var schedule = APIClient.GetRequest<List<ScheduleViewModel>>($"api/schedule/GetScheduleList?TutorId={APIClient.Client.Id}");
+
+            // Дополнительная логика для роли Tutor и Student
+            if (APIClient.Client.Role == "Tutor")
+            {
+                schedule = APIClient.GetRequest<List<ScheduleViewModel>>($"api/schedule/GetScheduleList?TutorId={APIClient.Client.Id}");
+            }
+            if (APIClient.Client.Role == "Student")
+            {
+                schedule = APIClient.GetRequest<List<ScheduleViewModel>>($"api/schedule/GetScheduleList?StudentId={APIClient.Client.Id}");
+            }
+            ViewBag.CurrentDate = date;
+
+            return RedirectToAction("Schedule", date);
         }
 
     }

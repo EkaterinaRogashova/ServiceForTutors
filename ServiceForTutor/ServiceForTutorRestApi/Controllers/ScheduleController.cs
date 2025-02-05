@@ -17,11 +17,12 @@ namespace ServiceForTutorRestApi.Controllers
         }
 
         [HttpGet]
-        public List<ScheduleViewModel>? GetScheduleList(int? tutorId, int? studentId)
+        public List<ScheduleViewModel>? GetScheduleList(int? tutorId, int? studentId, DateTime? startDate = null, DateTime? endDate = null)
         {
             try
             {
                 List<ScheduleViewModel> schedule;
+
                 if (tutorId != null && studentId == null)
                 {
                     schedule = _logic.ReadList(new ScheduleSearchModel { TutorId = tutorId });
@@ -33,6 +34,12 @@ namespace ServiceForTutorRestApi.Controllers
                 else
                 {
                     schedule = _logic.ReadList(new ScheduleSearchModel { StudentId = studentId, TutorId = tutorId });
+                }
+
+                // Фильтрация по дате
+                if (startDate.HasValue && endDate.HasValue)
+                {
+                    schedule = schedule.Where(s => s.DateTimeStart >= startDate.Value && s.DateTimeEnd <= endDate.Value).ToList();
                 }
 
                 // Преобразование дат в UTC
@@ -49,7 +56,6 @@ namespace ServiceForTutorRestApi.Controllers
                 throw;
             }
         }
-
 
         [HttpPost]
         public void AddTimeSlot(ScheduleBindingModel model)

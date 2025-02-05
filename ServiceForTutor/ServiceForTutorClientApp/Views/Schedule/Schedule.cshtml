@@ -1,4 +1,4 @@
-﻿@using ServiceForTutorContracts.ViewModels
+﻿﻿@using ServiceForTutorContracts.ViewModels
 @model List<ScheduleViewModel>
 
 @{
@@ -12,115 +12,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewData["Title"]</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
-        .time-slot-button {
-            width: 100%;
-            box-sizing: border-box;
-        }
-    </style>
 </head>
 <body>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
-    <div class="container mt-4">
+    <div class="container mt-4" style="min-width: 120%;">
         <div class="d-flex justify-content-between align-items-center">
-            <button class="btn btn-light" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px;" onclick="window.history.back();">
-                <i class="fas fa-arrow-left"></i>Назад
-            </button>
             <h1 class="display-4">Мое расписание</h1>
         </div>
-        
-        @if (APIClient.Client.Role == "Tutor")
-        {
-            <button class="btn btn-success"
-                    data-bs-toggle="modal"
-                    data-bs-target="#addTimeSlotModal" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px; margin-right: 40px; margin-bottom: 20px; margin-top: 10px;">
-                Добавить время
-            </button>
-        }
-        <div class="btn-group" role="group" aria-label="Basic example">
-            <button type="button" class="btn btn-secondary" onclick="previousWeek()">Предыдущая неделя</button>
-            <button type="button" class="btn btn-secondary" onclick="nextWeek()">Следующая неделя</button>
-        </div>
-        <script>
-            function previousWeek() {
-                alert("Функция 'previousWeek' еще не реализована.  Нужен AJAX запрос.");
-            }
 
-            function nextWeek() {
-                alert("Функция 'nextWeek' еще не реализована. Нужен AJAX запрос.");
-            }
-        </script>
-        @{
-            DateTime currentDate = DateTime.Today;
-            var datesOfWeek = GetDatesOfWeek(DateTime.Today);
-            var uniqueTimes = Model
-            .Select(x => x.DateTimeStart.TimeOfDay)
-            .Distinct()
-            .ToList();
-
-            var sortedUniqueTimes = uniqueTimes
-            .OrderBy(t => t)
-            .ToList();
-
-        }
-        <table class="table table-bordered" id="scheduleTable">
-            <thead>
-                <tr>
-                    <th>Время</th>
-                    @foreach (var day in datesOfWeek)
-                    {
-                        <th>@(day.ToString("dd MMMM")) <span style="font-size:smaller;">(@day.ToString("ddd"))</span></th>
-                    }
-                </tr>
-            </thead>
-            <tbody>
-    @foreach (var time in sortedUniqueTimes)
-    {
-            <tr>
-                <td>@time.ToString(@"hh\:mm")</td>
-                @foreach (var d in datesOfWeek)
-                {
-                    var timeSlot = Model.FirstOrDefault(m => m.DateTimeStart.TimeOfDay == time && m.DateTimeStart.Date == d);
-                    if (timeSlot != null)
-                    {
-                        var duration = (timeSlot.DateTimeEnd - timeSlot.DateTimeStart).TotalMinutes;
-                        var buttonHeight = Math.Max(20, (int)duration * 20);
-                        <td>
-                            @if (APIClient.Client.Role == "Student")
-                            {
-                                            <button class="time-slot-button" data-bs-toggle="modal" data-bs-target="#reservation"
-                                        data-id="@timeSlot.Id"
-                                        data-date="@timeSlot.DateTimeStart.ToString("yyyy-MM-dd")"
-                                        data-start-time="@timeSlot.DateTimeStart.ToString("HH:mm")"
-                                        data-end-time="@timeSlot.DateTimeEnd.ToString("HH:mm")"
-                                        data-tutor-id="@timeSlot.TutorId"
-                                        data-status="@timeSlot.Status">
-                                    @timeSlot.Status
-                                </button>
-                            } else{
-                                            <button class="time-slot-button" data-bs-toggle="modal" data-bs-target="#viewTimeSlot"
-                                        data-id="@timeSlot.Id"
-                                        data-date="@timeSlot.DateTimeStart.ToString("yyyy-MM-dd")"
-                                        data-start-time="@timeSlot.DateTimeStart.ToString("HH:mm")"
-                                        data-end-time="@timeSlot.DateTimeEnd.ToString("HH:mm")"
-                                        data-tutor-id="@timeSlot.TutorId"
-                                        data-status="@timeSlot.Status">
-                                     @timeSlot.Status
-                                </button>
-                            }
-                        </td>
-                    }
-                    else
-                    {
-                        <td></td>
-                    }
-                }
-            </tr>
-        
-    }
-</tbody>
-        </table>
         @functions {
             List<DateTime> GetDatesOfWeek(DateTime date)
             {
@@ -133,6 +33,87 @@
                 return dates;
             }
         }
+
+        @if (APIClient.Client.Role == "Tutor")
+        {
+            <button class="btn btn-action"
+                    data-bs-toggle="modal"
+                    data-bs-target="#addTimeSlotModal" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px; margin-right: 40px; margin-bottom: 20px; margin-top: 10px;">
+                Добавить время
+            </button>
+        }
+
+        @{
+            DateTime currentDate = ViewBag.CurrentDate != null ? (DateTime)ViewBag.CurrentDate : DateTime.Today;
+            var datesOfWeek = GetDatesOfWeek(currentDate);
+            var startOfWeek = datesOfWeek.First();
+
+            // Создаем структуру для временных слотов, сгруппированных по дате
+            var slotsByDate = datesOfWeek.ToDictionary(d => d, d =>
+            Model.Where(m => m.DateTimeStart.Date == d).ToList());
+
+            // Получаем уникальные времена из всех слотов для нового отображения каждого дня
+            var uniqueTimesByDay = datesOfWeek.ToDictionary(d => d, d =>
+            slotsByDate[d].Select(slot => slot.DateTimeStart.TimeOfDay).Distinct().OrderBy(t => t).ToList());
+        }
+
+        <div class="btn-group" role="group" aria-label="Basic example">
+            <form method="post" action="@Url.Action("Schedule", "Schedule")">
+                <input type="hidden" name="currentDate" value="@currentDate.ToString("yyyy-MM-dd")" />
+                <button type="submit" class="btn btn-active" name="direction" value="back">Предыдущая неделя</button>
+                <button type="submit" class="btn btn-active" name="direction" value="forward">Следующая неделя</button>
+            </form>
+        </div>
+
+        <div class="schedule-container">
+            @foreach (var day in datesOfWeek)
+            {
+                <div class="day-schedule">
+                    <h5>@(day.ToString("dddd, dd MMMM"))</h5> <!-- Заголовок с днем недели -->
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Временные слоты</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var time in uniqueTimesByDay[day]) // Используем уникальные времена для текущего дня
+                            {
+                                var timeSlot = slotsByDate[day].FirstOrDefault(m => m.DateTimeStart.TimeOfDay == time);
+                                var duration = timeSlot != null ? (int)(timeSlot.DateTimeEnd - timeSlot.DateTimeStart).TotalMinutes : 0;
+
+                                <tr>
+                                    <td style="vertical-align: top; text-align: center;">
+                                        @if (timeSlot != null)
+                                        {
+                                            var localStartDate = timeSlot.DateTimeStart.ToLocalTime();
+                                            var localEndDate = timeSlot.DateTimeEnd.ToLocalTime();
+
+                                            <button class="time-slot-button" data-bs-toggle="modal"
+                                                    data-bs-target="@((APIClient.Client.Role == "Student") ? "#reservation" : "#viewTimeSlot")"
+                                                    data-id="@timeSlot.Id"
+                                                    data-date="@localStartDate.ToString("yyyy-MM-dd")"
+                                                    data-start-time="@localStartDate.ToString("HH:mm")"
+                                                    data-end-time="@localEndDate.ToString("HH:mm")"
+                                                    data-tutor-id="@timeSlot.TutorId"
+                                                    data-status="@timeSlot.Status">
+                                                @timeSlot.Status <br />
+                                                @localStartDate.ToString("HH:mm") - @localEndDate.ToString("HH:mm")
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <span style="display: block; height: 20px;"></span> <!-- Пустой элемент для визуального выравнивания -->
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+        
 
 
         <div class="modal fade" id="addTimeSlotModal" tabindex="-1" role="dialog" aria-labelledby="addTimeSlotModalLabel" aria-hidden="true">
@@ -276,7 +257,7 @@
             </div>
         </div>
     </div>
-    
+
 </body>
 @section Scripts {
     @{
@@ -376,17 +357,32 @@
 
 
 <style>
-.time-slot-button {
-    width: 90px;
-    background-color: plum;
-    color: white;
-    border: none;
-    cursor: pointer;
-    min-height: 30px; /* Минимальная высота кнопки для видимости */
-    transition: height 0.3s; /* Плавный переход высоты, если требуется */
-}
+    .time-slot-button {
+        border-radius: 10px;
+        width: 90%; /* Ширина кнопки 90% от ширины ячейки */
+        background-color: plum;
+        color: white;
+        border: none;
+        cursor: pointer;
+        min-height: 30px; /* Минимальная высота кнопки для видимости */
+        transition: background-color 0.3s; /* Плавный переход цвета при наведении */
+        display: block; /* Чтобы margin работал */
+        margin: 0 auto; /* Центрирование кнопки */
+    }
 
-.time-slot-button:hover {
-    background-color: mediumorchid; /* Цвет при наведении для улучшения UX */
-}
+    .schedule-container {
+        display: flex;
+        flex-wrap: wrap; /* Вертикальное расположение таблиц */
+        gap: 10px; /* Интервал между таблицами */
+    }
+
+    .day-schedule {
+        border: 1px solid #ccc; /* Граница вокруг каждой таблицы */
+        padding: 5px; /* Отступ внутри таблицы */
+        border-radius: 5px; /* Закругленные углы */
+        max-width: 12%; /* Ограничиваем максимальную ширину таблицы */
+    }
+    .time-slot-button:hover {
+        background-color: mediumorchid; /* Цвет при наведении для улучшения UX */
+    }
 </style>
