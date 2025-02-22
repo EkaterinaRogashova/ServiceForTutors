@@ -4,6 +4,15 @@ using ServiceForTutorDatabaseImplements.Implements;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddDistributedMemoryCache();
+
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Установите время жизни сеанса
+    options.Cookie.HttpOnly = true; // Защита от JavaScript
+    options.Cookie.IsEssential = true; // Требуется в некоторых сценариях
+});
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddTransient<IAssignedTaskStorage, AssignedTaskStorage>();
@@ -32,6 +41,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseSession();
 
 app.UseAuthorization();
 

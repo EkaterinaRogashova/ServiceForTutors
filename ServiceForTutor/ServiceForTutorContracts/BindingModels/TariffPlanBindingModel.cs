@@ -18,6 +18,10 @@ namespace ServiceForTutorContracts.BindingModels
         public int PeriodInDays { get; set; }
 
         public string Status { get; set; } = string.Empty;
+        public int? StudentCount { get; set; }
+        public int? TaskCount { get; set; }
+        public bool AudioInTask { get; set; }
+        public bool VideoInTask { get; set; }
 
         public int Id { get; set; }
     }

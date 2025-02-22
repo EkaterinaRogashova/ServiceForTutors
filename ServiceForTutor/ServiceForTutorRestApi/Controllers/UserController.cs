@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ServiceForTutorBusinessLogic.MailWorker;
 using ServiceForTutorContracts.BindingModels;
 using ServiceForTutorContracts.BusinessLogicContracts;
 using ServiceForTutorContracts.SearchModels;
@@ -12,10 +13,25 @@ namespace ServiceForTutorRestApi.Controllers
     {
         private readonly IUserLogic _logic;
         private readonly ITutorStudentLogic _tutorStudentLogic;
-        public UserController(IUserLogic logic, ITutorStudentLogic tutorStudentLogic)
+        private readonly AbstractMailWorker _mailWorker;
+        public UserController(IUserLogic logic, ITutorStudentLogic tutorStudentLogic, AbstractMailWorker mailWorker)
         {
             _logic = logic;
             _tutorStudentLogic = tutorStudentLogic;
+            _mailWorker = mailWorker;
+        }
+
+        [HttpPost]
+        public void SendToMail(MailSendInfoBindingModel model)
+        {
+            try
+            {
+                _mailWorker.MailSendAsync(model);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
 
         [HttpGet]

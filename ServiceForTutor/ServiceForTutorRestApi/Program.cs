@@ -1,5 +1,7 @@
 using Microsoft.OpenApi.Models;
 using ServiceForTutorBusinessLogic.BusinessLogic;
+using ServiceForTutorBusinessLogic.MailWorker;
+using ServiceForTutorContracts.BindingModels;
 using ServiceForTutorContracts.BusinessLogicContracts;
 using ServiceForTutorContracts.StoragesContracts;
 using ServiceForTutorDatabaseImplements.Implements;
@@ -48,9 +50,21 @@ builder.Services.AddTransient<IUserLogic, UserLogic>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
-
+builder.Services.AddSingleton<AbstractMailWorker, MailKitWorker>();
 
 var app = builder.Build();
+
+var mailSender = app.Services.GetService<AbstractMailWorker>();
+
+mailSender?.MailConfig(new MailConfigBindingModel
+{
+    MailLogin = builder.Configuration?.GetSection("MailLogin")?.Value?.ToString() ?? string.Empty,
+    MailPassword = builder.Configuration?.GetSection("MailPassword")?.Value?.ToString() ?? string.Empty,
+    SmtpClientHost = builder.Configuration?.GetSection("SmtpClientHost")?.Value?.ToString() ?? string.Empty,
+    SmtpClientPort = Convert.ToInt32(builder.Configuration?.GetSection("SmtpClientPort")?.Value?.ToString()),
+    PopHost = builder.Configuration?.GetSection("PopHost")?.Value?.ToString() ?? string.Empty,
+    PopPort = Convert.ToInt32(builder.Configuration?.GetSection("PopPort")?.Value?.ToString())
+});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

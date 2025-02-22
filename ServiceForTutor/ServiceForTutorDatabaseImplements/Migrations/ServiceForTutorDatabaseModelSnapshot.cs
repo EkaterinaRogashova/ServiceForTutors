@@ -30,10 +30,10 @@ namespace ServiceForTutorDatabaseImplements.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("DateTimeEnd")
+                    b.Property<DateTime?>("DateTimeEnd")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime>("DateTimeStart")
+                    b.Property<DateTime?>("DateTimeStart")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<float>("Grade")
@@ -248,6 +248,9 @@ namespace ServiceForTutorDatabaseImplements.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("AudioInTask")
+                        .HasColumnType("boolean");
+
                     b.Property<decimal>("Cost")
                         .HasColumnType("numeric");
 
@@ -265,6 +268,15 @@ namespace ServiceForTutorDatabaseImplements.Migrations
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int?>("StudentCount")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("TaskCount")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("VideoInTask")
+                        .HasColumnType("boolean");
 
                     b.HasKey("Id");
 
@@ -337,7 +349,6 @@ namespace ServiceForTutorDatabaseImplements.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("LastName")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Name")

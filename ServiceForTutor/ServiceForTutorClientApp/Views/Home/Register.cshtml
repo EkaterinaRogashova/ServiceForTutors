@@ -1,4 +1,6 @@
-﻿@{
+﻿@using ServiceForTutorContracts.ViewModels
+@model UserViewModel
+@{
     ViewData["Title"] = "Регистрация";
 }
 
@@ -8,6 +10,15 @@
         <button id="teacherBtn" class="role-button rounded rounded w-100 me-2" style="background-color: #FDF8FF; border-radius: 40px;">Я учитель</button>
         <button id="studentBtn" class="role-button rounded rounded w-100 me-2" style="background-color: #FDF8FF;">Я ученик</button>
     </div>
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger">
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <p>@error.ErrorMessage</p>
+            }
+        </div>
+    }
     <form method="post" id="registrationForm" class="border p-4 rounded">
         <input type="hidden" name="role" id="roleField" value="">
         <div class="mb-4">
@@ -34,16 +45,40 @@
             <input type="password" name="password" class="form-control form-control-lg rounded" id="InputPassword1" required style="background-color: #FDF8FF; border: none;">
             <div class="invalid-feedback">Пожалуйста, введите пароль.</div>
         </div>
-
+        
         <div class="mb-4">
-            <button type="submit" class="btn btn-lg w-100 rounded" style="background-color: #C5A8EA; color: #300E36;">Зарегистрироваться</button>
+            <button type="button" id="sendCodeButton" class="btn btn-lg w-100 rounded" style="background-color: #C5A8EA; color: #300E36;">Зарегистрироваться</button>
         </div>
     </form>
+    
     <div class="mt-4">
         <span>Уже есть аккаунт? </span>
         <a href="@Url.Action("Enter", "Home")" class="btn btn-link">Войти</a>
     </div>
 </div>
+
+<div class="modal fade" id="verificationModal" tabindex="-1" role="dialog" aria-labelledby="verificationModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="border-radius: 15px;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="verificationModalLabel">Введите код подтверждения</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Закрыть" style="border: none; background: none;">
+                    <span aria-hidden="true" style="font-size: 1.5rem;">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Пожалуйста, проверьте свою электронную почту на наличие кода подтверждения. Если вы не получили код, можете запросить новый, нажав кнопку "Отправить код снова".</p>
+                <input type="text" id="verificationCode" class="form-control" placeholder="Введите код" required />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 10px; background-color: #300E36; color: #C5A8EA;">Закрыть</button>
+                <button type="button" id="verifyCodeButton" class="btn btn-primary" style="border-radius: 10px; background-color: #C5A8EA; color: #300E36;">Подтвердить</button>
+                <button type="button" id="resendCodeButton" class="btn btn-link">Отправить код снова</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <style>
     .containerenter {
@@ -78,6 +113,16 @@
         cursor: pointer;
         width: 48%; /* Зададим ширину кнопок */
     }
+
+    .alert {
+        padding: 10px; /* Уменьшить внутренние отступы */
+        margin-bottom: 10px; /* Уменьшить отступы снизу */
+    }
+
+        .alert p {
+            margin: 0; /* Убрать отступы для абзацев */
+            line-height: 1.2; /* Уменьшить межстрочный интервал */
+        }
 </style>
 
 <script>
@@ -88,11 +133,84 @@
         teacherBtn.style.backgroundColor = '#C5A8EA';
         studentBtn.style.backgroundColor = '#FDF8FF';
         roleField.value = 'Tutor';
+        errorAlert.style.display = 'none';
     }
 
     studentBtn.onclick = function () {
         studentBtn.style.backgroundColor = '#C5A8EA';
         teacherBtn.style.backgroundColor = '#FDF8FF';
         roleField.value = 'Student';
+        errorAlert.style.display = 'none';
     }
+
+    function errorAlert(message) {
+        alert(message);
+    }
+
+
+    document.getElementById('sendCodeButton').onclick = function () {
+        const email = document.querySelector('input[name="login"]').value;
+        console.log("fff");
+        console.log("Email перед отправкой:", email);
+        // AJAX запрос для отправки кода
+        fetch('SendVerificationCode', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email: email })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Открыть модальное окно
+                    $('#verificationModal').modal('show');
+                } else {
+                    alert(data.message);
+                }
+            });
+    };
+
+    // Подтвердить код
+    document.getElementById('verifyCodeButton').onclick = function () {
+        const enteredCode = document.getElementById('verificationCode').value;
+
+        fetch('/Home/VerifyCode', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ code: enteredCode })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Код подтвержден, переходим к регистрации
+                    document.getElementById('registrationForm').submit(); // Или другой способ завершить регистрацию
+                } else {
+                    alert(data.message);
+                }
+            });
+    };
+
+    document.getElementById('resendCodeButton').onclick = function () {
+        const email = document.querySelector('input[name="login"]').value;
+
+        // Снова отправляем код
+        fetch('/Home/SendVerificationCode', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email: email })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Код отправлен снова на вашу почту.");
+                } else {
+                    alert(data.message);
+                }
+            });
+    };
 </script>

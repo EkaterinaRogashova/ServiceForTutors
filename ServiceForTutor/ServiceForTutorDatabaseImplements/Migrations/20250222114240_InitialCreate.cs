@@ -22,7 +22,11 @@ namespace ServiceForTutorDatabaseImplements.Migrations
                     Description = table.Column<string>(type: "text", nullable: false),
                     Cost = table.Column<decimal>(type: "numeric", nullable: false),
                     PeriodInDays = table.Column<int>(type: "integer", nullable: false),
-                    Status = table.Column<string>(type: "text", nullable: false)
+                    Status = table.Column<string>(type: "text", nullable: false),
+                    StudentCount = table.Column<int>(type: "integer", nullable: true),
+                    TaskCount = table.Column<int>(type: "integer", nullable: true),
+                    AudioInTask = table.Column<bool>(type: "boolean", nullable: false),
+                    VideoInTask = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -39,7 +43,7 @@ namespace ServiceForTutorDatabaseImplements.Migrations
                     Password = table.Column<string>(type: "text", nullable: false),
                     Surname = table.Column<string>(type: "text", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
-                    LastName = table.Column<string>(type: "text", nullable: false),
+                    LastName = table.Column<string>(type: "text", nullable: true),
                     StatusActivity = table.Column<string>(type: "text", nullable: false),
                     Role = table.Column<string>(type: "text", nullable: false)
                 },
@@ -203,8 +207,8 @@ namespace ServiceForTutorDatabaseImplements.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     TaskId = table.Column<int>(type: "integer", nullable: false),
                     StudentId = table.Column<int>(type: "integer", nullable: false),
-                    DateTimeStart = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    DateTimeEnd = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    DateTimeStart = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    DateTimeEnd = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     Grade = table.Column<float>(type: "real", nullable: false),
                     Status = table.Column<string>(type: "text", nullable: false)
                 },

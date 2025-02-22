@@ -36,7 +36,7 @@ namespace ServiceForTutorClientApp.Controllers
             var code = APIClient.GetRequest<InvitationCodeViewModel>($"api/InvitationCode/GetCodeValue?CodeValue={invitationCode}");
             if (APIClient.Client != null)
             {
-                if (code != null && code.DateTimeEnd >= DateTime.Now)
+                if (code != null && code.DateTimeEnd.ToLocalTime() >= DateTime.Now)
                 {
                     APIClient.PostRequest("api/InvitationCode/AddTutorToStudent", new TutorStudentBindingModel
                     {

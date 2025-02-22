@@ -24,6 +24,13 @@ namespace ServiceForTutorDatabaseImplements.Models
         [Required]
         public string Status { get; set; } = string.Empty;
 
+        public int? StudentCount { get; set; }
+        public int? TaskCount { get; set; }
+        [Required]
+        public bool AudioInTask { get; set; }
+        [Required]
+        public bool VideoInTask { get; set; }
+
         public int Id { get; set; }
 
         public static TariffPlan? Create(TariffPlanBindingModel model)
@@ -39,7 +46,11 @@ namespace ServiceForTutorDatabaseImplements.Models
                 Description = model.Description,
                 Cost = model.Cost,
                 PeriodInDays = model.PeriodInDays,
-                Status = model.Status
+                Status = model.Status,
+                StudentCount = model.StudentCount,
+                TaskCount = model.TaskCount,
+                AudioInTask = model.AudioInTask,
+                VideoInTask = model.VideoInTask
             };
         }
         public static TariffPlan Create(TariffPlanViewModel model)
@@ -51,7 +62,11 @@ namespace ServiceForTutorDatabaseImplements.Models
                 Description = model.Description,
                 Cost = model.Cost,
                 PeriodInDays = model.PeriodInDays,
-                Status = model.Status
+                Status = model.Status,
+                StudentCount = model.StudentCount,
+                TaskCount = model.TaskCount,
+                AudioInTask = model.AudioInTask,
+                VideoInTask = model.VideoInTask
             };
         }
 
@@ -70,7 +85,11 @@ namespace ServiceForTutorDatabaseImplements.Models
             Description = Description,
             Cost = Cost,
             PeriodInDays = PeriodInDays,
-            Status = Status
+            Status = Status,
+            StudentCount = StudentCount,
+            TaskCount = TaskCount,
+            AudioInTask = AudioInTask,
+            VideoInTask = VideoInTask
         };
     }
 }

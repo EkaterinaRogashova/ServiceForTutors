@@ -4,6 +4,7 @@ using ServiceForTutorClientApp.Models;
 using ServiceForTutorContracts.BindingModels;
 using ServiceForTutorContracts.ViewModels;
 using ServiceForTutorDatabaseImplements.Models;
+using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Diagnostics;
 using System.Security.Cryptography;
@@ -18,6 +19,43 @@ namespace ServiceForTutorClientApp.Controllers
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
+        }
+
+        private void SendEmail(string email, string code)
+        {
+            APIClient.PostRequest("api/user/SendToMail", new MailSendInfoBindingModel
+            {
+                MailAddress = email,
+                Subject = "Подтверждение почты",
+                Text = code
+            });
+        }
+
+        private string GenerateVerificationCode()
+        {
+            var random = new Random();
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            return new string(Enumerable.Repeat(chars, 6)
+              .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
+
+        [HttpPost]
+        public IActionResult SendVerificationCode([FromBody] Dictionary<string, string> data)
+        {
+            if (!data.TryGetValue("email", out var email) || string.IsNullOrEmpty(email))
+            {
+                return Json(new { success = false, message = "Email не может быть пустым." });
+            }
+            // Генерация 6-символьного кода подтверждения
+            var verificationCode = GenerateVerificationCode();
+
+            // Сохраните код в временное хранилище (например, в сессии, базе данных и т.д.)
+            HttpContext.Session.SetString("VerificationCode", verificationCode);
+
+            // Отправка письма
+            SendEmail(email, verificationCode); // Реализуйте метод отправки почты
+
+            return Json(new { success = true, message = "Код подтверждения отправлен." });
         }
 
         public IActionResult Index()
@@ -56,8 +94,14 @@ namespace ServiceForTutorClientApp.Controllers
         }
 
         [HttpPost]
-        public IActionResult Register(string login, string password, string surname, string name, string lastname, string role)
+        public IActionResult Register(string login, string password, string surname, string name, string? lastname, string? role)
         {
+            
+            if (string.IsNullOrEmpty(role))
+            {
+                ModelState.AddModelError("role", "Пожалуйста, выберите роль.");
+                return View();
+            }
             string returnUrl = HttpContext.Request.Headers["Referer"].ToString();
 
             APIClient.PostRequest("api/User/Register", new UserBindingModel
@@ -72,6 +116,27 @@ namespace ServiceForTutorClientApp.Controllers
             });
 
             return RedirectToAction("Enter");
+        }
+
+        [HttpPost]
+        public IActionResult VerifyCode([FromBody] Dictionary<string, string> data)
+        {
+            if (!data.TryGetValue("code", out var code) || string.IsNullOrEmpty(code))
+            {
+                return Json(new { success = false, message = "Код не может быть пустым." });
+            }
+            // Получение сохраненного кода из сессии
+            var storedCode = HttpContext.Session.GetString("VerificationCode");
+
+            if (code == storedCode)
+            {
+                // Код подтвержден, можно продолжать регистрацию
+                return Json(new { success = true, message = "Код подтвержден." });
+            }
+            else
+            {
+                return Json(new { success = false, message = "Неверный код. Попробуйте снова." });
+            }
         }
 
         public IActionResult Profile()

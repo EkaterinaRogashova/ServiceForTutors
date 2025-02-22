@@ -11,8 +11,8 @@ namespace ServiceForTutorContracts.BindingModels
     {
         public int TaskId { get; set; }
         public int StudentId { get; set; }
-        public DateTime DateTimeStart { get; set; }
-        public DateTime DateTimeEnd { get; set; }
+        public DateTime? DateTimeStart { get; set; }
+        public DateTime? DateTimeEnd { get; set; }
         public float Grade { get; set; }
         public string Status { get; set; } = string.Empty;
 

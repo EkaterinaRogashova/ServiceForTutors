@@ -18,8 +18,8 @@ namespace ServiceForTutorDatabaseImplements.Models
         public int TaskId { get; set; }
         [Required]
         public int StudentId { get; set; }
-        public DateTime DateTimeStart { get; set; }
-        public DateTime DateTimeEnd { get; set; }
+        public DateTime? DateTimeStart { get; set; }
+        public DateTime? DateTimeEnd { get; set; }
         public float Grade { get; set; }
         [Required]
         public string Status { get; set; } = string.Empty;

@@ -13,7 +13,7 @@ namespace ServiceForTutorContracts.ViewModels
         public string Password { get; set; } = string.Empty;
         public string Surname { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
-        public string LastName { get; set; } = string.Empty;
+        public string? LastName { get; set; } = string.Empty;
         public string StatusActivity { get; set; } = string.Empty;
         public string Role { get; set; } = string.Empty;
         public string FullName { get; set; } = string.Empty;

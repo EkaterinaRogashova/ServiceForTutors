@@ -11,8 +11,8 @@ namespace ServiceForTutorDataModels.Models
     {
         int TaskId { get; set; }
         int StudentId { get; set; }
-        DateTime DateTimeStart { get; set; }
-        DateTime DateTimeEnd { get; set; }
+        DateTime? DateTimeStart { get; set; }
+        DateTime? DateTimeEnd { get; set; }
         float Grade { get; set; }
         string Status { get; set; }
     }

@@ -36,8 +36,8 @@
                                 <td>@Html.DisplayFor(modelItem => item.TaskTopic)</td>
                                 <td>@Html.DisplayFor(modelItem => item.StudentFIO)</td>
                                 <td>@Html.DisplayFor(modelItem => item.Status)</td>
-                                <td>@item.DateTimeStart.ToLocalTime().ToString("dd.MM.yyyy HH.mm")</td>
-                                <td>@item.DateTimeEnd.ToLocalTime().ToString("dd.MM.yyyy HH.mm")</td>
+                                <td>@item.DateTimeStart?.ToLocalTime().ToString("dd.MM.yyyy HH.mm")</td>
+                                <td>@item.DateTimeEnd?.ToLocalTime().ToString("dd.MM.yyyy HH.mm")</td>
 
                                 <td>
                                     @if (item.Status == "Assign")
@@ -61,8 +61,8 @@
                                 <td>@Html.DisplayFor(modelItem => item.TaskName)</td>
                                 <td>@Html.DisplayFor(modelItem => item.TaskTopic)</td>
                                 <td>@Html.DisplayFor(modelItem => item.Status)</td>
-                                <td>@item.DateTimeStart.ToString("dd.MM.yyyy HH.mm")</td>
-                                <td>@item.DateTimeEnd.ToString("dd.MM.yyyy HH.mm")</td>
+                                <td>@item.DateTimeStart?.ToString("dd.MM.yyyy HH.mm")</td>
+                                <td>@item.DateTimeEnd?.ToString("dd.MM.yyyy HH.mm")</td>
 
                                 <td>
                                     @if (item.Status == "Assign")

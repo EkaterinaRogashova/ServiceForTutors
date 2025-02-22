@@ -14,5 +14,9 @@ namespace ServiceForTutorDataModels.Models
         decimal Cost { get; }
         int PeriodInDays { get; }
         string Status { get; }
+        int? StudentCount { get; }
+        int? TaskCount { get; }
+        bool AudioInTask { get; }
+        bool VideoInTask { get; }
     }
 }
