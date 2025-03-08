@@ -84,7 +84,10 @@ namespace ServiceForTutorBusinessLogic.BusinessLogic
             {
                 return;
             }
-
+            if (model.DateTimeStart >= model.DateTimeEnd)
+            {
+                throw new ArgumentException("Дата начала должна быть меньше даты окончания.");
+            }
             var element = _assignedTaskStorage.GetElement(new AssignedTaskSearchModel
             {
                 Id = model.Id,

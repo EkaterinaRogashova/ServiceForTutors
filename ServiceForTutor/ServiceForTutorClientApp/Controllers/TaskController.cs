@@ -133,7 +133,7 @@ namespace ServiceForTutorClientApp.Controllers
             }
             var taskDetails = APIClient.GetRequest<TaskViewModel>($"api/task/GetTask?TaskId={id}");
             var taskQuestions = APIClient.GetRequest<List<QuestionViewModel>>($"api/task/GetQuestionsByTask?TaskId={id}");
-            var viewModel = new TaskViewModel // Замените TaskViewModel на вашу модель представления, которая содержит как задание, так и вопросы
+            var viewModel = new TaskViewModel
             {
                 Id = id,
                 Name = taskDetails.Name,
@@ -149,6 +149,11 @@ namespace ServiceForTutorClientApp.Controllers
         [HttpPost]
         public IActionResult AssignTask(int id, int studentId, DateTime startDate, DateTime endDate)
         {
+            if (startDate >= endDate)
+            {
+                TempData["ErrorMessage"] = "Дата начала должна быть меньше даты окончания.";
+                return RedirectToAction("ViewTask", new { id = id });
+            }
             APIClient.PostRequest("api/Task/CreateAssignTask", new AssignedTaskBindingModel
             {
                 TaskId = id,
@@ -160,18 +165,34 @@ namespace ServiceForTutorClientApp.Controllers
             return RedirectToAction("ViewTask", new { id = id });
         }
 
-        public IActionResult AssignedTasks()
+        public IActionResult AssignedTasks(int studentId)
         {
             if (APIClient.Client == null)
             {
                 return Redirect("~Home/Enter");
             }
-            var tasks = APIClient.GetRequest<List<AssignedTaskViewModel>>($"api/task/GetAssignedTaskList?StudentId={APIClient.Client.Id}");
-            if (APIClient.Client.Role == "Tutor") 
-            {
-                tasks = APIClient.GetRequest<List<AssignedTaskViewModel>>($"api/task/GetAssignedTaskList?TutorId={APIClient.Client.Id}");
-                return View(tasks);
+            var tasks = new List<AssignedTaskViewModel>();
+            var studentName = string.Empty;
+            if (APIClient.Client.Role == "Student"){
+                tasks = APIClient.GetRequest<List<AssignedTaskViewModel>>($"api/task/GetAssignedTaskList?StudentId={APIClient.Client.Id}");
             }
+            else if (APIClient.Client.Role == "Tutor") 
+            {
+                if (studentId > 0)
+                {
+                    tasks = APIClient.GetRequest<List<AssignedTaskViewModel>>($"api/task/GetAssignedTaskList?StudentId={studentId}");
+                    var student = APIClient.GetRequest<UserViewModel>($"api/user/GetUser?UserId={studentId}");
+                    if (student != null)
+                    {
+                        studentName = $"{student.Surname} {student.Name}";
+                    }
+                }
+                else
+                {
+                    tasks = APIClient.GetRequest<List<AssignedTaskViewModel>>($"api/task/GetAssignedTaskList?TutorId={APIClient.Client.Id}");
+                }
+            }
+            ViewData["Title"] = string.IsNullOrEmpty(studentName) ? "Назначенные задания" : $"Назначенные задания {studentName}";
             return View(tasks);
         }
 

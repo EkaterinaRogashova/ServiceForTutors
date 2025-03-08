@@ -14,7 +14,7 @@
                 <form asp-action="EditProfile" method="post">
                     <div class="mb-3">
                         <label for="userName" class="form-label">Имя</label>
-                        <input type="text" id="userName" class="form-control" asp-for="Name" />
+                        <input type="text" id="userName" required class="form-control" asp-for="Name" />
                     </div>
                     <div class="mb-3">
                         <label for="userLastname" class="form-label">Отчество</label>
@@ -22,7 +22,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="userSurname" class="form-label">Фамилия</label>
-                        <input type="text" id="userSurname" class="form-control" asp-for="Surname" />
+                        <input type="text" id="userSurname" required class="form-control" asp-for="Surname" />
                     </div>
                     <div class="text-center">
                         <button type="submit" class="btn" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px;">Сохранить изменения</button>

@@ -77,7 +77,8 @@ namespace ServiceForTutorClientApp.Controllers
 
             if (APIClient.Client == null)
             {
-                return RedirectToAction("Error", new { errorMessage = "Неверный логин/пароль", returnUrl });
+                ModelState.AddModelError("enter", "Неверный логин или пароль. Попробуйте еще раз!");
+                return View();
             }
 
             return RedirectToAction("Index");

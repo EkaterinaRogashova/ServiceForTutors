@@ -17,15 +17,27 @@ namespace ServiceForTutorClientApp.Controllers
         [HttpPost]
         public IActionResult CreateReview(string content, int rating)
         {
-            APIClient.PostRequest("api/Review/CreateReview", new ReviewBindingModel
+            if (rating < 1 || rating > 5)
             {
-                
+                TempData["ErrorMessage"] = "Пожалуйста, выберите оценку от 1 до 5.";
+                return RedirectToAction("CreateReview");
+            }
+
+            var response = APIClient.PostRequestApiResponse("api/Review/CreateReview", new ReviewBindingModel
+            {
                 TutorId = APIClient.Client.Id,
                 Content = content,
                 Rating = rating,
                 DateTimeCreated = DateTime.Now.ToUniversalTime(),
             });
 
+            if (!response.Success)
+            {
+                TempData["ErrorMessage"] = "Произошла ошибка при отправке отзыва. Пожалуйста, попробуйте еще раз.";
+                return RedirectToAction("CreateReview");
+            }
+
+            TempData["SuccessMessage"] = "Ваш отзыв отправлен! Спасибо за обратную связь.";
             return RedirectToAction("CreateReview");
         }
     }

@@ -1,13 +1,9 @@
 ﻿@using ServiceForTutorContracts.ViewModels
 @model List<AssignedTaskViewModel>
 
-@{
-    ViewData["Title"] = "Назначенные задания";
-}
-
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center">
-        <h1 class="display-4">Назначенные задания</h1>
+        <h1 class="display-4">@ViewData["Title"]</h1>
     </div>
     <div class="text-center mt-4">
         @{

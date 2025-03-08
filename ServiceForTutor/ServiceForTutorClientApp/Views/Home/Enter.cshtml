@@ -14,6 +14,15 @@
             <label for="InputPassword1" class="form-label" style="font-size: 24px;">Введите пароль</label>
             <input type="password" name="password" class="form-control form-control-lg rounded" id="InputPassword1" placeholder="********" required style="background-color: #FDF8FF;">
         </div>
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert alert-danger">
+                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <p>@error.ErrorMessage</p>
+                }
+            </div>
+        }
         <div class="mb-4">
             <button type="submit" class="btn btn-lg w-100 rounded" style="background-color: #C5A8EA; color: #300E36;">Войти</button>
         </div>

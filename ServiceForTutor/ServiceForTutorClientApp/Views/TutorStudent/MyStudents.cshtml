@@ -47,7 +47,7 @@
                             <td>@item.Name</td>
                             <td>@item.LastName</td>
                             <td>
-                                <a class="btn btn-action btn-sm" asp-action="ViewTasksForStudent" asp-route-id="@item.Id" style="height: 40px;">Назначенные задания</a>
+                                <a class="btn btn-action btn-sm" asp-controller="Task" asp-action="AssignedTasks" asp-route-studentId="@item.Id" style="height: 40px;">Назначенные задания</a>
                                 <a class="btn btn-action btn-sm" asp-action="DeleteStudent" asp-route-id="@item.Id" style="height: 40px;" onclick="return confirm('Вы уверены, что хотите удалить ученика?');">Удалить</a>
                             </td>
                         </tr>

@@ -5,6 +5,7 @@
 }
 <head>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <meta charset="utf-8">
 </head>
 <body>
     <div class="container mt-5">
@@ -85,6 +86,21 @@
             }
         </div>
 
+        <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="errorModalLabel">Ошибка!</h5>
+                    </div>
+                    <div class="modal-body">
+                        <p id="modalMessage"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="modal fade" id="assignTaskModal" tabindex="-1" role="dialog" aria-labelledby="assignTaskModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content" style="border-radius: 15px;">
@@ -127,5 +143,17 @@
             </div>
         </div>
     </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var errorMessage = @Html.Raw(Json.Serialize(TempData["ErrorMessage"]));
+            if (errorMessage) {
+                $('#modalMessage').text(errorMessage);
+                $('#errorModal').modal('show');
+            }
+        });
+
+    </script>
 </body>
 

@@ -141,15 +141,28 @@ namespace ServiceForTutorRestApi.Controllers
         }
 
         [HttpPost]
-        public void CreateAssignTask(AssignedTaskBindingModel model)
+        public IActionResult CreateAssignTask(AssignedTaskBindingModel model)
         {
             try
             {
                 _assignTaskLogic.Create(model);
+                return Ok();
+            }
+            catch (ArgumentNullException ex)
+            {
+                return BadRequest("Модель не может быть null.");
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest("Элемент с таким ID уже существует.");
             }
             catch (Exception ex)
             {
-                throw;
+                return StatusCode(500, "Произошла ошибка сервера.");
             }
         }
 

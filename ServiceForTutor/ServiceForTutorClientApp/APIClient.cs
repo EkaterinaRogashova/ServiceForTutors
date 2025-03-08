@@ -62,5 +62,47 @@ namespace ServiceForTutorClientApp
             var createdVisitor = JsonConvert.DeserializeObject<InvitationCodeBindingModel>(result);
             return createdVisitor.Id; // Предполагается, что у вас есть свойство Id в VisitorBindingModel
         }
+
+        
+
+        public static ApiResponse PostRequestApiResponse<T>(string requestUrl, T model)
+        {
+            var json = JsonConvert.SerializeObject(model);
+            var data = new StringContent(json, Encoding.UTF8, "application/json");
+
+            // Ожидаем результат асинхронного вызова
+            var response = _client.PostAsync(requestUrl, data).Result;
+
+            // Читаем содержимое ответа
+            var resultContent = response.Content.ReadAsStringAsync().Result;
+
+            if (!response.IsSuccessStatusCode)
+            {
+                // Можно бросить исключение или вернуть ошибку в ApiResponse
+                return new ApiResponse
+                {
+                    Success = false,
+                    Message = "Ошибка при выполнении запроса",
+                    Content = resultContent
+                };
+            }
+
+            // Возвращаем успех
+            return new ApiResponse
+            {
+                Success = true,
+                Message = "Запрос выполнен успешно",
+                Content = resultContent
+            };
+        }
+
+    }
+
+    public class ApiResponse
+    {
+        public bool Success { get; set; }
+        public string Message { get; set; }
+        public string Content { get; set; } // Для возможного возврата контента
     }
 }
+
