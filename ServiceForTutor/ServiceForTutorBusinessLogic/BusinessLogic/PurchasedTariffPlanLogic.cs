@@ -30,6 +30,16 @@ namespace ServiceForTutorBusinessLogic.BusinessLogic
             return true;
         }
 
+        public List<PurchasedTariffPlanViewModel>? ReadList(PurchasedTariffPlanSearchModel? model)
+        {
+            var list = _purchasedTariffPlanStorage.GetFilteredList(model);
+            if (list == null)
+            {
+                return null;
+            }
+            return list;
+        }
+
         public PurchasedTariffPlanViewModel? ReadElement(PurchasedTariffPlanSearchModel model)
         {
             if (model == null)

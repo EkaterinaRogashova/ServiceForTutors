@@ -19,5 +19,7 @@ namespace ServiceForTutorContracts.ViewModels
         public string FullName { get; set; } = string.Empty;
         public List<ReviewViewModel> Reviews { get; set; }
         public int Id { get; set; }
+        public string TariffName { get; set; } = string.Empty;
+        public string PurchasedTariffEnd { get; set; } = string.Empty;
     }
 }

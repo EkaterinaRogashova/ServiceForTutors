@@ -13,12 +13,16 @@ namespace ServiceForTutorRestApi.Controllers
     {
         private readonly IUserLogic _logic;
         private readonly ITutorStudentLogic _tutorStudentLogic;
+        private readonly IPurchasedTariffPlanLogic _purchasedTariffLogic;
+        private readonly ITariffPlanLogic _tariffLogic;
         private readonly AbstractMailWorker _mailWorker;
-        public UserController(IUserLogic logic, ITutorStudentLogic tutorStudentLogic, AbstractMailWorker mailWorker)
+        public UserController(IUserLogic logic, ITutorStudentLogic tutorStudentLogic, AbstractMailWorker mailWorker, IPurchasedTariffPlanLogic purchasedTariffLogic, ITariffPlanLogic tariffLogic)
         {
             _logic = logic;
             _tutorStudentLogic = tutorStudentLogic;
             _mailWorker = mailWorker;
+            _purchasedTariffLogic = purchasedTariffLogic;
+            _tariffLogic = tariffLogic;
         }
 
         [HttpPost]
@@ -69,10 +73,41 @@ namespace ServiceForTutorRestApi.Controllers
         {
             try
             {
-                return _logic.ReadElement(new UserSearchModel
+                var user = _logic.ReadElement(new UserSearchModel
                 {
                     Id = userId
                 });
+
+                var purchasedTariff = _purchasedTariffLogic.ReadElement(new PurchasedTariffPlanSearchModel
+                {
+                    TutorId = userId
+                });
+                if (purchasedTariff != null)
+                {
+                    var tariff = _tariffLogic.ReadElement(new TariffPlanSearchModel
+                    {
+                        Id = purchasedTariff.TariffPlanId
+                    });
+                    return new UserViewModel
+                    {
+                        Surname = user.Surname,
+                        Name = user.Name,
+                        LastName = user.LastName,
+                        Email = user.Email,
+                        TariffName = tariff.Name,
+                        PurchasedTariffEnd = purchasedTariff.DateEnd.ToString("dd.MM.yyyy")
+                    };
+                }
+
+                return new UserViewModel
+                {
+                    Surname = user.Surname,
+                    Name = user.Name,
+                    LastName = user.LastName,
+                    Email = user.Email
+                };
+
+                
             }
             catch (Exception ex)
             {

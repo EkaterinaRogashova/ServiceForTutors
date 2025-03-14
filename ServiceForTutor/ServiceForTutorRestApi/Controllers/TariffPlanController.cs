@@ -12,9 +12,11 @@ namespace ServiceForTutorRestApi.Controllers
     public class TariffPlanController : Controller
     {
         private readonly ITariffPlanLogic _logic;
-        public TariffPlanController(ITariffPlanLogic logic)
+        private readonly IPurchasedTariffPlanLogic _planLogic;
+        public TariffPlanController(ITariffPlanLogic logic, IPurchasedTariffPlanLogic planLogic)
         {
             _logic = logic;
+            _planLogic = planLogic;
         }
 
         [HttpGet]
@@ -68,6 +70,19 @@ namespace ServiceForTutorRestApi.Controllers
                 {
                     Id = tariffPlanId
                 });
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        [HttpPost]
+        public void Subscribe(PurchasedTariffPlanBindingModel model)
+        {
+            try
+            {
+                _planLogic.Create(model);
             }
             catch (Exception ex)
             {

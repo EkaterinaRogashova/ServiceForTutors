@@ -5,47 +5,69 @@
 }
 
 <div class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center">
-        <button class="btn btn-light" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px;" onclick="window.history.back();">
-            <i class="fas fa-arrow-left"></i>Назад
-        </button>
+    <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="text-center">@ViewData["Title"]</h2>
     </div>
-    <form asp-action="CreateTariff" method="post">
-        <div class="mb-3">
-            <label asp-for="Name" class="form-label">Название тарифа</label>
-            <input asp-for="Name" class="form-control" />
-            <span asp-validation-for="Name" class="text-danger"></span>
+    
+    <div class="card shadow-sm rounded">
+        <div class="card-body">
+            <form asp-action="CreateTariff" method="post">
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label">Название тарифа</label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label">Описание тарифа</label>
+                    <textarea asp-for="Description" class="form-control"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Cost" class="form-label">Цена</label>
+                    <input asp-for="Cost" class="form-control" type="number" step="0.01" />
+                    <span asp-validation-for="Cost" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="PeriodInDays" class="form-label">Срок действия (дни)</label>
+                    <input asp-for="PeriodInDays" class="form-control" type="number" />
+                    <span asp-validation-for="PeriodInDays" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Status" class="form-label">Статус</label>
+                    <select class="form-select" id="Status" name="Status">
+                        <option value="">Выберите статус</option>
+                        <option value="Active">Активный</option>
+                        <option value="Inactive">Неактивный</option>
+                    </select>
+                    <span asp-validation-for="Status" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="StudentCount" class="form-label">Количество студентов</label>
+                    <input asp-for="StudentCount" class="form-control" type="number" />
+                    <span asp-validation-for="StudentCount" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="TaskCount" class="form-label">Количество заданий</label>
+                    <input asp-for="TaskCount" class="form-control" type="number" />
+                    <span asp-validation-for="TaskCount" class="text-danger"></span>
+                </div>
+                <div class="mb-3 form-check">
+                    <input asp-for="AudioInTask" class="form-check-input" type="checkbox" />
+                    <label class="form-check-label" for="AudioInTask">Включает аудио в задачи</label>
+                </div>
+                <div class="mb-3 form-check">
+                    <input asp-for="VideoInTask" class="form-check-input" type="checkbox" />
+                    <label class="form-check-label" for="VideoInTask">Включает видео в задачи</label>
+                </div>
+
+                <div class="text-center mb-3">
+                    <button type="submit" class="btn" style="background-color: #C5A8EA; color: #300E36; border-radius: 40px; width: 200px;">Создать тариф</button>
+                </div>
+            </form>
         </div>
-        <div class="mb-3">
-            <label asp-for="Description" class="form-label">Описание тарифа</label>
-            <textarea asp-for="Description" class="form-control"></textarea>
-            <span asp-validation-for="Description" class="text-danger"></span>
-        </div>
-        <div class="mb-3">
-            <label asp-for="Cost" class="form-label">Цена</label>
-            <input asp-for="Cost" class="form-control" type="number" step="0.01" />
-            <span asp-validation-for="Cost" class="text-danger"></span>
-        </div>
-        <div class="mb-3">
-            <label asp-for="PeriodInDays" class="form-label">Срок действия (дни)</label>
-            <input asp-for="PeriodInDays" class="form-control" type="number" />
-            <span asp-validation-for="PeriodInDays" class="text-danger"></span>
-        </div>
-        <div class="mb-3">
-            <label asp-for="Status" class="form-label">Статус</label>
-            <select class="form-select" id="Status" name="Status">
-                <option value="">Выберите статус</option>
-                <option value="Active">Активный</option>
-                <option value="Inactive">Неактивный</option>
-            </select>
-            <span asp-validation-for="Status" class="text-danger"></span>
-        </div>
-        <div class="text-center">
-            <button type="submit" class="btn btn-primary">Создать тариф</button>
-        </div>
-    </form>
+    </div>
 </div>
+
 
 @section Scripts {
     @{

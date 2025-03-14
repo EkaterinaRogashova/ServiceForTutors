@@ -9,5 +9,6 @@ namespace ServiceForTutorContracts.SearchModels
     public class PurchasedTariffPlanSearchModel
     {
         public int? Id { get; set; }
+        public int? TutorId { get; set; }
     }
 }

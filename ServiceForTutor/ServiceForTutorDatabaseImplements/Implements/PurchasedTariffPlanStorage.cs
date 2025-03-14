@@ -16,8 +16,19 @@ namespace ServiceForTutorDatabaseImplements.Implements
         public PurchasedTariffPlanViewModel? GetElement(PurchasedTariffPlanSearchModel model)
         {
             using var context = new ServiceForTutorDatabase();
-            if (model.Id.HasValue)
-                return context.PurchasedTariffPlans.FirstOrDefault(x => x.Id == model.Id)?.GetViewModel;
+            if (model.TutorId.HasValue)
+                return context.PurchasedTariffPlans.FirstOrDefault(x => x.TutorId == model.TutorId)?.GetViewModel;
+            return null;
+        }
+
+        public List<PurchasedTariffPlanViewModel> GetFilteredList(PurchasedTariffPlanSearchModel model)
+        {
+            using var context = new ServiceForTutorDatabase();
+            if (model.TutorId.HasValue)
+            {
+                return context.PurchasedTariffPlans
+                .Where(x => x.TutorId == model.TutorId).Select(x => x.GetViewModel).ToList();
+            }
             return null;
         }
 

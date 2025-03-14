@@ -111,14 +111,15 @@
                     <h5 class="modal-title" id="successModalLabel">Успех!</h5>
                 </div>
                 <div class="modal-body">
-                    <p id="modalMessage"></p>
+                    <p id="successMessage"></p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
                 </div>
             </div>
         </div>
     </div>
+
     <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -126,7 +127,7 @@
                     <h5 class="modal-title" id="errorModalLabel">Ошибка!</h5>
                 </div>
                 <div class="modal-body">
-                    <p id="modalMessage"></p>
+                    <p id="errorMessage"></p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
@@ -140,12 +141,13 @@
         $(document).ready(function () {
             var errorMessage = @Html.Raw(Json.Serialize(TempData["ErrorMessage"]));
             var successMessage = @Html.Raw(Json.Serialize(TempData["SuccessMessage"]));
-            if ("@TempData["SuccessMessage"]" !== "") {
-                $('#modalMessage').text("@TempData["SuccessMessage"]");
+
+            if (successMessage) {
+                $('#successMessage').text(successMessage);
                 $('#successModal').modal('show');
             }
-            if ("@TempData["ErrorMessage"]" !== "") {
-                $('#modalMessage').text("@TempData["ErrorMessage"]");
+            if (errorMessage) {
+                $('#errorMessage').text(errorMessage);
                 $('#errorModal').modal('show');
             }
         });

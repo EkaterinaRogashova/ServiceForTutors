@@ -37,6 +37,9 @@
                     <div class="card-body">
                         <h5 class="card-title text-center">@tariff.Name</h5>
                         <p class="card-text">@tariff.Description</p>
+                        <p class="text-center">На этом тарифе Вам доступно:</p>
+                        <p class="text">- прикрепление до @tariff.StudentCount ученика(-ов)</p>
+                        <p class="text">- возможность создать до @tariff.TaskCount заданя(-ий)</p>
                         <h6 class="card-subtitle mb-2 text-muted text-center">@tariff.Cost.ToString("C")</h6>
                         <p class="text-center">Срок действия: @tariff.PeriodInDays дней</p>
                         @if (APIClient.Client != null)

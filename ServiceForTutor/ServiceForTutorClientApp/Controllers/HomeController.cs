@@ -147,6 +147,7 @@ namespace ServiceForTutorClientApp.Controllers
                 return Redirect("~/Home/Enter");
             }
             var userDetails = APIClient.GetRequest<UserViewModel>($"api/user/GetUser?UserId={APIClient.Client.Id}");
+            
             if (APIClient.Client.Role == "Admin")
             {
                 var reviews = APIClient.GetRequest<List<ReviewViewModel>>($"api/review/GetReviewList");
@@ -281,7 +282,7 @@ namespace ServiceForTutorClientApp.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateTariff(string name, string description, decimal cost, int periodInDays, string status)
+        public IActionResult CreateTariff(string name, string description, decimal cost, int periodInDays, string status, int studentCount, int taskCount)
         {
             APIClient.PostRequest("api/TariffPlan/CreateTariffPlan", new TariffPlanBindingModel
             {
@@ -289,7 +290,11 @@ namespace ServiceForTutorClientApp.Controllers
                 Description = description,
                 Cost = cost,
                 PeriodInDays = periodInDays,
-                Status = status
+                Status = status,
+                StudentCount = studentCount,
+                TaskCount = taskCount,
+                AudioInTask = false,
+                VideoInTask = false
             });
 
             return RedirectToAction("TariffPlans");
@@ -312,6 +317,23 @@ namespace ServiceForTutorClientApp.Controllers
                 {
                     Id = id,
                     Status = "Active"
+                });
+            }
+            return RedirectToAction("TariffPlans");
+        }
+
+        public IActionResult Subscribe(int planId)
+        {
+            var existingTariffPlan = APIClient.GetRequest<TariffPlanViewModel>($"api/TariffPlan/GetTariffPlan?TariffPlanId={planId}");
+            if (existingTariffPlan != null && APIClient.Client != null)
+            {
+                APIClient.PostRequest("api/TariffPlan/Subscribe", new PurchasedTariffPlanBindingModel
+                {
+                    TutorId = APIClient.Client.Id,
+                    DatePurchase = DateTime.Now.ToUniversalTime(),
+                    DateEnd = DateTime.Now.AddDays(existingTariffPlan.PeriodInDays).ToUniversalTime(),
+                    TariffPlanId = planId
+
                 });
             }
             return RedirectToAction("TariffPlans");
