@@ -21,5 +21,6 @@ namespace ServiceForTutorContracts.ViewModels
         public int Id { get; set; }
         public string TariffName { get; set; } = string.Empty;
         public string PurchasedTariffEnd { get; set; } = string.Empty;
+        public int PurchasedTariffId { get; set; }
     }
 }

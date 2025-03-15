@@ -12,7 +12,7 @@ using ServiceForTutorDatabaseImplements;
 namespace ServiceForTutorDatabaseImplements.Migrations
 {
     [DbContext(typeof(ServiceForTutorDatabase))]
-    [Migration("20250222114240_InitialCreate")]
+    [Migration("20250315092549_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -99,6 +99,10 @@ namespace ServiceForTutorDatabaseImplements.Migrations
 
                     b.Property<DateTime>("DatePurchase")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<int>("TariffPlanId")
                         .HasColumnType("integer");

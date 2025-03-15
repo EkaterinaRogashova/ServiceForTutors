@@ -82,7 +82,8 @@ namespace ServiceForTutorDatabaseImplements.Migrations
                     TutorId = table.Column<int>(type: "integer", nullable: false),
                     TariffPlanId = table.Column<int>(type: "integer", nullable: false),
                     DatePurchase = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    DateEnd = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    DateEnd = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Status = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {

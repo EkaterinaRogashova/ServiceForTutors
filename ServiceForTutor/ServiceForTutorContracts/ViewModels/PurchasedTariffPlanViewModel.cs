@@ -13,6 +13,7 @@ namespace ServiceForTutorContracts.ViewModels
         public int TariffPlanId { get; set; }
         public DateTime DatePurchase { get; set; }
         public DateTime DateEnd { get; set; }
+        public string Status { get; set; } = string.Empty;
 
         public int Id { get; set; }
     }

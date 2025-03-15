@@ -4,6 +4,7 @@ using ServiceForTutorDataModels.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.AccessControl;
 using System.Text;
@@ -22,6 +23,8 @@ namespace ServiceForTutorDatabaseImplements.Models
         public DateTime DatePurchase { get; set; }
         [Required]
         public DateTime DateEnd { get; set; }
+        [Required]
+        public string Status { get; set; } = string.Empty;
 
         public int Id { get; set; }
 
@@ -40,7 +43,8 @@ namespace ServiceForTutorDatabaseImplements.Models
                 TutorId = model.TutorId,
                 TariffPlanId = model.TariffPlanId,
                 DatePurchase = model.DatePurchase,
-                DateEnd = model.DateEnd
+                DateEnd = model.DateEnd,
+                Status = model.Status
             };
         }
         public static PurchasedTariffPlan Create(PurchasedTariffPlanViewModel model)
@@ -51,8 +55,18 @@ namespace ServiceForTutorDatabaseImplements.Models
                 TutorId = model.TutorId,
                 TariffPlanId = model.TariffPlanId,
                 DatePurchase = model.DatePurchase,
-                DateEnd = model.DateEnd
+                DateEnd = model.DateEnd,
+                Status = model.Status
             };
+        }
+
+        public void Update(PurchasedTariffPlanBindingModel model)
+        {
+            if (model == null)
+            {
+                return;
+            }
+            Status = model.Status;
         }
 
         public PurchasedTariffPlanViewModel GetViewModel => new()
@@ -61,7 +75,8 @@ namespace ServiceForTutorDatabaseImplements.Models
             TutorId = TutorId,
             TariffPlanId = TariffPlanId,
             DatePurchase = DatePurchase,
-            DateEnd = DateEnd
+            DateEnd = DateEnd,
+            Status = Status
         };
     }
 }

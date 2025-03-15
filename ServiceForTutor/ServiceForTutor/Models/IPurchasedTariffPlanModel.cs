@@ -13,5 +13,6 @@ namespace ServiceForTutorDataModels.Models
         int TariffPlanId { get; set; }
         DateTime DatePurchase { get; set; }
         DateTime DateEnd { get; set; }
+        string Status { get; set; }
     }
 }

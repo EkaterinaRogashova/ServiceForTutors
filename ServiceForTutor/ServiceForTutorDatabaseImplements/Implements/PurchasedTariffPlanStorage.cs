@@ -17,7 +17,12 @@ namespace ServiceForTutorDatabaseImplements.Implements
         {
             using var context = new ServiceForTutorDatabase();
             if (model.TutorId.HasValue)
-                return context.PurchasedTariffPlans.FirstOrDefault(x => x.TutorId == model.TutorId)?.GetViewModel;
+            {
+                return context.PurchasedTariffPlans
+                    .Where(x => x.TutorId == model.TutorId && x.DateEnd.ToUniversalTime() > DateTime.Now.ToUniversalTime() && x.Status == "Active")
+                    .Select(x => x.GetViewModel)
+                    .FirstOrDefault();
+            }
             return null;
         }
 
@@ -43,6 +48,19 @@ namespace ServiceForTutorDatabaseImplements.Implements
             context.PurchasedTariffPlans.Add(newElement);
             context.SaveChanges();
             return newElement.GetViewModel;
+        }
+
+        public PurchasedTariffPlanViewModel? Update(PurchasedTariffPlanBindingModel model)
+        {
+            using var context = new ServiceForTutorDatabase();
+            var element = context.PurchasedTariffPlans.FirstOrDefault(x => x.Id == model.Id);
+            if (element == null)
+            {
+                return null;
+            }
+            element.Update(model);
+            context.SaveChanges();
+            return element.GetViewModel;
         }
     }
 }

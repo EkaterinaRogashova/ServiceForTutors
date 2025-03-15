@@ -14,5 +14,6 @@ namespace ServiceForTutorContracts.BusinessLogicContracts
         PurchasedTariffPlanViewModel? ReadElement(PurchasedTariffPlanSearchModel model);
         bool Create(PurchasedTariffPlanBindingModel model);
         List<PurchasedTariffPlanViewModel>? ReadList(PurchasedTariffPlanSearchModel? model);
+        bool Update(PurchasedTariffPlanBindingModel model);
     }
 }

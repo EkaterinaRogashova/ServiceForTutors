@@ -29,6 +29,15 @@ namespace ServiceForTutorBusinessLogic.BusinessLogic
             }
             return true;
         }
+        public bool Update(PurchasedTariffPlanBindingModel model)
+        {
+            CheckModel(model);
+            if (_purchasedTariffPlanStorage.Update(model) == null)
+            {
+                return false;
+            }
+            return true;
+        }
 
         public List<PurchasedTariffPlanViewModel>? ReadList(PurchasedTariffPlanSearchModel? model)
         {

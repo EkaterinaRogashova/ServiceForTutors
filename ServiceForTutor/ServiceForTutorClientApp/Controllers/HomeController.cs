@@ -332,10 +332,19 @@ namespace ServiceForTutorClientApp.Controllers
                     TutorId = APIClient.Client.Id,
                     DatePurchase = DateTime.Now.ToUniversalTime(),
                     DateEnd = DateTime.Now.AddDays(existingTariffPlan.PeriodInDays).ToUniversalTime(),
-                    TariffPlanId = planId
-
+                    TariffPlanId = planId,
+                    Status = "Active"
                 });
             }
+            return RedirectToAction("TariffPlans");
+        }
+        public IActionResult DeleteSubscribe(int planId)
+        {
+            APIClient.PostRequest("api/TariffPlan/DeleteSubscribe", new PurchasedTariffPlanBindingModel
+            {
+                Id = planId,
+                Status = "Inactive"
+            });
             return RedirectToAction("TariffPlans");
         }
 

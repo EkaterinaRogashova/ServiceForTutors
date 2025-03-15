@@ -14,5 +14,6 @@ namespace ServiceForTutorContracts.StoragesContracts
         PurchasedTariffPlanViewModel? GetElement(PurchasedTariffPlanSearchModel model);
         PurchasedTariffPlanViewModel? Insert(PurchasedTariffPlanBindingModel model);
         List<PurchasedTariffPlanViewModel> GetFilteredList(PurchasedTariffPlanSearchModel model);
+        PurchasedTariffPlanViewModel? Update(PurchasedTariffPlanBindingModel model);
     }
 }

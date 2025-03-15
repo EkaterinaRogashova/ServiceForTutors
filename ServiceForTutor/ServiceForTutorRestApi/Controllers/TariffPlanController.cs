@@ -89,5 +89,18 @@ namespace ServiceForTutorRestApi.Controllers
                 throw;
             }
         }
+
+        [HttpPost]
+        public void DeleteSubscribe(PurchasedTariffPlanBindingModel model)
+        {
+            try
+            {
+                _planLogic.Update(model);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
     }
 }

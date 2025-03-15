@@ -97,6 +97,10 @@ namespace ServiceForTutorDatabaseImplements.Migrations
                     b.Property<DateTime>("DatePurchase")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<int>("TariffPlanId")
                         .HasColumnType("integer");
 
