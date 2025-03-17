@@ -47,7 +47,7 @@
                             if(APIClient.Client.Role == "Tutor")
                             {
                                 <div class="text-center">
-                                    <a href="@Url.Action("Subscribe", new { planId = tariff.Id })" class="btn btn-primary">Оформить</a>
+                                    <a href="@Url.Action("Subscribe", new { planId = tariff.Id })" class="btn btn-primary tariff-button" data-plan-id="@tariff.Id">Оформить</a>
                                 </div>
                             }
                             @if (APIClient.Client.Role == "Admin")
@@ -61,6 +61,53 @@
                 </div>
             </div>
         }
+    </div>
+    <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="errorModalLabel">Информация</h5>
+                </div>
+                <div class="modal-body">
+                    <p id="errorMessage"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="successModalLabel">Успех!</h5>
+                </div>
+                <div class="modal-body">
+                    <p id="successMessage"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="confirmationRequired" tabindex="-1" role="dialog" aria-labelledby="confirmationRequiredModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmationRequiredModalLabel">Подтвердите действие</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="confirmationRequiredText">У Вас уже приобретен другой тариф. Вы уверены, что хотите изменить тариф?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="button" id="confirmChangeTariff" class="btn btn-primary">Подтвердить</button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -79,3 +126,40 @@
     }
 
 </style>
+
+@section Scripts {
+    
+    <script>
+        $(document).ready(function () {
+            var errorMessage = @Html.Raw(Json.Serialize(TempData["ErrorMessage"]));
+            var successMessage = @Html.Raw(Json.Serialize(TempData["SuccessMessage"]));
+
+            
+            if (successMessage) {
+                $('#successMessage').text(successMessage);
+                $('#successModal').modal('show');
+            }
+            if (errorMessage) {
+                $('#errorMessage').text(errorMessage);
+                $('#errorModal').modal('show');
+            }
+
+            var confirmationRequired = @Html.Raw(Json.Serialize(TempData["ConfirmationRequired"]));
+
+            if (confirmationRequired) {
+                $('#confirmationRequired').modal('show');
+
+                $('#confirmChangeTariff').on('click', function () {
+
+                    var newTariffId = @TempData["NewTariffId"]; // Получаем новый тариф
+                    // Отправляем запрос на сервер с подтверждением
+                    $.post('/Home/Subscribe', { planId: newTariffId, confirmChange: true }, function (response) {
+                        // Обработка ответа, например, покажите сообщение об успехе или редирект
+                        window.location.href = '/Home/TariffPlans'; // Перенаправьте на страницу тарифов
+                    });
+                });
+            }
+        });
+
+    </script>
+}

@@ -322,9 +322,38 @@ namespace ServiceForTutorClientApp.Controllers
             return RedirectToAction("TariffPlans");
         }
 
-        public IActionResult Subscribe(int planId)
+        public IActionResult Subscribe(int planId, bool confirmChange = false)
         {
             var existingTariffPlan = APIClient.GetRequest<TariffPlanViewModel>($"api/TariffPlan/GetTariffPlan?TariffPlanId={planId}");
+            var userDetails = APIClient.GetRequest<UserViewModel>($"api/user/GetUser?UserId={APIClient.Client.Id}");
+            ViewBag.UserDetails = userDetails;
+            if (userDetails.PurchasedTariffId == planId)
+            {
+                TempData["ErrorMessage"] = "У вас уже приобретен данный тариф";
+                return RedirectToAction("TariffPlans");
+            }
+
+            if (userDetails.PurchasedTariffId.HasValue)
+            {
+                if (confirmChange)
+                {
+                    APIClient.PostRequest("api/TariffPlan/DeleteSubscribe", new PurchasedTariffPlanBindingModel
+                    {
+                        Id = (int)userDetails.TariffId,
+                        Status = "Inactive"
+                    });
+                }
+                else
+                {
+                    // Если подтверждение не было, устанавливаем дату и перенаправляем
+                    TempData["ConfirmationRequired"] = "У вас уже приобретен другой тариф. Вы действительно хотите приобрести новый?";
+                    TempData["OldTariffId"] = userDetails.PurchasedTariffId.Value;  // Сохраняем ID старого тарифа
+                    TempData["NewTariffId"] = planId;  // Сохраняем ID нового тарифа
+                    return RedirectToAction("TariffPlans");
+                }
+            }
+
+            // Если тарифа нет, выполняем подписку
             if (existingTariffPlan != null && APIClient.Client != null)
             {
                 APIClient.PostRequest("api/TariffPlan/Subscribe", new PurchasedTariffPlanBindingModel
@@ -335,6 +364,7 @@ namespace ServiceForTutorClientApp.Controllers
                     TariffPlanId = planId,
                     Status = "Active"
                 });
+                TempData["SuccessMessage"] = "Вы успешно приобрели тариф! Подробная информация отправлена Вам на почту";
             }
             return RedirectToAction("TariffPlans");
         }

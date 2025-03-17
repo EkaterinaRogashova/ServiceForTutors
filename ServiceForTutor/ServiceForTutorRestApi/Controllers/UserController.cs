@@ -96,7 +96,8 @@ namespace ServiceForTutorRestApi.Controllers
                         Email = user.Email,
                         TariffName = tariff.Name,
                         PurchasedTariffEnd = purchasedTariff.DateEnd.ToString("dd.MM.yyyy"),
-                        PurchasedTariffId = purchasedTariff.Id
+                        PurchasedTariffId = tariff.Id,
+                        TariffId = purchasedTariff.Id
                     };
                 }
 
