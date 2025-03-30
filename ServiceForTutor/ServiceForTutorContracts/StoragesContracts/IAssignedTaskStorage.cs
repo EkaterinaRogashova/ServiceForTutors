@@ -12,11 +12,12 @@ namespace ServiceForTutorContracts.StoragesContracts
     public interface IAssignedTaskStorage
     {
         List<AssignedTaskViewModel> GetFullList();
-        List<AssignedTaskViewModel> GetFilteredList(AssignedTaskSearchModel model);
+        List<AssignedTaskViewModel> GetFilteredList(AssignedTaskSearchModel model, int pageIndex, int pageSize);
         AssignedTaskViewModel? GetElement(AssignedTaskSearchModel model);
         AssignedTaskViewModel? Insert(AssignedTaskBindingModel model);
         AssignedTaskViewModel? Delete(AssignedTaskBindingModel model);
         AssignedTaskViewModel? Update(AssignedTaskBindingModel model);
+        int GetTotalCount(AssignedTaskSearchModel model);
 
     }
 }

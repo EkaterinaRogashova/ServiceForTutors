@@ -55,7 +55,7 @@ namespace ServiceForTutorBusinessLogic.BusinessLogic
 
         public List<TaskViewModel>? ReadList(TaskSearchModel? model)
         {
-            var list = _taskStorage.GetFullList();
+            var list = _taskStorage.GetFilteredList(model, model.PageIndex, model.PageSize);
             if (list == null)
             {
                 return null;
@@ -92,6 +92,16 @@ namespace ServiceForTutorBusinessLogic.BusinessLogic
             {
                 throw new InvalidOperationException("");
             }
+        }
+
+        public int GetTotalCount(TaskSearchModel model)
+        {
+            if (model == null)
+            {
+                throw new ArgumentNullException(nameof(model)); // Проверяем, что модель не null
+            }
+
+            return _taskStorage.GetTotalCount(model); // Вызываем метод хранилища
         }
     }
 }

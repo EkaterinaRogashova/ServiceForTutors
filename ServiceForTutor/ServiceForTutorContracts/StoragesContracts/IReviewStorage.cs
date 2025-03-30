@@ -11,8 +11,9 @@ namespace ServiceForTutorContracts.StoragesContracts
 {
     public interface IReviewStorage
     {
-        List<ReviewViewModel> GetFullList();
-        List<ReviewViewModel> GetFilteredList(ReviewSearchModel model);
+        List<ReviewViewModel> GetFullList(int pageIndex = 0, int pageSize = 10);
+        List<ReviewViewModel> GetFilteredList(ReviewSearchModel model, int pageIndex, int pageSize);
         ReviewViewModel? Insert(ReviewBindingModel model);
+        int GetTotalCount(ReviewSearchModel model);
     }
 }

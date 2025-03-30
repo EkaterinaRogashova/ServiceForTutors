@@ -35,16 +35,30 @@ namespace ServiceForTutorDatabaseImplements.Implements
             return null;
         }
 
-        public List<TaskViewModel> GetFilteredList(TaskSearchModel model)
+        public List<TaskViewModel> GetFilteredList(TaskSearchModel model, int pageIndex, int pageSize)
         {
             using var context = new ServiceForTutorDatabase();
+
+            // Начинаем с основного запроса
+            var query = context.Tasks.AsQueryable();
+
+            // Применяем фильтр по TutorId, если он задан
             if (model.TutorId.HasValue)
             {
-                return context.Tasks
-                .Where(x => x.TutorId == model.TutorId).Select(x => x.GetViewModel).ToList();
+                query = query.Where(x => x.TutorId == model.TutorId);
             }
-            return null;
+
+            // Добавляем пагинацию
+            var tasks = query
+                .Skip(pageIndex * pageSize) // Пропускаем нужное количество записей
+                .Take(pageSize) // Берем только необходимое количество
+                .Select(x => x.GetViewModel) // Проецируем в TaskViewModel
+                .ToList();
+
+            // Возвращаем результат, даже если это пустой список
+            return tasks;
         }
+
 
         public List<TaskViewModel> GetFullList()
         {
@@ -77,5 +91,23 @@ namespace ServiceForTutorDatabaseImplements.Implements
             context.SaveChanges();
             return task.GetViewModel;
         }
+
+        public int GetTotalCount(TaskSearchModel model)
+        {
+            using var context = new ServiceForTutorDatabase();
+
+            // Начинаем с основного запроса
+            var query = context.Tasks.AsQueryable();
+
+            // Применяем фильтр по TutorId, если он задан
+            if (model.TutorId.HasValue)
+            {
+                query = query.Where(x => x.TutorId == model.TutorId);
+            }
+
+            // Возвращаем общее количество записей
+            return query.Count();
+        }
+
     }
 }

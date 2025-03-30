@@ -18,6 +18,10 @@ namespace ServiceForTutorContracts.ViewModels
         public string Role { get; set; } = string.Empty;
         public string FullName { get; set; } = string.Empty;
         public List<ReviewViewModel> Reviews { get; set; }
+        public int PageIndex { get; set; }  // Текущий индекс страницы
+        public int PageSize { get; set; }   // Размер страницы
+        public int TotalCount { get; set; }  // Общее количество отзывов
+        public int TotalPages => (int)Math.Ceiling((double)TotalCount / PageSize); // Общее количество страниц
         public int Id { get; set; }
         public string? TariffName { get; set; } = string.Empty;
         public string? PurchasedTariffEnd { get; set; } = string.Empty;

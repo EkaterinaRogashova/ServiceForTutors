@@ -36,7 +36,7 @@ namespace ServiceForTutorDatabaseImplements.Implements
             return null;
         }
 
-        public List<AssignedTaskViewModel> GetFilteredList(AssignedTaskSearchModel model)
+        public List<AssignedTaskViewModel> GetFilteredList(AssignedTaskSearchModel model, int pageIndex, int pageSize)
         {
             using var context = new ServiceForTutorDatabase();
             var query = context.AssignedTasks.Include(at => at.Task)
@@ -57,7 +57,8 @@ namespace ServiceForTutorDatabaseImplements.Implements
                 query = query.Where(x => x.TaskId == model.TaskId);
             }
 
-            return query.Select(at => new AssignedTaskViewModel
+            return query.Skip(pageIndex * pageSize)
+            .Take(pageSize).Select(at => new AssignedTaskViewModel
             {
                 Id = at.Id,
                 TaskId = at.TaskId,
@@ -102,6 +103,28 @@ namespace ServiceForTutorDatabaseImplements.Implements
             assignTask.Update(model);
             context.SaveChanges();
             return assignTask.GetViewModel;
+        }
+
+        public int GetTotalCount(AssignedTaskSearchModel model)
+        {
+            using var context = new ServiceForTutorDatabase();
+            var query = context.AssignedTasks.Include(at => at.Task)
+                .Where(at => at.Status != "Remove");
+
+            if (model.TutorId.HasValue)
+            {
+                query = query.Where(at => at.Task.TutorId == model.TutorId);
+            }
+            if (model.StudentId.HasValue)
+            {
+                query = query.Where(at => at.StudentId == model.StudentId);
+            }
+            if (model.TaskId.HasValue)
+            {
+                query = query.Where(x => x.TaskId == model.TaskId);
+            }
+
+            return query.Count(); // Возвращаем количество
         }
     }
 }

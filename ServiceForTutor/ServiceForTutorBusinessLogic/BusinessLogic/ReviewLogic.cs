@@ -30,9 +30,19 @@ namespace ServiceForTutorBusinessLogic.BusinessLogic
             return true;
         }
 
+        public int GetTotalCount(ReviewSearchModel model)
+        {
+            if (model == null)
+            {
+                throw new ArgumentNullException(nameof(model)); // Проверяем, что модель не null
+            }
+
+            return _reviewStorage.GetTotalCount(model); // Вызываем метод хранилища
+        }
+
         public List<ReviewViewModel>? ReadList(ReviewSearchModel? model)
         {
-            var list = _reviewStorage.GetFullList();
+            var list = _reviewStorage.GetFilteredList(model, model.PageIndex, model.PageSize);
             if (list == null)
             {
                 return null;

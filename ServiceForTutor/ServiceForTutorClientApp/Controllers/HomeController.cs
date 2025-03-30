@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using ServiceForTutorClientApp.Helpers;
 using ServiceForTutorClientApp.Models;
 using ServiceForTutorContracts.BindingModels;
 using ServiceForTutorContracts.ViewModels;
@@ -188,31 +189,38 @@ namespace ServiceForTutorClientApp.Controllers
             }
         }
 
-        public IActionResult Profile()
+        public IActionResult Profile(int pageIndex = 0, int pageSize = 10)
         {
             if (APIClient.Client == null)
             {
                 return Redirect("~/Home/Enter");
             }
+
             var userDetails = APIClient.GetRequest<UserViewModel>($"api/user/GetUser?UserId={APIClient.Client.Id}");
-            
+
             if (APIClient.Client.Role == "Admin")
             {
-                var reviews = APIClient.GetRequest<List<ReviewViewModel>>($"api/review/GetReviewList");
+                var reviewListResponse = APIClient.GetRequest<ReviewListResponse>($"api/review/GetReviewList?pageIndex={pageIndex}&pageSize={pageSize}");
 
                 var combinedViewModel = new UserViewModel
                 {
                     Email = userDetails.Email,
                     Name = userDetails.Name,
-                    Surname=userDetails.Surname,
+                    Surname = userDetails.Surname,
                     LastName = userDetails.LastName,
                     Role = userDetails.Role,
-                    Reviews = reviews
+                    Reviews = reviewListResponse.Items,
+                    PageIndex = pageIndex,
+                    PageSize = pageSize,
+                    TotalCount = reviewListResponse.TotalCount
                 };
+
                 return View(combinedViewModel);
             }
+
             return View(userDetails);
         }
+
 
         public IActionResult EditProfile()
         {

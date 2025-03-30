@@ -10,5 +10,7 @@ namespace ServiceForTutorContracts.SearchModels
     {
         public int? Id { get; set; }
         public int? TutorId { get; set; }
+        public int PageIndex { get; set; } = 0; // Индекс текущей страницы
+        public int PageSize { get; set; } = 10; // Количество элементов на странице
     }
 }

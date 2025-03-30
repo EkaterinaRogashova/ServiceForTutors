@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ServiceForTutorClientApp.Helpers;
 using ServiceForTutorContracts.BindingModels;
 using ServiceForTutorContracts.BusinessLogicContracts;
 using ServiceForTutorContracts.SearchModels;
@@ -23,24 +24,38 @@ namespace ServiceForTutorRestApi.Controllers
         }
 
         [HttpGet]
-        public List<TaskViewModel>? GetTaskList(int? tutorId)
+        public IActionResult GetTaskList(int? tutorId, int pageIndex = 0, int pageSize = 10)
         {
             try
             {
-                if (tutorId == null)
+                var searchModel = new TaskSearchModel
                 {
-                    return _logic.ReadList(null);
-                }
-                return _logic.ReadList(new TaskSearchModel
-                {
-                    TutorId = tutorId
-                });
+                    TutorId = tutorId,
+                    PageIndex = pageIndex,
+                    PageSize = pageSize
+                };
+
+                // Получаем отфильтрованный список задач с учётом пагинации
+                var tasks = _logic.ReadList(searchModel);
+
+                // Получаем общее количество задач для пагинации
+                int totalCount = _logic.GetTotalCount(searchModel);
+
+                // Создаём объект TaskListResponse
+                var response = new TaskListResponse(tasks, totalCount);
+
+                return Ok(response); // Возвращаем ответ с задачами и общим количеством
             }
             catch (Exception ex)
             {
-                throw;
+                // Здесь можно добавить запись в лог или обработку ошибок
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
+
+
+
 
         [HttpPost]
         public void CreateTask(TaskBindingModel model)
@@ -167,26 +182,24 @@ namespace ServiceForTutorRestApi.Controllers
         }
 
         [HttpGet]
-        public List<AssignedTaskViewModel>? GetAssignedTaskList(int? tutorId, int? studentId)
+        public IActionResult GetAssignedTaskList(int? tutorId, int? studentId, int pageIndex = 0, int pageSize = 10)
         {
             try
             {
+                var model = studentId != null
+                    ? new AssignedTaskSearchModel { StudentId = studentId, PageIndex = pageIndex, PageSize = pageSize }
+                    : new AssignedTaskSearchModel { TutorId = tutorId, PageIndex = pageIndex, PageSize = pageSize };
 
-                if (studentId != null)
-                {
-                    return _assignTaskLogic.ReadList(new AssignedTaskSearchModel
-                    {
-                        StudentId = studentId
-                    });
-                }
-                return _assignTaskLogic.ReadList(new AssignedTaskSearchModel
-                {
-                    TutorId = tutorId
-                });
+                var taskList = _assignTaskLogic.ReadList(model); // Получаем заданные задачи
+
+                var totalCount = _assignTaskLogic.GetTotalCount(model); // Получаем общее количество элементов (реализуйте этот метод)
+
+                var response = new AssignedTaskListResponse(taskList, totalCount);
+                return Ok(response); // Возвращаем экземпляр класса ответа
             }
             catch (Exception ex)
             {
-                throw;
+                return StatusCode(500, "Internal server error");
             }
         }
 

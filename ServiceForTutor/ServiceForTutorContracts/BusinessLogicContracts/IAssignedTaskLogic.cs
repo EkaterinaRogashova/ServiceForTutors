@@ -16,5 +16,6 @@ namespace ServiceForTutorContracts.BusinessLogicContracts
         bool Create(AssignedTaskBindingModel model);
         bool Delete(AssignedTaskBindingModel model);
         bool Update(AssignedTaskBindingModel model);
+        int GetTotalCount(AssignedTaskSearchModel model);
     }
 }

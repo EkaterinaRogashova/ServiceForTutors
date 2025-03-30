@@ -1,6 +1,6 @@
 ﻿@using ServiceForTutorContracts.ViewModels
 @using ServiceForTutorClientApp.Helpers
-@model List<AssignedTaskViewModel>
+@model PaginatedList<ServiceForTutorContracts.ViewModels.AssignedTaskViewModel>
 
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center">
@@ -24,7 +24,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in Model)
+                    @foreach (var item in Model.Items)
                     {
                         @if (APIClient.Client.Role == "Tutor")
                         {
@@ -93,6 +93,25 @@
             </table>
         }
     </div>
+    @if (Model.TotalPages > 1)
+    {
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center mt-4">
+                @for (int i = 0; i < Model.TotalPages; i++)
+                {
+                    <li class="page-item @(i == Model.PageIndex ? "active" : "") mx-1">
+
+                        <!-- Класс mx-1 для межкнопочных отступов -->
+                        <a class="page-link" asp-action="AssignedTasks" asp-route-pageIndex="@i" asp-route-pageSize="@Model.PageSize" style="border-radius: 10px; background-color: #C5A8EA; color: #300E36;">
+                            @(i + 1)
+                        </a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    }
+
+
 </div>
 
 <style>
@@ -100,6 +119,39 @@
         background-color: #f8f9fa;
         font-family: 'Arial', sans-serif;
     }
+
+    .container {
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
+    .table {
+        width: 100%;
+        margin: auto; /* Центрируем таблицу */
+    }
+
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: #f2f2f2; /* Светло-серый цвет для четных строк */
+    }
+
+    .table th {
+        background-color: #007bff; /* Цвет заголовка таблицы */
+        color: white; /* Цвет текста заголовка таблицы */
+    }
+
+    .page-item.active .page-link {
+        background-color: #007bff; /* Цвет активной страницы */
+        border-color: #007bff; /* Цвст активной страницы */
+    }
+
+    .page-link {
+        color: #007bff; /* Цвет текста для ссылок на страницы */
+    }
+
+        .page-link:hover {
+            background-color: #e9ecef; /* Цвет фона при наведении */
+        }
+
 
     h1 {
         color: #300E36;

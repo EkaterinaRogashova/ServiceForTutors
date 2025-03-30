@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ServiceForTutorBusinessLogic\ServiceForTutorBusinessLogic.csproj" />
+    <ProjectReference Include="..\ServiceForTutorClientApp\ServiceForTutorClientApp.csproj" />
     <ProjectReference Include="..\ServiceForTutorContracts\ServiceForTutorContracts.csproj" />
     <ProjectReference Include="..\ServiceForTutorDatabaseImplements\ServiceForTutorDatabaseImplements.csproj" />
   </ItemGroup>

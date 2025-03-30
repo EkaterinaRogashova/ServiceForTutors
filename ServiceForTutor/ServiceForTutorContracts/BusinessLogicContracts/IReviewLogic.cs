@@ -13,5 +13,6 @@ namespace ServiceForTutorContracts.BusinessLogicContracts
     {
         List<ReviewViewModel>? ReadList(ReviewSearchModel? model);
         bool Create(ReviewBindingModel model);
+        int GetTotalCount(ReviewSearchModel model);
     }
 }
