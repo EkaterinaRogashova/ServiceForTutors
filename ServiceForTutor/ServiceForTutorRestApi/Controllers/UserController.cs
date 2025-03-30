@@ -39,15 +39,25 @@ namespace ServiceForTutorRestApi.Controllers
         }
 
         [HttpGet]
-        public UserViewModel? Login(string login, string password)
+        public UserViewModel? Login(string login, string? password)
         {
             try
             {
-                return _logic.ReadElement(new UserSearchModel
+                if (string.IsNullOrEmpty(password))
                 {
-                    Email = login,
-                    Password = password
-                });
+                    return _logic.ReadElement(new UserSearchModel
+                    {
+                        Email = login
+                    });
+                }
+                else
+                {
+                    return _logic.ReadElement(new UserSearchModel
+                    {
+                        Email = login,
+                        Password = password
+                    });
+                }
             }
             catch (Exception ex)
             {
@@ -62,9 +72,13 @@ namespace ServiceForTutorRestApi.Controllers
             {
                 _logic.Create(model);
             }
+            catch (InvalidOperationException ex)
+            {
+                ModelState.AddModelError("Email", ex.Message);
+            }
             catch (Exception ex)
             {
-                BadRequest(new { message = ex.Message });
+                ModelState.AddModelError("General", "Произошла ошибка при регистрации. Попробуйте позже.");
             }
         }
 

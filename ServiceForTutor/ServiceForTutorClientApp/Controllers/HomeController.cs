@@ -40,12 +40,8 @@ namespace ServiceForTutorClientApp.Controllers
         }
 
         [HttpPost]
-        public IActionResult SendVerificationCode([FromBody] Dictionary<string, string> data)
+        public IActionResult SendVerificationCode(string login)
         {
-            if (!data.TryGetValue("email", out var email) || string.IsNullOrEmpty(email))
-            {
-                return Json(new { success = false, message = "Email не может быть пустым." });
-            }
             // Генерация 6-символьного кода подтверждения
             var verificationCode = GenerateVerificationCode();
 
@@ -53,7 +49,7 @@ namespace ServiceForTutorClientApp.Controllers
             HttpContext.Session.SetString("VerificationCode", verificationCode);
 
             // Отправка письма
-            SendEmail(email, verificationCode); // Реализуйте метод отправки почты
+            SendEmail(login, verificationCode); // Реализуйте метод отправки почты
 
             return Json(new { success = true, message = "Код подтверждения отправлен." });
         }
@@ -105,7 +101,7 @@ namespace ServiceForTutorClientApp.Controllers
             }
             string returnUrl = HttpContext.Request.Headers["Referer"].ToString();
 
-            APIClient.PostRequest("api/User/Register", new UserBindingModel
+            APIClient.PostRequestApiResponse("api/User/Register", new UserBindingModel
             {
                 Name = name,
                 Surname = surname,
@@ -118,6 +114,58 @@ namespace ServiceForTutorClientApp.Controllers
 
             return RedirectToAction("Enter");
         }
+
+        [HttpPost]
+        public IActionResult CheckUser([FromBody] Dictionary<string, string> data)
+        {
+            
+            if (!data.TryGetValue("email", out var email) || string.IsNullOrEmpty(email))
+            {
+                return Json(new { success = false, message = "Email не найден." });
+            }
+            var user = APIClient.GetRequest<UserViewModel>($"api/User/login?login={email}");
+            if (user == null)
+            {
+                SendVerificationCode(email);
+                return Json(new { success = true, message = "Код подтверждения отправлен." });
+            }
+            return Json(new { success = false, message = "Пользователь с такой почтой уже существует." });
+        }
+
+        [HttpPost]
+        public IActionResult UpdatePassword([FromBody] Dictionary<string, string> data)
+        {
+            if (!data.TryGetValue("email", out var email) || string.IsNullOrEmpty(email))
+            {
+                return Json(new { success = false, message = "Email не найден." });
+            }
+            var user = APIClient.GetRequest<UserViewModel>($"api/User/login?login={email}");
+            if (user != null)
+            {
+                SendVerificationCode(email);
+                return Json(new { success = true, message = "Код подтверждения отправлен." });
+            }
+            return Json(new { success = false, message = "Пользователь c такой почтой не найден" });
+        }
+
+        [HttpPost]
+        public IActionResult InstallNewPassword(string newPassword, string email)
+        {
+            var existingUser = APIClient.GetRequest<UserViewModel>($"api/User/login?login={email}");
+            APIClient.PostRequest("api/user/UpdateUser", new UserBindingModel
+            {
+                Id = existingUser.Id,
+                Name = existingUser.Name,
+                Surname = existingUser.Surname,
+                LastName = existingUser.LastName,
+                Role = existingUser.Role,
+                StatusActivity = existingUser.StatusActivity,
+                Email = existingUser.Email,
+                Password = existingUser.Password
+            });
+            return RedirectToAction("Profile");
+        }
+
 
         [HttpPost]
         public IActionResult VerifyCode([FromBody] Dictionary<string, string> data)
@@ -376,6 +424,24 @@ namespace ServiceForTutorClientApp.Controllers
                 Status = "Inactive"
             });
             return RedirectToAction("TariffPlans");
+        }
+
+        public IActionResult DeleteAccount(int userId)
+        {
+            var existingUser = APIClient.GetRequest<UserViewModel>($"api/user/GetUser?UserId={APIClient.Client.Id}");
+
+            APIClient.PostRequest("api/user/UpdateUser", new UserBindingModel
+            {
+                Id = APIClient.Client.Id,
+                Name = existingUser.Name,
+                Surname = existingUser.Surname,
+                LastName = existingUser.LastName,
+                Role = existingUser.Role,
+                StatusActivity = "Inactive",
+                Password = existingUser.Password,
+                Email = existingUser.Email
+            });
+            return RedirectToAction("Enter");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

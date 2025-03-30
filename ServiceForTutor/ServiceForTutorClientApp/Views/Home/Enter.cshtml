@@ -26,13 +26,152 @@
         <div class="mb-4">
             <button type="submit" class="btn btn-lg w-100 rounded" style="background-color: #C5A8EA; color: #300E36;">Войти</button>
         </div>
+        
     </form>
-
-    <div class="mt-4">
-        <span>Впервые здесь? </span>
-        <a href="@Url.Action("Register", "Home")" class="btn btn-link">Зарегистрироваться</a>
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card text-center" style="background-color: #F7E3FF; border-radius: 10px;">
+                <div class="card-body">
+                    <h5 class="card-title">Забыли пароль?</h5>
+                    <p class="card-text">Не беспокойтесь, мы восстановим его.</p>
+                    <a class="btn" style="background-color: #C5A8EA; color: #300E36;" data-bs-toggle="modal" data-bs-target="#updatePasswordModal">Восстановить пароль</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card text-center" style="background-color: #F7E3FF; border-radius: 10px;">
+                <div class="card-body">
+                    <h5 class="card-title">Впервые здесь?</h5>
+                    <p class="card-text">Создайте учетную запись, чтобы начать!</p>
+                    <a href="@Url.Action("Register", "Home")" class="btn" style="background-color: #C5A8EA; color: #300E36;">Зарегистрироваться</a>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
+<div class="modal fade" id="updatePasswordModal" tabindex="-1" role="dialog" aria-labelledby="updatePasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="border-radius: 15px;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updatePasswordModal">Введите почту</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Закрыть" style="border: none; background: none;">
+                    <span aria-hidden="true" style="font-size: 1.5rem;">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Введите почту, на которую зарегистирован аккаунт</p>
+                <input type="email" id="emailForUpdatePassword" class="form-control" placeholder="Введите email" required />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 10px; background-color: #300E36; color: #C5A8EA;">Закрыть</button>
+                <button type="button" id="updatePasswordEmail" class="btn btn-primary" style="border-radius: 10px; background-color: #C5A8EA; color: #300E36;">Отправить код подтверждения</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="verificationCodeModal" tabindex="-1" role="dialog" aria-labelledby="verificationCodeModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="border-radius: 15px;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="verificationCodeModalLabel">Введите код подтверждения</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Закрыть" style="border: none; background: none;">
+                    <span aria-hidden="true" style="font-size: 1.5rem;">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Пожалуйста, проверьте свою электронную почту на наличие кода подтверждения.</p>
+                <input type="text" id="code" class="form-control" placeholder="Введите код" required />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 10px; background-color: #300E36; color: #C5A8EA;">Закрыть</button>
+                <button type="button" id="verifyCodeButton" class="btn btn-primary" style="border-radius: 10px; background-color: #C5A8EA; color: #300E36;">Подтвердить</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="newPasswordModal" tabindex="-1" role="dialog" aria-labelledby="newPasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="border-radius: 15px;">
+            <form method="post" action="@Url.Action("InstallNewPassword", "Home")">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="newPasswordLabel">Введите код подтверждения</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Закрыть" style="border: none; background: none;">
+                        <span aria-hidden="true" style="font-size: 1.5rem;">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Введите новый пароль</p>
+                    <input type="password" id="newPassword" class="form-control" placeholder="Введите новый пароль" name="newPassword" required />
+                    <input type="hidden" id="emailForNewPassword" name="email" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 10px; background-color: #300E36; color: #C5A8EA;">Закрыть</button>
+                    <button type="submit"  class="btn btn-primary" style="border-radius: 10px; background-color: #C5A8EA; color: #300E36;">Подтвердить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    let storedEmail = '';
+    document.getElementById('updatePasswordEmail').onclick = function () {
+        const email = document.getElementById('emailForUpdatePassword').value; // Используем getElementById
+        storedEmail = email;
+        fetch('UpdatePassword', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email: email })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    $('#updatePasswordModal').modal('hide');
+                    $('#verificationCodeModal').modal('show');
+                    
+                } else {
+                    $('#errorMessage').text(data.message);
+                    $('#errorModal').modal('show');
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+                $('#errorMessage').text('Произошла ошибка при обработке запроса.');
+                $('#errorModal').modal('show'); // Показываем окно с ошибкой
+            });
+        
+    };
+    document.getElementById('verifyCodeButton').onclick = function () {
+        const enteredCode = document.getElementById('code').value;
+
+        fetch('VerifyCode', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ code: enteredCode })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    $('#verificationCodeModal').modal('hide');
+                    $('#newPasswordModal').modal('show');
+                    document.getElementById('emailForNewPassword').value = storedEmail;
+                } else {
+                    alert(data.message);
+                }
+            });
+    };
+
+</script>
+
+
+
 
 <style>
     .containerenter {
@@ -56,7 +195,7 @@
         text-decoration: none;
     }
 
-        .btn-link:hover {
-            text-decoration: underline; /* Подчеркивание при наведении */
-        }
+    .btn-link:hover {
+        text-decoration: underline; /* Подчеркивание при наведении */
+    }
 </style>

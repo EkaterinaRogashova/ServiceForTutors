@@ -1,4 +1,5 @@
 ﻿@using ServiceForTutorContracts.ViewModels
+@using ServiceForTutorClientApp.Helpers
 @model List<AssignedTaskViewModel>
 
 <div class="container mt-5">
@@ -31,7 +32,7 @@
                                 <td>@Html.DisplayFor(modelItem => item.TaskName)</td>
                                 <td>@Html.DisplayFor(modelItem => item.TaskTopic)</td>
                                 <td>@Html.DisplayFor(modelItem => item.StudentFIO)</td>
-                                <td>@Html.DisplayFor(modelItem => item.Status)</td>
+                                <td>@StatusDictionary.GetTranslation(item.Status)</td>
                                 <td>@item.DateTimeStart?.ToLocalTime().ToString("dd.MM.yyyy HH.mm")</td>
                                 <td>@item.DateTimeEnd?.ToLocalTime().ToString("dd.MM.yyyy HH.mm")</td>
 

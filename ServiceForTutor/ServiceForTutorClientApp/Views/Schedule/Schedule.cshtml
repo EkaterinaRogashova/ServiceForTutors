@@ -334,8 +334,25 @@
             }
         }).datepicker("setDate", new Date()).datepicker("show"); // Установка текущей даты и открытие календаря
     });
-</script>
+    </script>
+    <script>
+        document.getElementById('datePicker').addEventListener('change', function () {
+            var selectedDate = this.value; // Получаем выбранную дату
+            var form = document.createElement('form'); // Создаем форму
+            form.method = 'post'; // Устанавливаем метод POST
+            form.action = '@Url.Action("Schedule", "Schedule")'; // Устанавливаем действие
 
+            // Создаем скрытое поле для передачи выбранной даты
+            var hiddenField = document.createElement('input');
+            hiddenField.type = 'hidden';
+            hiddenField.name = 'currentDate'; // Имя поля
+            hiddenField.value = selectedDate; // Значение поля
+
+            form.appendChild(hiddenField); // Добавляем скрытое поле в форму
+            document.body.appendChild(form); // Добавляем форму в тело документа
+            form.submit(); // Отправляем форму
+        });
+    </script>
 
 
     <script>

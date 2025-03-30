@@ -17,9 +17,9 @@ namespace ServiceForTutorDatabaseImplements.Implements
         {
             using var context = new ServiceForTutorDatabase();
             if (model.Id.HasValue)
-                return context.Users.Where(x => x.Id == model.Id).Select(x => x.GetViewModel).FirstOrDefault();
+                return context.Users.Where(x => x.Id == model.Id && x.StatusActivity == "Active").Select(x => x.GetViewModel).FirstOrDefault();
             if (!string.IsNullOrEmpty(model.Email))
-                return context.Users.FirstOrDefault(x => x.Email.Equals(model.Email))?.GetViewModel;
+                return context.Users.FirstOrDefault(x => x.Email.Equals(model.Email) && x.StatusActivity == "Active")?.GetViewModel;
             return null;
         }
 
