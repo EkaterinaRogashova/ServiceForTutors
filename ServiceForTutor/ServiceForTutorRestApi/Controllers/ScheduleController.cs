@@ -58,15 +58,17 @@ namespace ServiceForTutorRestApi.Controllers
         }
 
         [HttpPost]
-        public void AddTimeSlot(ScheduleBindingModel model)
+        public IActionResult AddTimeSlot(ScheduleBindingModel model)
         {
             try
             {
                 _logic.Create(model);
+                return Ok("Временной слот успешно добавлен.");
             }
-            catch (Exception ex)
+            catch (InvalidOperationException ex)
             {
-                throw;
+                // Обработка специфической ошибки, например, перекрытия
+                return BadRequest(ex.Message);
             }
         }
 

@@ -73,7 +73,11 @@ namespace ServiceForTutorClientApp.Controllers
                 Status = status
             };
 
-            APIClient.PostRequest("api/Schedule/AddTimeSlot", newSchedule);
+            var response = APIClient.PostRequestApiResponse("api/Schedule/AddTimeSlot", newSchedule);
+            if (response.Success == false)
+            {
+                TempData["ErrorMessage"] = "Данное время уже занято другим временным слотом.";
+            }
 
             return RedirectToAction("Schedule");
         }

@@ -1,12 +1,11 @@
 ﻿namespace ServiceForTutorClientApp.Helpers
 {
-    public static class StatusDictionary
+    public static class StatusTimeSlotDictionary
     {
         private static readonly Dictionary<string, string> statusTranslations = new Dictionary<string, string>
         {
-            { "Assign", "Назначено" },
-            { "Completed", "Завершено" },
-            { "Checked", "Проверено" }
+            { "Booked", "Занято" },
+            { "Available", "Свободно" }
         };
 
         public static string GetTranslation(string status)

@@ -11,5 +11,7 @@ namespace ServiceForTutorContracts.SearchModels
         public int? Id { get; set; }
         public int? TutorId { get; set; }
         public int? StudentId { get; set; }
+        public DateTime? DateTimeStart { get; set; }
+        public DateTime? DateTimeEnd { get; set;}
     }
 }

@@ -65,7 +65,6 @@ namespace ServiceForTutorBusinessLogic.BusinessLogic
 
         public bool Update(ScheduleBindingModel model)
         {
-            CheckModel(model);
             if (_scheduleStorage.Update(model) == null)
             {
                 return false;
@@ -82,16 +81,26 @@ namespace ServiceForTutorBusinessLogic.BusinessLogic
             {
                 return;
             }
-
-            var element = _scheduleStorage.GetElement(new ScheduleSearchModel
+            var searchModel = new ScheduleSearchModel
             {
-                Id = model.Id,
-            });
+                DateTimeStart = model.DateTimeStart,
+                DateTimeEnd = model.DateTimeEnd,
+            };
 
-            if (element != null && element.Id != model.Id)
+            var existingSlots = _scheduleStorage.GetFilteredList(searchModel);
+
+            foreach (var slot in existingSlots)
             {
-                throw new InvalidOperationException("");
+                if (IsTimeSlotOverlapping(model.DateTimeStart, model.DateTimeEnd, slot.DateTimeStart, slot.DateTimeEnd))
+                {
+                    throw new InvalidOperationException("Невозможно добавить временной слот, так как в это время уже есть занятие.");
+                }
             }
+        }
+
+        private bool IsTimeSlotOverlapping(DateTime start1, DateTime end1, DateTime start2, DateTime end2)
+        {
+            return (start1 < end2 && end1 > start2);
         }
     }
 }

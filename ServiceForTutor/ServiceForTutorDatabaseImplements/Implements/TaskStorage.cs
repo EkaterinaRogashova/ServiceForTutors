@@ -48,16 +48,25 @@ namespace ServiceForTutorDatabaseImplements.Implements
                 query = query.Where(x => x.TutorId == model.TutorId);
             }
 
+            // Применяем фильтр по поисковому запросу, если он задан
+            if (!string.IsNullOrEmpty(model.SearchQuery) && model.SearchQuery.Length >= 3)
+            {
+                query = query.Where(x =>
+                    x.Name.Contains(model.SearchQuery) ||
+                    x.Topic.Contains(model.SearchQuery) ||
+                    x.Subject.Contains(model.SearchQuery));
+            }
+
             // Добавляем пагинацию
             var tasks = query
-                .Skip(pageIndex * pageSize) // Пропускаем нужное количество записей
-                .Take(pageSize) // Берем только необходимое количество
-                .Select(x => x.GetViewModel) // Проецируем в TaskViewModel
+                .Skip(pageIndex * pageSize)
+                .Take(pageSize)
+                .Select(x => x.GetViewModel)
                 .ToList();
 
-            // Возвращаем результат, даже если это пустой список
             return tasks;
         }
+
 
 
         public List<TaskViewModel> GetFullList()
@@ -103,6 +112,13 @@ namespace ServiceForTutorDatabaseImplements.Implements
             if (model.TutorId.HasValue)
             {
                 query = query.Where(x => x.TutorId == model.TutorId);
+            }
+            if (!string.IsNullOrEmpty(model.SearchQuery) && model.SearchQuery.Length >= 3)
+            {
+                query = query.Where(x =>
+                    x.Name.Contains(model.SearchQuery) ||
+                    x.Topic.Contains(model.SearchQuery) ||
+                    x.Subject.Contains(model.SearchQuery));
             }
 
             // Возвращаем общее количество записей

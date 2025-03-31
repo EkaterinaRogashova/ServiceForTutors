@@ -19,7 +19,7 @@ namespace ServiceForTutorClientApp.Controllers
             _logger = logger;
         }
 
-        public IActionResult Tasks(int pageIndex = 0, int pageSize = 10)
+        public IActionResult Tasks(string? searchQuery, int pageIndex = 0, int pageSize = 10)
         {
             if (APIClient.Client == null)
             {
@@ -31,13 +31,13 @@ namespace ServiceForTutorClientApp.Controllers
             // Проверка роли клиента
             if (APIClient.Client.Role == "Tutor")
             {
-                response = APIClient.GetRequest<TaskListResponse>($"api/task/GetTaskList?TutorId={APIClient.Client.Id}&pageIndex={pageIndex}&pageSize={pageSize}");
+                response = APIClient.GetRequest<TaskListResponse>($"api/task/GetTaskList?TutorId={APIClient.Client.Id}&searchQuery={searchQuery}&pageIndex={pageIndex}&pageSize={pageSize}");
             }
             else if (APIClient.Client.Role == "Student")
             {
-                // Здесь можно добавить фильтрацию задач для студентов, если это необходимо
-                // Например, немного изменяя запрос для студентов. 
-                response = APIClient.GetRequest<TaskListResponse>($"api/task/GetTaskList?StudentId={APIClient.Client.Id}&pageIndex={pageIndex}&pageSize={pageSize}");
+                response = APIClient.GetRequest<TaskListResponse>(
+                    $"api/task/GetTaskList?StudentId={APIClient.Client.Id}&searchQuery={searchQuery}&pageIndex={pageIndex}&pageSize={pageSize}"
+                );
             }
 
             // Проверка, было ли получено значение от API
@@ -55,7 +55,6 @@ namespace ServiceForTutorClientApp.Controllers
 
             return View(paginatedList); // Передача paginatedList в представление
         }
-
 
 
         public IActionResult CreateTask()
@@ -195,7 +194,7 @@ namespace ServiceForTutorClientApp.Controllers
             return RedirectToAction("ViewTask", new { id = id });
         }
 
-        public IActionResult AssignedTasks(int studentId, int pageIndex = 0, int pageSize = 10)
+        public IActionResult AssignedTasks(int studentId, string? status, int pageIndex = 0, int pageSize = 10)
         {
             if (APIClient.Client == null)
             {
@@ -206,13 +205,13 @@ namespace ServiceForTutorClientApp.Controllers
 
             if (APIClient.Client.Role == "Student")
             {
-                response = APIClient.GetRequest<AssignedTaskListResponse>($"api/task/GetAssignedTaskList?StudentId={APIClient.Client.Id}&pageIndex={pageIndex}&pageSize={pageSize}");
+                response = APIClient.GetRequest<AssignedTaskListResponse>($"api/task/GetAssignedTaskList?Status={status}&StudentId={APIClient.Client.Id}&pageIndex={pageIndex}&pageSize={pageSize}");
             }
             else if (APIClient.Client.Role == "Tutor")
             {
                 response = studentId > 0
-                    ? APIClient.GetRequest<AssignedTaskListResponse>($"api/task/GetAssignedTaskList?StudentId={studentId}&pageIndex={pageIndex}&pageSize={pageSize}")
-                    : APIClient.GetRequest<AssignedTaskListResponse>($"api/task/GetAssignedTaskList?TutorId={APIClient.Client.Id}&pageIndex={pageIndex}&pageSize={pageSize}");
+                    ? APIClient.GetRequest<AssignedTaskListResponse>($"api/task/GetAssignedTaskList?Status={status}&StudentId={studentId}&pageIndex={pageIndex}&pageSize={pageSize}")
+                    : APIClient.GetRequest<AssignedTaskListResponse>($"api/task/GetAssignedTaskList?Status={status}&TutorId={APIClient.Client.Id}&pageIndex={pageIndex}&pageSize={pageSize}");
             }
 
             // Проверка, было ли получено значение от API

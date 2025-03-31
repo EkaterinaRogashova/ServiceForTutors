@@ -37,23 +37,31 @@ namespace ServiceForTutorDatabaseImplements.Implements
         public List<ScheduleViewModel> GetFilteredList(ScheduleSearchModel model)
         {
             using var context = new ServiceForTutorDatabase();
-            if (model.TutorId.HasValue && model.StudentId.HasValue)
+
+            var query = context.Schedules.AsQueryable(); // Используем IQueryable для построения запроса
+
+            // Фильтрация по TutorId
+            if (model.TutorId.HasValue)
             {
-                return context.Schedules
-                .Where(x => x.TutorId == model.TutorId && x.StudentId == model.StudentId).Select(x => x.GetViewModel).ToList();
+                query = query.Where(x => x.TutorId == model.TutorId);
             }
-            if (model.TutorId.HasValue )
-            {
-                return context.Schedules
-                .Where(x => x.TutorId == model.TutorId).Select(x => x.GetViewModel).ToList();
-            }
+
+            // Фильтрация по StudentId
             if (model.StudentId.HasValue)
             {
-                return context.Schedules
-                .Where(x => x.StudentId == model.StudentId).Select(x => x.GetViewModel).ToList();
+                query = query.Where(x => x.StudentId == model.StudentId);
             }
-            return null;
+
+            // Фильтрация по диапазону дат
+            if (model.DateTimeStart.HasValue && model.DateTimeEnd.HasValue)
+            {
+                query = query.Where(x => x.DateTimeStart < model.DateTimeEnd && x.DateTimeEnd > model.DateTimeStart);
+            }
+
+            // Выполняем запрос и преобразуем к ScheduleViewModel
+            return query.Select(x => x.GetViewModel).ToList();
         }
+
 
         public List<ScheduleViewModel> GetFullList()
         {

@@ -24,38 +24,29 @@ namespace ServiceForTutorRestApi.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetTaskList(int? tutorId, int pageIndex = 0, int pageSize = 10)
+        public IActionResult GetTaskList(int? tutorId, string? searchQuery, int pageIndex = 0, int pageSize = 10)
         {
             try
             {
                 var searchModel = new TaskSearchModel
                 {
                     TutorId = tutorId,
+                    SearchQuery = searchQuery, // Добавляем поисковый запрос
                     PageIndex = pageIndex,
                     PageSize = pageSize
                 };
 
-                // Получаем отфильтрованный список задач с учётом пагинации
                 var tasks = _logic.ReadList(searchModel);
-
-                // Получаем общее количество задач для пагинации
                 int totalCount = _logic.GetTotalCount(searchModel);
 
-                // Создаём объект TaskListResponse
                 var response = new TaskListResponse(tasks, totalCount);
-
-                return Ok(response); // Возвращаем ответ с задачами и общим количеством
+                return Ok(response);
             }
             catch (Exception ex)
             {
-                // Здесь можно добавить запись в лог или обработку ошибок
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-
-
-
-
 
         [HttpPost]
         public void CreateTask(TaskBindingModel model)
@@ -182,13 +173,13 @@ namespace ServiceForTutorRestApi.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAssignedTaskList(int? tutorId, int? studentId, int pageIndex = 0, int pageSize = 10)
+        public IActionResult GetAssignedTaskList(int? tutorId, string? status, int? studentId, int pageIndex = 0, int pageSize = 10)
         {
             try
             {
                 var model = studentId != null
-                    ? new AssignedTaskSearchModel { StudentId = studentId, PageIndex = pageIndex, PageSize = pageSize }
-                    : new AssignedTaskSearchModel { TutorId = tutorId, PageIndex = pageIndex, PageSize = pageSize };
+                    ? new AssignedTaskSearchModel { StudentId = studentId, Status = status, PageIndex = pageIndex, PageSize = pageSize }
+                    : new AssignedTaskSearchModel { TutorId = tutorId, Status = status, PageIndex = pageIndex, PageSize = pageSize };
 
                 var taskList = _assignTaskLogic.ReadList(model); // Получаем заданные задачи
 

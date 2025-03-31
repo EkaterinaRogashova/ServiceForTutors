@@ -1,4 +1,5 @@
 ﻿﻿@using ServiceForTutorContracts.ViewModels
+@using ServiceForTutorClientApp.Helpers
 @model List<ScheduleViewModel>
 
 @{
@@ -99,7 +100,7 @@
                                                     data-end-time="@localEndDate.ToString("HH:mm")"
                                                     data-tutor-id="@timeSlot.TutorId"
                                                     data-status="@timeSlot.Status">
-                                                @timeSlot.Status <br />
+                                                @StatusTimeSlotDictionary.GetTranslation(timeSlot.Status) <br />
                                                 @localStartDate.ToString("HH:mm") - @localEndDate.ToString("HH:mm")
                                             </button>
                                         }
@@ -141,11 +142,11 @@
                             <div class="form-group">
                                 <label for="duration">Продолжительность занятия</label>
                                 <select class="form-control" id="duration" name="duration" required>
-                                    <option value="0.5">30 минут</option>
+                                    <option value="0,5">30 минут</option>
                                     <option value="1">1 час</option>
-                                    <option value="1.5">1,5 часа</option>
+                                    <option value="1,5">1,5 часа</option>
                                     <option value="2">2 часа</option>
-                                    <option value="2.5">2,5 часа</option>
+                                    <option value="2,5">2,5 часа</option>
                                     <option value="3">3 часа</option>
                                 </select>
                             </div>
@@ -196,10 +197,6 @@
                             <label>ФИО репетитора:</label>
                             <p id="modalTutorId" name="tutorId"></p>
                         </div>
-                        <div class="form-group">
-                            <label>Статус:</label>
-                            <p id="modalStatus"></p>
-                        </div>
                         <div class="mb-3">
                             <label for="duration">Продолжительность занятия:</label>
                             <p id="modalDuration"></p>
@@ -242,10 +239,6 @@
                             <label>Время окончания:</label>
                             <p id="modalEndTime"></p>
                         </div>
-                        <div class="form-group">
-                            <label>Статус:</label>
-                            <p id="modalStatus"></p>
-                        </div>
                         <div class="mb-3">
                             <label for="duration">Продолжительность занятия:</label>
                             <p id="modalDuration"></p>
@@ -259,12 +252,36 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="errorModalLabel">Ошибка!</h5>
+                </div>
+                <div class="modal-body">
+                    <p id="errorMessage"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 </body>
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script>
+        $(document).ready(function () {
+            var errorMessage = @Html.Raw(Json.Serialize(TempData["ErrorMessage"]));
+            if (errorMessage) {
+                $('#errorMessage').text(errorMessage);
+                $('#errorModal').modal('show');
+            }
+        });
+    </script>
     <script>
         $('#reservation').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget);
@@ -364,19 +381,21 @@
             // Функция для вычисления времени окончания
             function calculateEndTime() {
                 const startTime = startTimeInput.value;
-                const durationHours = parseFloat(durationSelect.value);
+                const durationHours = parseFloat(durationSelect.value.replace(',', '.'));
 
                 if (startTime) {
                     // Получаем часы и минуты начала занятия
-                    const [hours, minutes] = startTime.split(':').map(Number);
+                    const [startHours, startMinutes] = startTime.split(':').map(Number);
                     // Конвертируем все в минуты
-                    const totalMinutes = hours * 60 + minutes + (durationHours * 60);
+                    let totalMinutes = startHours * 60 + startMinutes + (durationHours * 60);
                     // Вычисляем окончание занятия
                     const endHours = Math.floor(totalMinutes / 60) % 24; // Учтем 24 часа
                     const endMinutes = totalMinutes % 60;
 
                     // Устанавливаем время окончания
                     endTimeInput.value = `${String(endHours).padStart(2, '0')}:${String(endMinutes).padStart(2, '0')}`;
+                } else {
+                    endTimeInput.value = ''; // Если нет времени начала, очищаем поле окончания
                 }
             }
 
@@ -384,6 +403,7 @@
             startTimeInput.addEventListener('change', calculateEndTime);
             durationSelect.addEventListener('change', calculateEndTime);
         });
+
     </script>
 
 }

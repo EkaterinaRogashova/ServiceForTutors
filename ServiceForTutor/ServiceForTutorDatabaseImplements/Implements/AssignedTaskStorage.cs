@@ -52,6 +52,11 @@ namespace ServiceForTutorDatabaseImplements.Implements
                 query = query.Where(at => at.StudentId == model.StudentId);
             }
 
+            if (!string.IsNullOrEmpty(model.Status))
+            {
+                query = query.Where(at => at.Status == model.Status);
+            }
+
             if (model.TaskId.HasValue)
             {
                 query = query.Where(x => x.TaskId == model.TaskId);
