@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Личный кабинет";
 }
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <div class="container mt-5">
     <div class="row">
         <div class="col-md-4">
@@ -92,7 +93,7 @@
                                     <div class="rating">
                                         @for (int i = 1; i <= 5; i++)
                                         {
-                                            <i class="fas fa-star @(i <= review.Rating ? "filled" : "")"></i>
+                                            <span class="material-icons @(i <= review.Rating ? "filled" : "")">star_rate</span>
                                         }
                                     </div>
                                     <p class="card-text">@review.Content</p>
@@ -121,6 +122,7 @@
                     </nav>
                 }
             </div>
+
         }
     </div>
 </div>
@@ -157,17 +159,14 @@
         </div>
     </div>
 </div>
-<script src="https://kit.fontawesome.com/c99de67db0.js" crossorigin="anonymous"></script>  <!-- Font Awesome Kit -->
-<script src="script.js"></script>
+
 <style>
-    .rating i {
-    font-size: 1.5em;
-    color: lightgray;
-    margin-right: 5px;
+    .rating .material-icons {
+        color: #ccc; /* Цвет неактивной звезды */
+        font-size: 24px; /* Размер иконки */
     }
 
-
-    .rating .filled {
-    color: gold;
-    }
+        .rating .material-icons.filled {
+            color: gold; /* Цвет заполненной звезды */
+        }
 </style>

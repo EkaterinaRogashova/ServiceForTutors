@@ -20,6 +20,8 @@ namespace ServiceForTutorContracts.ViewModels
         public string Answers { get; set; } = string.Empty;
 
         public string CorrectAnswers { get; set; } = string.Empty;
+        public List<string> StoredAnswers { get; private set; } = new List<string>();
+
 
         public void SetAnswers(object answers)
         {
@@ -39,6 +41,11 @@ namespace ServiceForTutorContracts.ViewModels
         public List<string> GetCorrectAnswers()
         {
             return JsonConvert.DeserializeObject<List<string>>(CorrectAnswers);
+        }
+
+        public void SetStoredAnswer(string jsonAnswer)
+        {
+            StoredAnswers = string.IsNullOrWhiteSpace(jsonAnswer) ? new List<string>() : JsonConvert.DeserializeObject<List<string>>(jsonAnswer);
         }
     }
 }

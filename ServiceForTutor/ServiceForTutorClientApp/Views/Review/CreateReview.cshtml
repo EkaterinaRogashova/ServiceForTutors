@@ -7,7 +7,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Создание отзыва</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
     <style>
         body {
             background-color: #f8f9fa; /* Светлый фон */
@@ -79,16 +80,15 @@
                     <div class="form-group mt-4">
                         <div class="rating">
                             <input type="radio" id="star5" name="Rating" value="5">
-                            <label for="star5" class="full"><i class="fas fa-star"></i></label>
+                            <label for="star5" class="full"><span class="material-icons">star_rate</span></label>
                             <input type="radio" id="star4" name="Rating" value="4">
-                            <label for="star4" class="full"><i class="fas fa-star"></i></label>
+                            <label for="star4" class="full"><span class="material-icons">star_rate</span></label>
                             <input type="radio" id="star3" name="Rating" value="3">
-                            <label for="star3" class="full"><i class="fas fa-star"></i></label>
+                            <label for="star3" class="full"><span class="material-icons">star_rate</span></label>
                             <input type="radio" id="star2" name="Rating" value="2">
-                            <label for="star2" class="full"><i class="fas fa-star"></i></label>
+                            <label for="star2" class="full"><span class="material-icons">star_rate</span></label>
                             <input type="radio" id="star1" name="Rating" value="1">
-
-                            <label for="star1" class="full"><i class="fas fa-star"></i></label>
+                            <label for="star1" class="full"><span class="material-icons">star_rate</span></label>
                         </div>
                     </div>
 
@@ -102,7 +102,6 @@
             </div>
         </div>
     </div>
-    <script src="https://kit.fontawesome.com/c99de67db0.js" crossorigin="anonymous"></script> <!-- Font Awesome Kit -->
 
     <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -136,7 +135,6 @@
         </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
     <script>
         $(document).ready(function () {
             var errorMessage = @Html.Raw(Json.Serialize(TempData["ErrorMessage"]));

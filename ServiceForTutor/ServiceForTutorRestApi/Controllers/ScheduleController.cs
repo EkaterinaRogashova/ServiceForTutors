@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ServiceForTutorBusinessLogic.BusinessLogic;
 using ServiceForTutorContracts.BindingModels;
 using ServiceForTutorContracts.BusinessLogicContracts;
 using ServiceForTutorContracts.SearchModels;
@@ -78,6 +79,19 @@ namespace ServiceForTutorRestApi.Controllers
             try
             {
                 _logic.Update(model);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        [HttpPost]
+        public void DeleteTimeSlot(ScheduleBindingModel model)
+        {
+            try
+            {
+                _logic.Delete(model);
             }
             catch (Exception ex)
             {

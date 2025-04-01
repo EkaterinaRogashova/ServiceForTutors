@@ -96,6 +96,32 @@ namespace ServiceForTutorClientApp
             };
         }
 
+        public static T? GetRequest<T>(string requestUrl, Dictionary<string, string> queryParams = null)
+        {
+            if (queryParams != null)
+            {
+                // Фильтруем параметры, исключая null значения
+                var filteredParams = queryParams.Where(p => p.Value != null)
+                                                 .ToDictionary(p => p.Key, p => p.Value);
+
+                var queryString = string.Join("&", filteredParams.Select(p => $"{p.Key}={Uri.EscapeDataString(p.Value)}"));
+                requestUrl += "?" + queryString;
+            }
+
+            var response = _client.GetAsync(requestUrl).Result;
+            var result = response.Content.ReadAsStringAsync().Result;
+            if (response.IsSuccessStatusCode)
+            {
+                return JsonConvert.DeserializeObject<T>(result);
+            }
+            else
+            {
+                throw new Exception(result);
+            }
+        }
+
+
+
     }
 
     public class ApiResponse

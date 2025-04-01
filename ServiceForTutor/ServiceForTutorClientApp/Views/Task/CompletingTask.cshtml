@@ -3,9 +3,7 @@
 @{
     ViewData["Title"] = "Выполнение задания";
 }
-<head>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-</head>
+
 <body>
     <div class="container mt-5">
         <h1 class="display-4">@ViewData["Title"]</h1>
@@ -51,14 +49,14 @@
                                 {
                                     <div class="mb-3">
                                         <label for="shortAnswer_@question.Id" class="form-label">Ваш ответ:</label>
-                                        <input type="text" class="form-control" id="shortAnswer_@question.Id" name="answer[@question.Id]" />
+                                        <textarea name="answer[@question.Id]" class="form-control" rows="3">@string.Join(", ", question.StoredAnswers)</textarea>
                                     </div>
                                 }
                                 else if (question.TypeQuestion == "Развернутый ответ")
                                 {
                                     <div class="mb-3">
                                         <label for="longAnswer_@question.Id" class="form-label">Ваш ответ:</label>
-                                        <textarea class="form-control" id="longAnswer_@question.Id" name="answer[@question.Id]" rows="5"></textarea>
+                                        <textarea class="form-control" id="longAnswer_@question.Id" name="answer[@question.Id]" rows="5">@question.StoredAnswers</textarea>
                                     </div>
                                 }
                                 else if (question.TypeQuestion == "Единичный выбор")
@@ -72,8 +70,15 @@
                                                 if (answer != null)
                                                 {
                                                     <div class="form-check">
-
-                                                        <input class="form-check-input" type="radio" name="answer[@question.Id]" id="radio_@answer" value="@answer" />
+                                                        <input class="form-check-input" type="radio"
+                                                                name="answer[@question.Id]"
+                                                                id="radio_@answer"
+                                                                value="@answer"
+                                                        @if (question.StoredAnswers != null && question.StoredAnswers.Contains(answer))
+                                                        {
+                                                            <text>checked</text>
+                                                            ;
+                                                        } />
                                                         <label class="form-check-label" for="radio_@answer">@answer</label>
                                                     </div>
                                                 }
@@ -92,7 +97,15 @@
                                                 if (answer != null)
                                                 {
                                                     <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="answer[@question.Id]" id="checkbox_@answer" value="@answer" />
+                                                        <input class="form-check-input" type="checkbox"
+                                                                name="answer[@question.Id]"
+                                                                id="checkbox_@answer"
+                                                                value="@answer"
+                                                        @if (question.StoredAnswers != null && question.StoredAnswers.Contains(answer))
+                                                        {
+                                                            <text>checked</text>
+                                                            ;
+                                                        } />
                                                         <label class="form-check-label" for="checkbox_@answer">@answer</label>
                                                     </div>
                                                 }

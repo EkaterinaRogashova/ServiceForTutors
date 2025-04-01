@@ -24,6 +24,7 @@ namespace ServiceForTutorClientApp.Controllers
             {
                 date = date.AddDays(7);
             }
+
             // Вычисляем начало и конец недели
             DateTime startOfWeek = date.AddDays(-(int)date.DayOfWeek);
             DateTime endOfWeek = startOfWeek.AddDays(6);
@@ -33,39 +34,42 @@ namespace ServiceForTutorClientApp.Controllers
                 return Redirect("~Home/Enter");
             }
 
-            // Изменяем запрос к API, передавая даты начала и конца недели
-            var schedule = APIClient.GetRequest<List<ScheduleViewModel>>($"api/schedule/GetScheduleList?TutorId={APIClient.Client.Id}&startDate={startOfWeek:yyyy-MM-dd}&endDate={endOfWeek:yyyy-MM-dd}");
+            List<ScheduleViewModel> schedule = null;
 
-            if (APIClient.Client.Role == "Tutor")
-            {
-                schedule = APIClient.GetRequest<List<ScheduleViewModel>>($"api/schedule/GetScheduleList?TutorId={APIClient.Client.Id}&startDate={startOfWeek:yyyy-MM-dd}&endDate={endOfWeek:yyyy-MM-dd}");
-            }
-
+            // Загрузка расписания для студентов
             if (APIClient.Client.Role == "Student")
             {
+                // Загружаем расписание для студента
                 schedule = APIClient.GetRequest<List<ScheduleViewModel>>($"api/schedule/GetScheduleList?StudentId={APIClient.Client.Id}&startDate={startOfWeek:yyyy-MM-dd}&endDate={endOfWeek:yyyy-MM-dd}");
 
+                // Если tutorId указан, загружаем расписание для конкретного репетитора
                 if (tutorId != null)
                 {
                     schedule = APIClient.GetRequest<List<ScheduleViewModel>>($"api/schedule/GetScheduleList?TutorId={tutorId}&startDate={startOfWeek:yyyy-MM-dd}&endDate={endOfWeek:yyyy-MM-dd}");
                 }
             }
-            
+            // Загрузка расписания для репетиторов
+            else if (APIClient.Client.Role == "Tutor")
+            {
+                // Загружаем расписание для репетитора
+                schedule = APIClient.GetRequest<List<ScheduleViewModel>>($"api/schedule/GetScheduleList?TutorId={APIClient.Client.Id}&startDate={startOfWeek:yyyy-MM-dd}&endDate={endOfWeek:yyyy-MM-dd}");
+            }
 
+            // Дальнейшие действия с данными
             if (tutorId != null)
             {
                 UserViewModel tutor = APIClient.GetRequest<UserViewModel>($"api/user/GetUser?userId={tutorId}");
-                // Установить заголовок на основе имени и фамилии найденного репетитора
-                ViewBag.HeaderTitle = $"Расписание {tutor.Surname} {tutor.Name}";
+                ViewBag.HeaderTitle = tutor != null ? $"Расписание {tutor.Surname} {tutor.Name}" : "Мое расписание";
             }
             else
             {
-                ViewBag.HeaderTitle = "Мое расписание"; // На случай, если репетитор не найден
+                ViewBag.HeaderTitle = "Мое расписание"; // Заголовок по умолчанию
             }
 
             ViewBag.CurrentDate = date;
             return View(schedule);
         }
+
 
 
         [HttpPost]
@@ -114,24 +118,34 @@ namespace ServiceForTutorClientApp.Controllers
 
 
         [HttpPost]
-        public IActionResult DeleteBook(int id, int tutorId)
+        public IActionResult DeleteBook(int id, int tutorId, string status)
         {
             if (APIClient.Client == null)
             {
                 return Redirect("~Home/Enter");
             }
-
-            APIClient.PostRequest($"api/schedule/UpdateSchedule", new ScheduleBindingModel
+            if (status != "Booked")
             {
-                Id = id,
-                StudentId = null,
-                Status = "Available"
-            });
+                APIClient.PostRequest($"api/schedule/DeleteTimeSlot", new ScheduleBindingModel
+                {
+                    Id = id
+                });
+            }
+            else
+            {
+                APIClient.PostRequest($"api/schedule/UpdateSchedule", new ScheduleBindingModel
+                {
+                    Id = id,
+                    StudentId = null,
+                    Status = "Available"
+                });
+                
+            }
             if (APIClient.Client.Role == "Tutor")
             {
                 return Redirect($"/Schedule/Schedule?tutorId={APIClient.Client.Id}");
             }
-            return Redirect($"/Schedule/Schedule?tutorId={APIClient.Client.Id}");
+            return Redirect($"/Schedule/Schedule?studentId={APIClient.Client.Id}");
         }
 
         [HttpPost]
@@ -192,5 +206,13 @@ namespace ServiceForTutorClientApp.Controllers
             return RedirectToAction("Schedule", date);
         }
 
+    }
+
+    public class ScheduleRequestParams
+    {
+        public int? TutorId { get; set; }
+        public int? StudentId { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
     }
 }

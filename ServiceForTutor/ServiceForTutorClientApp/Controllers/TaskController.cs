@@ -230,10 +230,6 @@ namespace ServiceForTutorClientApp.Controllers
             return View(paginatedList); // Передача paginatedList в представление
         }
 
-
-
-
-
         public IActionResult RemoveTask(int id)
         {
             APIClient.PostRequest("api/Task/RemoveTask", new AssignedTaskBindingModel
@@ -253,14 +249,24 @@ namespace ServiceForTutorClientApp.Controllers
             var test = APIClient.GetRequest<AssignedTaskViewModel>($"api/task/GetAssignedTask?TaskId={id}");
             var taskDetails = APIClient.GetRequest<TaskViewModel>($"api/task/GetTask?TaskId={test.TaskId}");
             var taskQuestions = APIClient.GetRequest<List<QuestionViewModel>>($"api/task/GetQuestionsByTask?TaskId={test.TaskId}");
+
+            // Создаем модель представления
+            var studentAnswers = APIClient.GetRequest<List<StudentAnswerViewModel>>($"api/task/GetStudentAnswers?AssignedTaskId={test.Id}");
+            var answersDictionary = studentAnswers?.ToDictionary(answer => answer.QuestionId, answer => answer.Answer);
+
             var viewModel = new TaskViewModel
             {
                 Id = id,
                 Name = taskDetails.Name,
                 Topic = taskDetails.Topic,
                 Subject = taskDetails.Subject,
-                Questions = taskQuestions
+                Questions = taskQuestions.Select(q =>
+                {
+                    q.SetStoredAnswer(answersDictionary != null && answersDictionary.TryGetValue(q.Id, out var storedAnswer) ? storedAnswer : null);
+                    return q;
+                }).ToList()
             };
+
             return View(viewModel);
         }
 
