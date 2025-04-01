@@ -50,6 +50,18 @@ namespace ServiceForTutorClientApp.Controllers
                     schedule = APIClient.GetRequest<List<ScheduleViewModel>>($"api/schedule/GetScheduleList?TutorId={tutorId}&startDate={startOfWeek:yyyy-MM-dd}&endDate={endOfWeek:yyyy-MM-dd}");
                 }
             }
+            
+
+            if (tutorId != null)
+            {
+                UserViewModel tutor = APIClient.GetRequest<UserViewModel>($"api/user/GetUser?userId={tutorId}");
+                // Установить заголовок на основе имени и фамилии найденного репетитора
+                ViewBag.HeaderTitle = $"Расписание {tutor.Surname} {tutor.Name}";
+            }
+            else
+            {
+                ViewBag.HeaderTitle = "Мое расписание"; // На случай, если репетитор не найден
+            }
 
             ViewBag.CurrentDate = date;
             return View(schedule);
@@ -108,14 +120,45 @@ namespace ServiceForTutorClientApp.Controllers
             {
                 return Redirect("~Home/Enter");
             }
+
             APIClient.PostRequest($"api/schedule/UpdateSchedule", new ScheduleBindingModel
             {
                 Id = id,
                 StudentId = null,
                 Status = "Available"
             });
-            return Redirect($"/Schedule/Schedule?tutorId={tutorId}");
+            if (APIClient.Client.Role == "Tutor")
+            {
+                return Redirect($"/Schedule/Schedule?tutorId={APIClient.Client.Id}");
+            }
+            return Redirect($"/Schedule/Schedule?tutorId={APIClient.Client.Id}");
         }
+
+        [HttpPost]
+        public IActionResult DeleteBookAtStudent(int id)
+        {
+            if (APIClient.Client == null)
+            {
+                return RedirectToAction("Enter", "Home");
+            }
+
+            try
+            {
+                APIClient.PostRequest($"api/schedule/UpdateSchedule", new ScheduleBindingModel
+                {
+                    Id = id,
+                    StudentId = null,
+                    Status = "Available"
+                });
+                return Ok(); // Возвратите 200 OK по успешному завершению
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Ошибка при удалении записи с ID {id}", id);
+                return StatusCode(500, "Внутренняя ошибка сервера"); // Возвратите статус 500 при ошибке
+            }
+        }
+
 
         [HttpPost]
         public IActionResult WeekBackOrForward(string currentDate, string direction)

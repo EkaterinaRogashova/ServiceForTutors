@@ -22,7 +22,7 @@
     <div class="container-fluid" style="margin-top: 2%">
        
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="display-4">Мое расписание</h1>
+            <h1 class="display-4">@ViewBag.HeaderTitle</h1>
         </div>
         @functions {
             List<DateTime> GetDatesOfWeek(DateTime date)
@@ -93,7 +93,7 @@
                                             var localEndDate = timeSlot.DateTimeEnd.ToLocalTime();
 
                                             <button class="time-slot-button" data-bs-toggle="modal"
-                                                    data-bs-target="@((APIClient.Client.Role == "Student") ? "#reservation" : "#viewTimeSlot")"
+                                                    data-bs-target="@((APIClient.Client.Role == "Student" && timeSlot.Status == "Available") ? "#reservation" : "#viewTimeSlot")"
                                                     data-id="@timeSlot.Id"
                                                     data-date="@localStartDate.ToString("yyyy-MM-dd")"
                                                     data-start-time="@localStartDate.ToString("HH:mm")"
@@ -173,10 +173,10 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form asp-action="Reservation" method="post">
-
                     <div class="modal-body">
                         <input type="hidden" id="modalId" name="id" />
                         <input type="hidden" id="modalTutorId" name="tutorId" />
+                        <input type="hidden" id="modalStatus" name="status" />
                         <div class="mb-3">
                             <label>Дата:</label>
                             <p id="modalDate"></p>
@@ -195,7 +195,7 @@
                         </div>
                         <div class="mb-3">
                             <label>ФИО репетитора:</label>
-                            <p id="modalTutorId" name="tutorId"></p>
+                            <p id="modalTutorFullName"></p>
                         </div>
                         <div class="mb-3">
                             <label for="duration">Продолжительность занятия:</label>
@@ -205,12 +205,13 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
                         <div id="actionButtons"></div>
-                        <button type="submit" class="btn" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px;">Забронировать</button>
+                        <button type="submit" id="bookButton" class="btn" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px;">Забронировать</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+
 
     <div class="modal fade" id="viewTimeSlot" tabindex="-1" role="dialog" aria-labelledby="viewTimeSlotLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -292,7 +293,7 @@
             var tutorId = button.data('tutor-id');
             var status = button.data('status');
             var dayOfWeek = new Date(date).toLocaleDateString('ru-RU', { weekday: 'long' });
-            var duration = (new Date(`2000-01-01 ${endTime}`) - new Date(`2000-01-01 ${startTime}`)) / (1000 * 60);
+            var duration = (new Date("2000-01-01 " + endTime) - new Date("2000-01-01 " + startTime)) / (1000 * 60);
 
             var modal = $(this);
             modal.find('#modalId').val(id);
@@ -301,13 +302,20 @@
             modal.find('#modalStartTime').text(startTime);
             modal.find('#modalEndTime').text(endTime);
             modal.find('#modalTutorId').val(tutorId);
-            modal.find('#modalStatus').text(status);
+            modal.find('#modalStatus').val(status);
             modal.find('#modalDuration').text(duration / 60 + " часа");
 
+            // Убираем старые кнопки перед добавлением новых
             $('#actionButtons').empty();
 
+            // Условие для показа кнопок в зависимости от статуса
             if (status === "Booked") {
-                $('#actionButtons').append('');
+                // Кнопка "Забронировать" неактивна
+                $('#bookButton').prop('disabled', true);
+                $('#cancelButton').prop('disabled', false);
+            } else {
+                // Кнопка "Забронировать" активна
+                $('#bookButton').prop('disabled', false);
             }
         });
 

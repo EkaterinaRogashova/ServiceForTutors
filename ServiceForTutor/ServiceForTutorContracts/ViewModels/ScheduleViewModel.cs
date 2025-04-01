@@ -16,5 +16,8 @@ namespace ServiceForTutorContracts.ViewModels
         public string Status { get; set; } = string.Empty;
         public UserViewModel Tutor { get; set; }
         public int Id { get; set; }
+
+        public string TutorFirstName => Tutor?.Name;  // Замените на соответствующее свойство
+        public string TutorLastName => Tutor?.Surname;
     }
 }
