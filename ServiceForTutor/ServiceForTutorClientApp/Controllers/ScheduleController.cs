@@ -26,8 +26,8 @@ namespace ServiceForTutorClientApp.Controllers
             }
 
             // Вычисляем начало и конец недели
-            DateTime startOfWeek = date.AddDays(-(int)date.DayOfWeek);
-            DateTime endOfWeek = startOfWeek.AddDays(6);
+            DateTime startOfWeek = date.AddDays(-(int)date.DayOfWeek + (int)DayOfWeek.Monday);
+            DateTime endOfWeek = startOfWeek.AddDays(7);
 
             if (APIClient.Client == null)
             {
@@ -63,8 +63,9 @@ namespace ServiceForTutorClientApp.Controllers
             }
             else
             {
-                ViewBag.HeaderTitle = "Мое расписание"; // Заголовок по умолчанию
+                ViewBag.HeaderTitle = "Мое расписание";
             }
+            
 
             ViewBag.CurrentDate = date;
             return View(schedule);

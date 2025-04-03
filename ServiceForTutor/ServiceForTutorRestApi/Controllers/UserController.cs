@@ -111,7 +111,10 @@ namespace ServiceForTutorRestApi.Controllers
                         TariffName = tariff.Name,
                         PurchasedTariffEnd = purchasedTariff.DateEnd.ToString("dd.MM.yyyy"),
                         PurchasedTariffId = tariff.Id,
-                        TariffId = purchasedTariff.Id
+                        TariffId = purchasedTariff.Id,
+                        StatusActivity = user.StatusActivity,
+                        Password = user.Password,
+                        Role = user.Role
                     };
                 }
 
@@ -120,7 +123,10 @@ namespace ServiceForTutorRestApi.Controllers
                     Surname = user.Surname,
                     Name = user.Name,
                     LastName = user.LastName,
-                    Email = user.Email
+                    Email = user.Email,
+                    Password = user.Password,
+                    Role = user.Role,
+                    StatusActivity = user.StatusActivity
                 };
 
                 

@@ -133,7 +133,6 @@
             var errorMessage = @Html.Raw(Json.Serialize(TempData["ErrorMessage"]));
             var successMessage = @Html.Raw(Json.Serialize(TempData["SuccessMessage"]));
 
-            
             if (successMessage) {
                 $('#successMessage').text(successMessage);
                 $('#successModal').modal('show');
@@ -150,7 +149,7 @@
 
                 $('#confirmChangeTariff').on('click', function () {
 
-                    var newTariffId = @TempData["NewTariffId"]; // Получаем новый тариф
+                    var newTariffId = @Html.Raw(Json.Serialize(TempData["NewTariffId"] ?? 0)); // Получаем новый тариф
                     // Отправляем запрос на сервер с подтверждением
                     $.post('/Home/Subscribe', { planId: newTariffId, confirmChange: true }, function (response) {
                         // Обработка ответа, например, покажите сообщение об успехе или редирект

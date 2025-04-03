@@ -200,6 +200,10 @@ namespace ServiceForTutorClientApp.Controllers
             {
                 return Redirect("~Home/Enter");
             }
+            if (studentId != 0)
+            {
+                ViewData["StudentId"] = studentId;
+            }
 
             AssignedTaskListResponse response = null; // Инициализация переменной как null
 

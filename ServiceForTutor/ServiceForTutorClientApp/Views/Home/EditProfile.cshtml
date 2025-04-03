@@ -57,3 +57,34 @@
     </div>
 </div>
 
+<div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="errorModalLabel">Ошибка!</h5>
+            </div>
+            <div class="modal-body">
+                <p id="errorMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+
+    <script>
+        $(document).ready(function () {
+            var errorMessage = @Html.Raw(Json.Serialize(TempData["ErrorMessage"]));
+            
+            if (errorMessage) {
+                $('#errorMessage').text(errorMessage);
+                $('#errorModal').modal('show');
+            }
+        });
+
+    </script>
+}
+

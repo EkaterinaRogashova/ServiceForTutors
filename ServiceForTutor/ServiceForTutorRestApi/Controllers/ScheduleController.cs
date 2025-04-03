@@ -12,9 +12,11 @@ namespace ServiceForTutorRestApi.Controllers
     public class ScheduleController : Controller
     {
         private readonly IScheduleLogic _logic;
-        public ScheduleController(IScheduleLogic logic)
+        private readonly IUserLogic _userLogic;
+        public ScheduleController(IScheduleLogic logic, IUserLogic userLogic)
         {
             _logic = logic;
+            _userLogic = userLogic;
         }
 
         [HttpGet]
@@ -36,18 +38,30 @@ namespace ServiceForTutorRestApi.Controllers
                 {
                     schedule = _logic.ReadList(new ScheduleSearchModel { StudentId = studentId, TutorId = tutorId });
                 }
-
+                
                 // Фильтрация по дате
                 if (startDate.HasValue && endDate.HasValue)
                 {
                     schedule = schedule.Where(s => s.DateTimeStart >= startDate.Value && s.DateTimeEnd <= endDate.Value).ToList();
                 }
-
+                
                 // Преобразование дат в UTC
                 foreach (var item in schedule)
                 {
                     item.DateTimeStart = item.DateTimeStart.ToUniversalTime();
                     item.DateTimeEnd = item.DateTimeEnd.ToUniversalTime();
+                    if(item.StudentId.HasValue)
+                    {
+                        var studentInfo = _userLogic.ReadElement(new UserSearchModel
+                        {
+                            Id = item.StudentId.Value
+                        });
+                        if (studentInfo != null)
+                        {
+                            item.Surname = studentInfo.Surname;
+                            item.Name = studentInfo.Name;
+                        }
+                    }
                 }
 
                 return schedule;

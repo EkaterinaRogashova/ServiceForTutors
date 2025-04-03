@@ -249,7 +249,6 @@ namespace ServiceForTutorClientApp.Controllers
                 Name = model.Name,
                 Surname = model.Surname,
                 LastName = model.LastName,
-                Role = existingUser.Role,
                 StatusActivity = existingUser.StatusActivity,
                 Password = existingUser.Password,
                 Email = existingUser.Email
@@ -271,9 +270,9 @@ namespace ServiceForTutorClientApp.Controllers
                 return Redirect("~Home/Enter");
             }
             var existingUser = APIClient.GetRequest<UserViewModel>($"api/user/GetUser?UserId={APIClient.Client.Id}");
-            string returnUrl = HttpContext.Request.Headers["Referer"].ToString();
+
             if (EncryptPassword(currentPassword) == existingUser.Password)
-                {
+            {
                 if (newPassword == confirmPassword)
                 {
                     APIClient.PostRequest("api/user/UpdateUser", new UserBindingModel
@@ -291,11 +290,13 @@ namespace ServiceForTutorClientApp.Controllers
                 }
                 else
                 {
+                    TempData["ErrorMessage"] = "Пароли не совпадают. Попробуйте еще раз";
                     return RedirectToAction("EditProfile");
                 }
             }
             else
             {
+                TempData["ErrorMessage"] = "Неверный текущий пароль";
                 return RedirectToAction("EditProfile");
             }
             
@@ -383,7 +384,7 @@ namespace ServiceForTutorClientApp.Controllers
             var existingTariffPlan = APIClient.GetRequest<TariffPlanViewModel>($"api/TariffPlan/GetTariffPlan?TariffPlanId={planId}");
             var userDetails = APIClient.GetRequest<UserViewModel>($"api/user/GetUser?UserId={APIClient.Client.Id}");
             ViewBag.UserDetails = userDetails;
-            if (userDetails.PurchasedTariffId == planId)
+            if (userDetails.PurchasedTariffId == existingTariffPlan.Id)
             {
                 TempData["ErrorMessage"] = "У вас уже приобретен данный тариф";
                 return RedirectToAction("TariffPlans");
@@ -424,11 +425,11 @@ namespace ServiceForTutorClientApp.Controllers
             }
             return RedirectToAction("TariffPlans");
         }
-        public IActionResult DeleteSubscribe(int planId)
+        public IActionResult DeleteSubscribe(int purchasedTariffId)
         {
             APIClient.PostRequest("api/TariffPlan/DeleteSubscribe", new PurchasedTariffPlanBindingModel
             {
-                Id = planId,
+                Id = purchasedTariffId,
                 Status = "Inactive"
             });
             return RedirectToAction("TariffPlans");

@@ -89,18 +89,42 @@
                                         {
                                             var localStartDate = timeSlot.DateTimeStart.ToLocalTime();
                                             var localEndDate = timeSlot.DateTimeEnd.ToLocalTime();
+                                            if (timeSlot.Status == "Available")
+                                            {
+                                                <button class="time-slot-button" data-bs-toggle="modal"
+                                                        data-bs-target="@((APIClient.Client.Role == "Student" && timeSlot.Status == "Available") ? "#reservation" : "#viewTimeSlot")"
+                                                        data-id="@timeSlot.Id"
+                                                        data-date="@localStartDate.ToString("dddd, dd MMMM yyyy")"
+                                                        data-start-time="@localStartDate.ToString("HH:mm")"
+                                                        data-end-time="@localEndDate.ToString("HH:mm")"
+                                                        data-tutor-id="@timeSlot.TutorId"
+                                                        data-status="@timeSlot.Status">
+                                                    @StatusTimeSlotDictionary.GetTranslation(timeSlot.Status) <br />
+                                                    @localStartDate.ToString("HH:mm") - @localEndDate.ToString("HH:mm")
+                                                </button>
+                                            }
+                                            if (timeSlot.Status == "Booked" && APIClient.Client.Role == "Tutor")
+                                            {
+                                                <button class="time-slot-button" data-bs-toggle="modal"
+                                                        data-bs-target="@((APIClient.Client.Role == "Student" && timeSlot.Status == "Available") ? "#reservation" : "#viewTimeSlot")"
+                                                        data-id="@timeSlot.Id"
+                                                        data-date="@localStartDate.ToString("dddd, dd MMMM yyyy")"
+                                                        data-start-time="@localStartDate.ToString("HH:mm")"
+                                                        data-end-time="@localEndDate.ToString("HH:mm")"
+                                                        data-tutor-id="@timeSlot.TutorId"
+                                                        data-status="@timeSlot.Status">
+                                                    @(timeSlot.Surname + " " + timeSlot.Name) <br />
+                                                    @localStartDate.ToString("HH:mm") - @localEndDate.ToString("HH:mm")
+                                                </button>
+                                            }
+                                            if (timeSlot.Status == "Booked" && APIClient.Client.Role == "Student")
+                                            {
+                                                <button class="time-slot-button">
+                                                    @(timeSlot.Surname + " " + timeSlot.Name) <br />
+                                                    @localStartDate.ToString("HH:mm") - @localEndDate.ToString("HH:mm")
+                                                </button>
+                                            }
 
-                                            <button class="time-slot-button" data-bs-toggle="modal"
-                                                    data-bs-target="@((APIClient.Client.Role == "Student" && timeSlot.Status == "Available") ? "#reservation" : "#viewTimeSlot")"
-                                                    data-id="@timeSlot.Id"
-                                                    data-date="@localStartDate.ToString("yyyy-MM-dd")"
-                                                    data-start-time="@localStartDate.ToString("HH:mm")"
-                                                    data-end-time="@localEndDate.ToString("HH:mm")"
-                                                    data-tutor-id="@timeSlot.TutorId"
-                                                    data-status="@timeSlot.Status">
-                                                @StatusTimeSlotDictionary.GetTranslation(timeSlot.Status) <br />
-                                                @localStartDate.ToString("HH:mm") - @localEndDate.ToString("HH:mm")
-                                            </button>
                                         }
                                         else
                                         {
@@ -177,10 +201,6 @@
                             <p id="modalDate"></p>
                         </div>
                         <div class="mb-3">
-                            <label>День недели:</label>
-                            <p id="modalDayOfWeek"></p>
-                        </div>
-                        <div class="mb-3">
                             <label>Время начала:</label>
                             <p id="modalStartTime"></p>
                         </div>
@@ -219,10 +239,6 @@
                         <div class="mb-3">
                             <label>Дата:</label>
                             <p id="modalDate"></p>
-                        </div>
-                        <div class="mb-3">
-                            <label>День недели:</label>
-                            <p id="modalDayOfWeek"></p>
                         </div>
                         <div class="mb-3">
                             <label>Время начала:</label>
@@ -300,15 +316,24 @@
 
             // Убираем старые кнопки перед добавлением новых
             $('#actionButtons').empty();
+            var currentTime = new Date();
+            var endDateTime = new Date(date + "T" + endTime);
 
-            // Условие для показа кнопок в зависимости от статуса
-            if (status === "Booked") {
-                // Кнопка "Забронировать" неактивна
+            //Условие для показа кнопок в зависимости от статуса
+            if (endDateTime <= currentTime) {
+                // Дата занятия уже прошла, отключаем кнопки
                 $('#bookButton').prop('disabled', true);
-                $('#cancelButton').prop('disabled', false);
+                $('#cancelButton').prop('disabled', true);
             } else {
-                // Кнопка "Забронировать" активна
-                $('#bookButton').prop('disabled', false);
+                // Условие для показа кнопок в зависимости от статуса
+                if (status === "Booked") {
+                    // Кнопка "Забронировать" неактивна
+                    $('#bookButton').prop('disabled', true);
+                    $('#cancelButton').prop('disabled', false);
+                } else {
+                    // Кнопка "Забронировать" активна
+                    $('#bookButton').prop('disabled', false);
+                }
             }
         });
 
@@ -331,15 +356,22 @@
             modal.find('#modalEndTime').text(endTime);
             modal.find('#modalTutorId').val(tutorId);
             modal.find('#modalStatus').val(status);
-            modal.find('#modalDuration').text(duration / 60 + " часа");
+            var dur = duration / 60
+            if (dur === 0.5) {
+                modal.find('#modalDuration').text("30 мин");
+            }
+            else {
+                modal.find('#modalDuration').text(duration / 60 + " ч");
+            }
+            
 
             var startDateTime = new Date(`${date}T${startTime}`); // Создаем объект даты/времени начала занятия
             var currentTime = new Date(); // Текущая дата/время
 
             // Разница во времени в миллисекундах
             var timeDifference = startDateTime - currentTime;
-
             if (status === "Booked") {
+                $('#cancelButton').text('Отменить занятие');
                 $('#cancelButton').prop('disabled', false); // Активируем кнопку отмены
 
                 // Проверяем, активировать ли кнопку "Начать занятие"
@@ -414,7 +446,6 @@
                     endTimeInput.value = ''; // Если нет времени начала, очищаем поле окончания
                 }
             }
-
             // Добавляем обработчики событий
             startTimeInput.addEventListener('change', calculateEndTime);
             durationSelect.addEventListener('change', calculateEndTime);

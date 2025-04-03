@@ -48,7 +48,7 @@
                                         <p class="mb-0">Максимальный балл: <strong>@question.MaxScore</strong></p>
                                     </div>
 
-                                    @if (question.TypeQuestion == "Краткий ответ")
+                                    @if (question.TypeQuestion == "Краткий ответ" && question.GetCorrectAnswers().FirstOrDefault() != null)
                                     {
                                         <p class="card-text mt-3">Правильный ответ: <strong>@question.GetCorrectAnswers().FirstOrDefault()</strong></p>
                                     }
@@ -151,7 +151,6 @@
                 $('#errorModal').modal('show');
             }
         });
-
     </script>
 </body>
 

@@ -72,6 +72,10 @@
                                             {
                                                 <p>Ответ не найден</p>
                                             }
+                                        @if (question.TypeQuestion == "Краткий ответ" && question.GetCorrectAnswers().FirstOrDefault() != null)
+                                        {
+                                            <p class="card-text mt-3">Правильный ответ: <strong>@question.GetCorrectAnswers().FirstOrDefault()</strong></p>
+                                        }
 
                                             @if (question.Answers != null && question.Answers.Any())
                                             {

@@ -7,6 +7,8 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Подключение Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .hero {
             background-image: url('https://i.pinimg.com/236x/5a/09/c0/5a09c076a7378e8cf088ac20b135d866.jpg');
@@ -37,14 +39,15 @@
 </head>
 <body>
     <div class="container">
-    <header class="hero">
-        <div class="hero-title">
-            <h1 class="display-4">Добро пожаловать на нашу платформу онлайн-обучения!</h1>
-            <p class="lead">Мы рады представить вам уникальное пространство, где студенты и репетиторы могут легко взаимодействовать и совместно достигать образовательных целей.</p>
-            <a href="@Url.Action("Register", "Home")" class="btn btn-light btn-lg">Начать обучение</a>
-        </div>
-    </header>
+        <header class="hero">
+            <div class="hero-title">
+                <h1 class="display-4">Добро пожаловать на нашу платформу онлайн-обучения!</h1>
+                <p class="lead">Мы рады представить вам уникальное пространство, где студенты и репетиторы могут легко взаимодействовать и совместно достигать образовательных целей.</p>
+                <a href="@Url.Action("Register", "Home")" class="btn btn-light btn-lg">Начать обучение</a>
+            </div>
+        </header>
     </div>
+
     <div class="container">
         <h2 class="text-center my-5">Почему выбирают нашу платформу?</h2>
         <div class="row features">
@@ -62,6 +65,7 @@
         </div>
     </div>
 
+    <!-- Подключение jQuery и Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 </body>
 </html>
