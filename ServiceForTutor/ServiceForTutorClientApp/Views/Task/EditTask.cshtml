@@ -13,17 +13,18 @@
         <div class="container">
             <div class="row" style="margin-top: 20px;">
                 <div class="col-md-6">
-                    <div class="p-4" style="background-color: #DBCEF6; border-radius: 10px;">
+                    <div class="p-4" style="background-color: #E3EFFF; border-radius: 10px;">
                         <h3 class="text-center mt-3" style="color: #300E36;">@Model.Name</h3>
-                        <p style="font-weight: bold;">Темa: @Model.Topic</p>
+                        <p style="font-weight: bold;">Тема: @Model.Topic</p>
                         <p style="font-weight: bold;">Предмет: @Model.Subject</p>
-                        <div class="text-right">
-                            <button class="btn" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px;" data-bs-toggle="modal" data-bs-target="#addQuestionModal">Добавить вопрос</button>
+                        <div class="d-flex justify-content-end">
+                            <button class="btn me-2" style="background-color: #9ACCFF; color: #300E36; border-radius: 10px;" data-bs-toggle="modal" data-bs-target="#addQuestionModal">Добавить вопрос</button>
+                            <button class="btn" style="background-color: rgba(70, 144, 229, 0.3); color: #300E36; border-radius: 10px;" data-bs-toggle="modal" data-bs-target="#assignTaskModal">Назначить ученика</button>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-6 text-center">
-                    <img src="https://cdn-icons-png.flaticon.com/512/5058/5058451.png" alt="" style="max-width: 40%; margin-left: -20px; height: auto; border-radius: 10px;">
+                    <img src="https://okeygeek.ru/wp-content/uploads/2019/09/icon_needs_assessment_blue-300x300-768x768.png" alt="" style="max-width: 40%; margin-left: -20px; height: auto; border-radius: 10px; margin-top: -20px;">
                 </div>
             </div>
         </div>
@@ -38,7 +39,7 @@
                     <div class="d-flex mb-3" style="width: 100%;">
                         <!-- Контейнер для карточки вопроса с фиксированной шириной -->
                         <div class="flex-fill" style="min-width: 70%; max-width: 90%; /* Задайте фиксированную ширину */">
-                            <div class="card" style="background-color: #F5F4FF; border-radius: 0;">
+                            <div class="card" style="background-color: rgba(227, 239, 255, 0.3); border-radius: 0;">
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between">
                                         <h5 class="card-title mb-0">@question.TaskText</h5>
@@ -123,7 +124,7 @@
                                 <form asp-action="DeleteQuestion" method="post" style="margin-top: 10px;">
                                     <input type="hidden" id="taskId" name="taskId" value="@Model.Id" />
                                     <input type="hidden" id="questionId" name="id" value="@question.Id" />
-                                    <button class="btn" type="submit" style="border-radius: 10px; background-color: #DBCEF6; color: #300E36; width: 100%;">
+                                    <button class="btn" type="submit" style="border-radius: 10px; background-color: #9ACCFF; color: #300E36; width: 100%;">
                                         Удалить вопрос
                                     </button>
                                 </form>
@@ -208,8 +209,8 @@
                         </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 10px; background-color: #300E36 ; color: #C5A8EA;">Закрыть</button>
-                    <button type="submit" class="btn btn-primary" id="saveQuestionButton" style="border-radius: 10px; background-color: #C5A8EA; color: #300E36;">Сохранить</button>
+                    <button type="button" class="btn" data-bs-dismiss="modal" style="border-radius: 10px; background-color: #9ACCFF; color: black;">Закрыть</button>
+                            <button type="submit" class="btn" id="saveQuestionButton" style="border-radius: 10px; background-color: #E3EFFF; color: black;">Сохранить</button>
                 </div>
                 </form>
             </div>
@@ -259,13 +260,71 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
-                        <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+                            <button type="button" class="btn" data-dismiss="modal" style="border-radius: 10px; background-color: #9ACCFF; color: black;">Закрыть</button>
+                            <button type="submit" class="btn" style="border-radius: 10px; background-color: #E3EFFF; color: black;">Сохранить изменения</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+
+        <div class="modal fade" id="assignTaskModal" tabindex="-1" role="dialog" aria-labelledby="assignTaskModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content" style="border-radius: 15px;">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="assignTaskModalLabel">Добавить вопрос</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Закрыть" style="border: none; background: none;">
+                            <span aria-hidden="true" style="font-size: 1.5rem;">&times;</span>
+                        </button>
+                    </div>
+                    <form asp-action="AssignTask" method="post">
+                        <div class="modal-body">
+                            <input type="hidden" id="taskId" name="id" value="@Model.Id" />
+                            <div class="mb-3">
+                                <label for="studentSelect">Выберите ученика</label>
+                                <select id="studentSelect" name="studentId" class="form-select" required>
+                                    <option value="" disabled selected>-- Выберите ученика --</option>
+                                    @foreach (var student in ViewBag.Students)
+                                    {
+                                        <option value="@student.Id">@student.Name @student.Surname</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="startDate">Дата и время начала</label>
+                                <input type="datetime-local" id="startDate" name="startDate" class="form-control" required />
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="endDate">Дата и время окончания</label>
+                                <input type="datetime-local" id="endDate" name="endDate" class="form-control" required />
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn" data-bs-dismiss="modal" style="border-radius: 10px; background-color: #9ACCFF; color: black;">Закрыть</button>
+                            <button type="submit" class="btn" id="saveQuestionButton" style="border-radius: 10px; background-color: #E3EFFF; color: black;">Назначить задание</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="errorModalLabel">Ошибка!</h5>
+                    </div>
+                    <div class="modal-body">
+                        <p id="modalMessage"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn" data-bs-dismiss="modal" style="border-radius: 10px; background-color: #9ACCFF; color: black;">Закрыть</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     
 </body>
@@ -343,6 +402,7 @@
 
 
 </style>
+
 
 @section Scripts {
     @{
@@ -555,7 +615,10 @@
         // Обработчик события для выбора файлов
         document.getElementById('fileUpload').addEventListener('change', function (event) {
             const files = event.target.files;
-            filesArray = Array.from(files); // Преобразуем FileList в массив
+            for (let i = 0; i < files.length; i++) {
+                filesArray.push(files[i]); // Добавляем каждый выбранный файл в массив
+            }
+
             renderFilePreview(); // Обновляем превью
         });
 
@@ -569,22 +632,43 @@
             const previewContainer = document.getElementById("filePreviewContainer");
             previewContainer.innerHTML = ""; // Очищаем контейнер перед обновлением
 
-            filesArray.forEach((file) => {
+            filesArray.forEach((file, index) => {
                 const fileDiv = document.createElement("div");
                 fileDiv.innerText = file.name;
+
+                const removeBtn = document.createElement("button");
+                removeBtn.innerText = "X";
+                removeBtn.className = "remove-btn";
+                removeBtn.onclick = function () {
+                    removeFile(index); // Удаляем файл из массива по индексу
+                };
 
                 // Если файл — это изображение, показываем миниатюру
                 if (file.type.startsWith("image/")) {
                     const img = document.createElement("img");
                     img.src = URL.createObjectURL(file);
-                    img.style.width = "100px"; // Ограничиваем ширину миниатюры
+                    img.style.width = "300px"; // Ограничиваем ширину миниатюры
                     img.style.height = "auto"; // Поддерживаем пропорции
                     fileDiv.appendChild(img);
                 }
-
+                fileDiv.appendChild(removeBtn); // Добавляем кнопку "Удалить"
                 previewContainer.appendChild(fileDiv);
             });
         }
+
+        // Функция для удаления файла
+        function removeFile(index) {
+            filesArray.splice(index, 1); // Удаляем файл из массива
+            renderFilePreview(); // Обновляем превью
+        }
+
+        $(document).ready(function () {
+            var errorMessage = @Html.Raw(Json.Serialize(TempData["ErrorMessage"]));
+            if (errorMessage) {
+                $('#modalMessage').text(errorMessage);
+                $('#errorModal').modal('show');
+            }
+        });
     </script>
 
 }

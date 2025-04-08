@@ -5,16 +5,15 @@
 }
 
 <div class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center">
-        <button class="btn btn-light" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px;" onclick="window.history.back();">
-            <i class="fas fa-arrow-left"></i>Назад
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <button class="btn btn-light" style="background-color: #9ACCFF; color: #300E36; border-radius: 10px;" onclick="window.history.back();">
+            <i class="fas fa-arrow-left"></i> Вернуться к заданиям
         </button>
-        <h3 class="text-center mt-3" style="color: #300E36;">Создание нового задания</h3>
+        <h1 class="text-center" style="color: #300E36;">Создание нового задания</h1>
     </div>
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <div class="p-4" style="background-color: #DBCEF6; border-radius: 10px;">
-                
+            <div class="p-4" style="background-color: #E3EFFF; border-radius: 10px; box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);">
                 <form asp-action="CreateTask" method="post">
                     <div class="mb-3">
                         <label asp-for="Name" class="form-label">Название задания</label>
@@ -32,7 +31,7 @@
                         <span asp-validation-for="Topic" class="text-danger"></span>
                     </div>
                     <div class="text-center">
-                        <button type="submit" class="btn" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px;">Создать задание</button>
+                        <button type="submit" class="btn" style="background-color: #9ACCFF; color: #300E36; border-radius: 10px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">Создать задание</button>
                     </div>
                 </form>
             </div>
@@ -40,6 +39,32 @@
     </div>
 </div>
 
+<style>
+    .btn {
+        padding: 10px 20px; /* Увеличение внутреннего отступа для кнопок */
+        transition: background-color 0.3s, transform 0.2s; /* Плавные переходы */
+    }
+
+        .btn:hover {
+            background-color: #E3EFFF; /* Цвет при наведении на кнопки */
+            transform: translateY(-2px); /* Эффект поднятия кнопки при наведении */
+        }
+
+    .form-label {
+        font-weight: bold; /* Выделение названий полей формы */
+    }
+
+    .form-control {
+        border-radius: 5px; /* Закругление углов полей ввода */
+        border: 1px solid #ccc; /* Задание границы */
+    }
+
+        .form-control:focus {
+            border-color: #9ACCFF; /* Цвет границ при фокусе */
+            box-shadow: 0 0 5px rgba(153, 204, 255, 0.5); /* Подсветка при фокусе */
+        }
+
+</style>
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");

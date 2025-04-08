@@ -10,30 +10,33 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
     <style>
-        body {
-            background-color: #f8f9fa; /* Светлый фон */
+
+
+        .container {
+            display: flex;
+            justify-content: center; /* Центрирование по горизонтали */
+            align-items: center; /* Центрирование по вертикали */
+            height: 100%; /* Высота контейнера как 100% заданной высоты страницы */
+            padding: 20px; /* Вы можете добавить отступы, если это необходимо */
         }
 
         .profile-form {
-            background-color: #E6D9F5; /* Цвет фона карточки */
+            background-color: #E3EFFF; /* Цвет фона карточки */
             border-radius: 10px;
             padding: 20px;
             margin-bottom: 20px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Добавление тени */
+            width: 700px; /* Ширина карточки */
         }
 
-        .profile-form h2 {
-            text-align: center;
-            color: #300E36; /* Цвет заголовка */
-            margin-top: 0;
-        }
-
-        .profile-form label {
-            font-weight: bold;
-        }
+            .profile-form h2 {
+                text-align: center;
+                color: #300E36; /* Цвет заголовка */
+                margin-top: 0;
+            }
 
         .btn-action {
-            background-color: #C5A8EA; /* Цвет кнопки */
+            background-color: #9ACCFF; /* Цвет кнопки */
             color: #300E36; /* Цвет текста кнопки */
             border-radius: 10px;
             padding: 10px 20px;
@@ -113,7 +116,7 @@
                     <p id="successMessage"></p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    <button type="button" class="btn" data-bs-dismiss="modal" style="border-radius: 10px; background-color: #9ACCFF; color: black;">Закрыть</button>
                 </div>
             </div>
         </div>
@@ -129,7 +132,7 @@
                     <p id="errorMessage"></p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    <button type="button" class="btn" data-bs-dismiss="modal" style="border-radius: 10px; background-color: #9ACCFF; color: black;">Закрыть</button>
                 </div>
             </div>
         </div>

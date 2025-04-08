@@ -12,7 +12,7 @@
         {
             <div class="row mb-4">
                 <div class="col-md-8">
-                    <a href="@Url.Action("CreateTariffPlan", "Home")" class="nav-link btn rounded-pill btn-block" style="background-color: #DBCEF6; color: #300E36;">Создать тарифный план</a>
+                    <a href="@Url.Action("CreateTariffPlan", "Home")" class="nav-link btn rounded btn-block" style="background-color: #9ACCFF; color: #300E36; border-radius: 20px;">Создать тарифный план</a>
                 </div>
                 <div class="col-md-4">
                     <form method="get" class="d-flex align-items-end">
@@ -23,7 +23,7 @@
                                 <option value="inactive">Неактивные</option>
                             </select>
                         </div>
-                        <button type="submit" class="btn btn-primary">Применить фильтр</button>
+                        <button type="submit" class="btn">Применить фильтр</button>
                     </form>
                 </div>
             </div>
@@ -102,8 +102,8 @@
                     <p id="confirmationRequiredText">У Вас уже приобретен другой тариф. Вы уверены, что хотите изменить тариф?</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                    <button type="button" id="confirmChangeTariff" class="btn btn-primary">Подтвердить</button>
+                    <button type="button" class="btn" data-bs-dismiss="modal" style="border-radius: 10px; background-color: #9ACCFF; color: black;">Отмена</button>
+                    <button type="button" id="confirmChangeTariff" class="btn" style="border-radius: 10px; background-color: #E3EFFF; color: black;">Подтвердить</button>
                 </div>
             </div>
         </div>
@@ -119,9 +119,8 @@
         background-color: #f8f9fa; /* светлый фон для карточки */
     }
 
-    .btn-primary {
-        background-color: #C5A8EA; /* Цвет кнопки */
-        border-color: #C5A8EA; /* Цвет границы кнопки */
+    .btn {
+        background-color: #9ACCFF; /* Цвет кнопки */
     }
 
 </style>

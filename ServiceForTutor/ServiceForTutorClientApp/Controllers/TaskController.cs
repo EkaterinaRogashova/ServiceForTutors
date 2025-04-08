@@ -110,6 +110,8 @@ namespace ServiceForTutorClientApp.Controllers
             }
             var taskDetails = APIClient.GetRequest<TaskViewModel>($"api/task/GetTask?TaskId={id}");
             var taskQuestions = APIClient.GetRequest<List<QuestionViewModel>>($"api/task/GetQuestionsByTask?TaskId={id}");
+            var students = APIClient.GetRequest<List<UserViewModel>>($"api/user/GetStudents?TutorId={APIClient.Client.Id}");
+            ViewBag.Students = students;
             string token = _configuration["AppSettings:ApiToken"];
             foreach (var question in taskQuestions)
             {
@@ -278,7 +280,7 @@ namespace ServiceForTutorClientApp.Controllers
             if (startDate >= endDate)
             {
                 TempData["ErrorMessage"] = "Дата начала должна быть меньше даты окончания.";
-                return RedirectToAction("ViewTask", new { id = id });
+                return RedirectToAction("EditTask", new { id = id });
             }
             APIClient.PostRequest("api/Task/CreateAssignTask", new AssignedTaskBindingModel
             {
@@ -288,7 +290,7 @@ namespace ServiceForTutorClientApp.Controllers
                 DateTimeStart = startDate.ToUniversalTime(),
                 Status = "Assign"
             });
-            return RedirectToAction("ViewTask", new { id = id });
+            return RedirectToAction("EditTask", new { id = id });
         }
 
         public IActionResult AssignedTasks(int studentId, string? status, int pageIndex = 0, int pageSize = 10)
