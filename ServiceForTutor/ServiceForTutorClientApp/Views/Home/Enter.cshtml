@@ -2,17 +2,17 @@
     ViewData["Title"] = "Вход";
 }
 
-<div class="containerenter text-center mt-5" style="background-color: #DBCEF6; border-radius: 10px;">
+<div class="containerenter text-center mt-5" style="background-color: #E3EFFF; border-radius: 10px;">
     <h3 class="display-4 mb-4">Добро пожаловать!</h3>
 
     <form method="post" class="border p-4 rounded">
         <div class="mb-4">
             <label for="InputEmail1" class="form-label" style="font-size: 24px;">Введите e-mail</label>
-            <input type="email" name="login" class="form-control form-control-lg rounded" id="InputEmail1" placeholder="example@example.com" required style="background-color: #FDF8FF;">
+            <input type="email" name="login" class="form-control form-control-lg rounded" id="InputEmail1" placeholder="example@example.com" required>
         </div>
         <div class="mb-4">
             <label for="InputPassword1" class="form-label" style="font-size: 24px;">Введите пароль</label>
-            <input type="password" name="password" class="form-control form-control-lg rounded" id="InputPassword1" placeholder="********" required style="background-color: #FDF8FF;">
+            <input type="password" name="password" class="form-control form-control-lg rounded" id="InputPassword1" placeholder="********" required>
         </div>
         @if (!ViewData.ModelState.IsValid)
         {
@@ -24,26 +24,26 @@
             </div>
         }
         <div class="mb-4">
-            <button type="submit" class="btn btn-lg w-100 rounded" style="background-color: #C5A8EA; color: #300E36;">Войти</button>
+            <button type="submit" class="btn btn-lg w-100 rounded" style="background-color: #9ACCFF; color: #300E36;">Войти</button>
         </div>
         
     </form>
     <div class="row mt-4">
         <div class="col-md-6">
-            <div class="card text-center" style="background-color: #F7E3FF; border-radius: 10px;">
+            <div class="card text-center" style="background-color: aliceblue; border-radius: 10px;">
                 <div class="card-body">
                     <h5 class="card-title">Забыли пароль?</h5>
                     <p class="card-text">Не беспокойтесь, мы восстановим его.</p>
-                    <a class="btn" style="background-color: #C5A8EA; color: #300E36;" data-bs-toggle="modal" data-bs-target="#updatePasswordModal">Восстановить пароль</a>
+                    <a class="btn" style="background-color: #9ACCFF; color: #300E36;" data-bs-toggle="modal" data-bs-target="#updatePasswordModal">Восстановить пароль</a>
                 </div>
             </div>
         </div>
         <div class="col-md-6">
-            <div class="card text-center" style="background-color: #F7E3FF; border-radius: 10px;">
+            <div class="card text-center" style="background-color: aliceblue; border-radius: 10px;">
                 <div class="card-body">
                     <h5 class="card-title">Впервые здесь?</h5>
                     <p class="card-text">Создайте учетную запись, чтобы начать!</p>
-                    <a href="@Url.Action("Register", "Home")" class="btn" style="background-color: #C5A8EA; color: #300E36;">Зарегистрироваться</a>
+                    <a href="@Url.Action("Register", "Home")" class="btn" style="background-color: #9ACCFF; color: #300E36;">Зарегистрироваться</a>
                 </div>
             </div>
         </div>
@@ -64,8 +64,8 @@
                 <input type="email" id="emailForUpdatePassword" class="form-control" placeholder="Введите email" required />
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 10px; background-color: #300E36; color: #C5A8EA;">Закрыть</button>
-                <button type="button" id="updatePasswordEmail" class="btn btn-primary" style="border-radius: 10px; background-color: #C5A8EA; color: #300E36;">Отправить код подтверждения</button>
+                <button type="button" class="btn" data-bs-dismiss="modal" style="border-radius: 10px; background-color: #9ACCFF; color: black;">Закрыть</button>
+                <button type="button" id="updatePasswordEmail" class="btn" style="border-radius: 10px; background-color: #E3EFFF; color: black;">Отправить код подтверждения</button>
             </div>
         </div>
     </div>
@@ -85,8 +85,8 @@
                 <input type="text" id="code" class="form-control" placeholder="Введите код" required />
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 10px; background-color: #300E36; color: #C5A8EA;">Закрыть</button>
-                <button type="button" id="verifyCodeButton" class="btn btn-primary" style="border-radius: 10px; background-color: #C5A8EA; color: #300E36;">Подтвердить</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 10px; background-color: #300E36; color: #E3EFFF;">Закрыть</button>
+                <button type="button" id="verifyCodeButton" class="btn btn-primary" style="border-radius: 10px; background-color: #E3EFFF; color: #300E36;">Подтвердить</button>
             </div>
         </div>
     </div>
@@ -108,8 +108,8 @@
                     <input type="hidden" id="emailForNewPassword" name="email" />
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 10px; background-color: #300E36; color: #C5A8EA;">Закрыть</button>
-                    <button type="submit"  class="btn btn-primary" style="border-radius: 10px; background-color: #C5A8EA; color: #300E36;">Подтвердить</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 10px; background-color: #300E36; color: #E3EFFF;">Закрыть</button>
+                    <button type="submit"  class="btn btn-primary" style="border-radius: 10px; background-color: #E3EFFF; color: #300E36;">Подтвердить</button>
                 </div>
             </form>
         </div>
@@ -177,7 +177,7 @@
     .containerenter {
         max-width: 500px;
         margin: auto;
-        background-color: #DBCEF6;
+        background-color: white;
         border-radius: 10px;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         padding: 20px;
@@ -186,7 +186,7 @@
 
     .form-control {
         border-radius: 10px;
-        background-color: #FDF8FF;
+        background-color: white;
         border: none;
     }
 

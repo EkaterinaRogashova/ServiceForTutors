@@ -1,0 +1,106 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="ServiceForTutorContracts.ViewModels.AssignedTaskViewModel" BaseTypeListCollapsed="true">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAEAAAAAAAABAAAAgAAAAgQAAAESCAAAAEGAAA=</HashCode>
+      <FileName>ViewModels\AssignedTaskViewModel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ServiceForTutorContracts.ViewModels.InvitationCodeViewModel" BaseTypeListCollapsed="true">
+    <Position X="4" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAACAAAAAAAAAAAAAAAAAAgAAAAQAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ViewModels\InvitationCodeViewModel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ServiceForTutorContracts.ViewModels.PaginatedList&lt;T&gt;">
+    <Position X="5.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgAAAAAACAAAAAAAEAAAAAAAAAAAAAAAEAAAAAA=</HashCode>
+      <FileName>ViewModels\PaginatedList.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ServiceForTutorContracts.ViewModels.PurchasedTariffPlanViewModel" BaseTypeListCollapsed="true">
+    <Position X="7.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAiCAAEAAAAAAAAAACAAAAAAAAAAAAQAAAAAAAAAAA=</HashCode>
+      <FileName>ViewModels\PurchasedTariffPlanViewModel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ServiceForTutorContracts.ViewModels.QuestionViewModel" BaseTypeListCollapsed="true">
+    <Position X="2.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAKAAAEACAAAAAQAAAAAAAAAEgAAAIAQAQIAAggAAA=</HashCode>
+      <FileName>ViewModels\QuestionViewModel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ServiceForTutorContracts.ViewModels.ReviewViewModel" BaseTypeListCollapsed="true">
+    <Position X="4" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAgAAAAAAAAEAAABAAAAAAAEQAAAAAAAAAAA=</HashCode>
+      <FileName>ViewModels\ReviewViewModel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ServiceForTutorContracts.ViewModels.ScheduleViewModel" BaseTypeListCollapsed="true">
+    <Position X="5.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAEAAAAAAAAAAAAAAQABAEQAAAQACAAAAACAAA=</HashCode>
+      <FileName>ViewModels\ScheduleViewModel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ServiceForTutorContracts.ViewModels.SentMessageViewModel">
+    <Position X="7.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAgAAAAAIABAAgAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ViewModels\SentMessageViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ServiceForTutorContracts.ViewModels.StudentAnswerViewModel" BaseTypeListCollapsed="true">
+    <Position X="0.5" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgCAAAAAAAAAAgAAAAAAAAEAAAAAAAAAAAAAgQAgAA=</HashCode>
+      <FileName>ViewModels\StudentAnswerViewModel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ServiceForTutorContracts.ViewModels.TariffPlanViewModel" BaseTypeListCollapsed="true">
+    <Position X="4" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACABAEAAAgAAAAAAABABQAAQAAAIAAAAAAAAAAEAA=</HashCode>
+      <FileName>ViewModels\TariffPlanViewModel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ServiceForTutorContracts.ViewModels.TaskViewModel" BaseTypeListCollapsed="true">
+    <Position X="5.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAIAAAAQAAAAAAAAUAAAAACAAAAA=</HashCode>
+      <FileName>ViewModels\TaskViewModel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ServiceForTutorContracts.ViewModels.TutorStudentViewModel" BaseTypeListCollapsed="true">
+    <Position X="7.5" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAACAAA=</HashCode>
+      <FileName>ViewModels\TutorStudentViewModel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ServiceForTutorContracts.ViewModels.UserViewModel" BaseTypeListCollapsed="true">
+    <Position X="2.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAkAAAGAABICAEAAAEgSABAAAAAAGAAAAEAAAAAg=</HashCode>
+      <FileName>ViewModels\UserViewModel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -22,6 +22,8 @@ namespace ServiceForTutorDatabaseImplements.Models
 
         public string CorrectAnswers { get; set; } = string.Empty;
 
+        public List<string> FileUrls { get; set; } = new List<string>();
+
         public static Question? Create(QuestionBindingModel model)
         {
             if (model == null)
@@ -36,7 +38,8 @@ namespace ServiceForTutorDatabaseImplements.Models
                 TaskText = model.TaskText,
                 MaxScore = model.MaxScore,
                 Answers = model.Answers,
-                CorrectAnswers = model.CorrectAnswers
+                CorrectAnswers = model.CorrectAnswers,
+                FileUrls = model.FileUrls
             };
         }
         public static Question Create(QuestionViewModel model)
@@ -49,7 +52,8 @@ namespace ServiceForTutorDatabaseImplements.Models
                 TaskText = model.TaskText,
                 MaxScore = model.MaxScore,
                 Answers = model.Answers,
-                CorrectAnswers = model.CorrectAnswers
+                CorrectAnswers = model.CorrectAnswers,
+                FileUrls = model.FileUrls
             };
         }
         public void Update(QuestionBindingModel model)
@@ -62,6 +66,7 @@ namespace ServiceForTutorDatabaseImplements.Models
             MaxScore = model.MaxScore;
             Answers = model.Answers;
             CorrectAnswers = model.CorrectAnswers;
+            FileUrls = model.FileUrls;
         }
         public QuestionViewModel GetViewModel => new()
         {
@@ -71,7 +76,8 @@ namespace ServiceForTutorDatabaseImplements.Models
             TaskText = TaskText,
             MaxScore = MaxScore,
             Answers = Answers,
-            CorrectAnswers = CorrectAnswers
+            CorrectAnswers = CorrectAnswers,
+            FileUrls = FileUrls
         };
     }
 }

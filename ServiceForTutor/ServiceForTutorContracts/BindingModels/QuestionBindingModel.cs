@@ -17,6 +17,7 @@ namespace ServiceForTutorContracts.BindingModels
         public int Id { get; set; }
         public string Answers { get; set; } = string.Empty;
         public string CorrectAnswers { get; set; } = string.Empty;
+        public List<string> FileUrls { get; set; } = new List<string>();
 
         public void SetAnswers(object answers)
         {

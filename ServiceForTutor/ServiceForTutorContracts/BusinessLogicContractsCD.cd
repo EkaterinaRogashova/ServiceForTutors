@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Interface Name="ServiceForTutorContracts.BusinessLogicContracts.IAssignedTaskLogic">
+    <Position X="1.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAABAAAAAEAAEABAAAAAAAAABA=</HashCode>
+      <FileName>BusinessLogicContracts\IAssignedTaskLogic.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ServiceForTutorContracts.BusinessLogicContracts.IInvitationCodeLogic">
+    <Position X="3" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAEABAAAAAAAAABA=</HashCode>
+      <FileName>BusinessLogicContracts\IInvitationCodeLogic.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ServiceForTutorContracts.BusinessLogicContracts.IPurchasedTariffPlanLogic">
+    <Position X="4.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAAAAEABAAAAAAAAABA=</HashCode>
+      <FileName>BusinessLogicContracts\IPurchasedTariffPlanLogic.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ServiceForTutorContracts.BusinessLogicContracts.IQuestionLogic">
+    <Position X="6.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAEAAEABAAAAAAAAABA=</HashCode>
+      <FileName>BusinessLogicContracts\IQuestionLogic.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ServiceForTutorContracts.BusinessLogicContracts.IReviewLogic">
+    <Position X="1.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAABAAAAAAAAEABAAAAAAAAAAA=</HashCode>
+      <FileName>BusinessLogicContracts\IReviewLogic.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ServiceForTutorContracts.BusinessLogicContracts.IScheduleLogic">
+    <Position X="3" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAEAAEABAAAAAAAAABA=</HashCode>
+      <FileName>BusinessLogicContracts\IScheduleLogic.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ServiceForTutorContracts.BusinessLogicContracts.IStudentAnswerLogic">
+    <Position X="4.75" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAAAAEABAAAAAAAAABA=</HashCode>
+      <FileName>BusinessLogicContracts\IStudentAnswerLogic.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ServiceForTutorContracts.BusinessLogicContracts.ITariffPlanLogic">
+    <Position X="6.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAAAAEABAAAAAAAAABA=</HashCode>
+      <FileName>BusinessLogicContracts\ITariffPlanLogic.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ServiceForTutorContracts.BusinessLogicContracts.ITaskLogic">
+    <Position X="1.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAABAAAAAEAAEABAAAAAAAAABA=</HashCode>
+      <FileName>BusinessLogicContracts\ITaskLogic.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ServiceForTutorContracts.BusinessLogicContracts.ITutorStudentLogic">
+    <Position X="3" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAEAAEABAAAAAAAAABA=</HashCode>
+      <FileName>BusinessLogicContracts\ITutorStudentLogic.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ServiceForTutorContracts.BusinessLogicContracts.IUserLogic">
+    <Position X="4.75" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAAAAEABAAAAAAAAABA=</HashCode>
+      <FileName>BusinessLogicContracts\IUserLogic.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

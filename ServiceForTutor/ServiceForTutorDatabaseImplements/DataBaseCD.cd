@@ -1,0 +1,201 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="ServiceForTutorDatabaseImplements.Implements.AssignedTaskStorage" BaseTypeListCollapsed="true">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAEAAAAAIAAAAAAAABAAAAAEQAAAAAAAAAAAIAAA=</HashCode>
+      <FileName>Implements\AssignedTaskStorage.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ServiceForTutorDatabaseImplements.Implements.InvitationCodeStorage" BaseTypeListCollapsed="true">
+    <Position X="2.25" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAIAAA=</HashCode>
+      <FileName>Implements\InvitationCodeStorage.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ServiceForTutorDatabaseImplements.Implements.PurchasedTariffPlanStorage" BaseTypeListCollapsed="true">
+    <Position X="4" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAEAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAA=</HashCode>
+      <FileName>Implements\PurchasedTariffPlanStorage.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ServiceForTutorDatabaseImplements.Implements.QuestionStorage" BaseTypeListCollapsed="true">
+    <Position X="5.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAEAAAAAIAAAAAAAAAAAAAAEAAAAAAAAAAAAIAAA=</HashCode>
+      <FileName>Implements\QuestionStorage.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ServiceForTutorDatabaseImplements.Implements.ReviewStorage" BaseTypeListCollapsed="true">
+    <Position X="0.5" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAIAAAAAAAABAAAAAAQAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Implements\ReviewStorage.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ServiceForTutorDatabaseImplements.Implements.ScheduleStorage" BaseTypeListCollapsed="true">
+    <Position X="2.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAEAAAAAIAAAAAAAAAAAAAAEQAAAAAAAAAAAIAAA=</HashCode>
+      <FileName>Implements\ScheduleStorage.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ServiceForTutorDatabaseImplements.Implements.StudentAnswerStorage" BaseTypeListCollapsed="true">
+    <Position X="4" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAEAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAA=</HashCode>
+      <FileName>Implements\StudentAnswerStorage.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ServiceForTutorDatabaseImplements.Implements.TariffPlanStorage" BaseTypeListCollapsed="true">
+    <Position X="5.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAEAAAAAIAAAAAAAAAAAAAAAQAAAAAAAAAAAIAAA=</HashCode>
+      <FileName>Implements\TariffPlanStorage.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ServiceForTutorDatabaseImplements.Implements.TaskStorage" BaseTypeListCollapsed="true">
+    <Position X="0.5" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAEAAAAAIAAAAAAAABAAAAAEQAAAAAAAAAAAIAAA=</HashCode>
+      <FileName>Implements\TaskStorage.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ServiceForTutorDatabaseImplements.Implements.TutorStudentStorage" BaseTypeListCollapsed="true">
+    <Position X="2.25" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAIAAAAAAAAAAAAAAEAAAAAAAAAAAAIAAA=</HashCode>
+      <FileName>Implements\TutorStudentStorage.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ServiceForTutorDatabaseImplements.Implements.UserStorage" BaseTypeListCollapsed="true">
+    <Position X="4" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAEAAAAAIAAAAAAAAAAAAAAAQAAAAAAAAAAAIAAA=</HashCode>
+      <FileName>Implements\UserStorage.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ServiceForTutorDatabaseImplements.Migrations.InitialCreate">
+    <Position X="7.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAI=</HashCode>
+      <FileName>Migrations\20250315092549_InitialCreate.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ServiceForTutorDatabaseImplements.Migrations.ServiceForTutorDatabaseModelSnapshot">
+    <Position X="7.5" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAA=</HashCode>
+      <FileName>Migrations\ServiceForTutorDatabaseModelSnapshot.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ServiceForTutorDatabaseImplements.Models.AssignedTask" BaseTypeListCollapsed="true">
+    <Position X="0.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQCAAAEUAAAAAAAAAAAAAAAAAgQAEAAAGAAAAECAAA=</HashCode>
+      <FileName>Models\AssignedTask.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ServiceForTutorDatabaseImplements.Models.InvitationCode" BaseTypeListCollapsed="true">
+    <Position X="5.75" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAADAAAAEAAAAAAAAAAAAAgAAAAQAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\InvitationCode.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ServiceForTutorDatabaseImplements.Models.PurchasedTariffPlan" BaseTypeListCollapsed="true">
+    <Position X="5.75" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQiCAAEEAAAAAAAAACAAAAAAAEAAEAQAAAAAAAAAAA=</HashCode>
+      <FileName>Models\PurchasedTariffPlan.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ServiceForTutorDatabaseImplements.Models.Question" BaseTypeListCollapsed="true">
+    <Position X="7.5" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQKAAAAEAAAAAAAAAAAAAAAAAgAAEAAQEQIAAAgAAA=</HashCode>
+      <FileName>Models\Question.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ServiceForTutorDatabaseImplements.Models.Review" BaseTypeListCollapsed="true">
+    <Position X="2.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAEgAAAAAAAAEAAAAAAAEAAEEQAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Review.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ServiceForTutorDatabaseImplements.Models.Schedule" BaseTypeListCollapsed="true">
+    <Position X="7.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQCAAAEUAAAAAAAAAAAAAAAAAEQAEAQACAAAAACAAA=</HashCode>
+      <FileName>Models\Schedule.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ServiceForTutorDatabaseImplements.Models.StudentAnswer" BaseTypeListCollapsed="true">
+    <Position X="4" Y="11" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQCAAAAEAAAAAgAAAAAAAAEAAAAAEAEAAAAAoQAAAA=</HashCode>
+      <FileName>Models\StudentAnswer.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ServiceForTutorDatabaseImplements.Models.TariffPlan" BaseTypeListCollapsed="true">
+    <Position X="0.5" Y="11.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQCABAEEAAgAAAAAAABABQAAQAAAMAAAAAAAAAAEAA=</HashCode>
+      <FileName>Models\TariffPlan.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ServiceForTutorDatabaseImplements.Models.Task" BaseTypeListCollapsed="true">
+    <Position X="4" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQCAAAAEAAAAAAAAIAAAAQAAAEAAEAQAAAAACAAAAA=</HashCode>
+      <FileName>Models\Task.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ServiceForTutorDatabaseImplements.Models.TutorStudent" BaseTypeListCollapsed="true">
+    <Position X="5.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAUAAAAAAAAAAAAAAAAAEAAEAQAAAAAAACAAA=</HashCode>
+      <FileName>Models\TutorStudent.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ServiceForTutorDatabaseImplements.Models.User" BaseTypeListCollapsed="true">
+    <Position X="2.25" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQCAAAAECAAAAAAEAAAAAQABAAAAEAGAAAAAAAAAAg=</HashCode>
+      <FileName>Models\User.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ServiceForTutorDatabaseImplements.ServiceForTutorDatabase">
+    <Position X="7.5" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEgAGIAAQAAAAAQgAAAAAAAAEAAAAAEAACIAAAAAAA=</HashCode>
+      <FileName>ServiceForTutorDatabase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

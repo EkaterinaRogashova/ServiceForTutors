@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -241,7 +242,8 @@ namespace ServiceForTutorDatabaseImplements.Migrations
                     TaskText = table.Column<string>(type: "text", nullable: false),
                     MaxScore = table.Column<float>(type: "real", nullable: false),
                     Answers = table.Column<string>(type: "text", nullable: false),
-                    CorrectAnswers = table.Column<string>(type: "text", nullable: false)
+                    CorrectAnswers = table.Column<string>(type: "text", nullable: false),
+                    FileUrls = table.Column<List<string>>(type: "text[]", nullable: false)
                 },
                 constraints: table =>
                 {

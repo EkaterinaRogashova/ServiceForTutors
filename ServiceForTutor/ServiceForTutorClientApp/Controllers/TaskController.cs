@@ -4,6 +4,7 @@ using ServiceForTutorClientApp.Helpers;
 using ServiceForTutorContracts.BindingModels;
 using ServiceForTutorContracts.ViewModels;
 using ServiceForTutorDatabaseImplements.Models;
+using System.Net.Http.Headers;
 using System.Numerics;
 using System.Reflection.Emit;
 using static System.Net.Mime.MediaTypeNames;
@@ -13,10 +14,12 @@ namespace ServiceForTutorClientApp.Controllers
     public class TaskController : Controller
     {
         private readonly ILogger<TaskController> _logger;
+        private readonly IConfiguration _configuration;
 
-        public TaskController(ILogger<TaskController> logger)
+        public TaskController(ILogger<TaskController> logger, IConfiguration configuration)
         {
             _logger = logger;
+            _configuration = configuration;
         }
 
         public IActionResult Tasks(string? searchQuery, int pageIndex = 0, int pageSize = 10)
@@ -80,7 +83,26 @@ namespace ServiceForTutorClientApp.Controllers
             return RedirectToAction("Tasks");
         }
 
-        public IActionResult EditTask(int id)
+        public async Task<string> GetFileLink(string filePath, string accessToken)
+        {
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("OAuth", accessToken);
+
+                var requestUri = $"https://cloud-api.yandex.net/v1/disk/resources/download?path={Uri.EscapeDataString(filePath)}";
+                var response = await client.GetAsync(requestUri);
+                if (response.IsSuccessStatusCode)
+                {
+                    var jsonResponse = await response.Content.ReadAsStringAsync();
+                    dynamic result = JsonConvert.DeserializeObject(jsonResponse);
+                    return result.href; // Здесь корректно извлекаем ссылку для загрузки файла
+                }
+            }
+
+            return null; // Обработка ошибок
+        }
+
+        public async Task<IActionResult> EditTask(int id)
         {
             if (APIClient.Client == null)
             {
@@ -88,13 +110,27 @@ namespace ServiceForTutorClientApp.Controllers
             }
             var taskDetails = APIClient.GetRequest<TaskViewModel>($"api/task/GetTask?TaskId={id}");
             var taskQuestions = APIClient.GetRequest<List<QuestionViewModel>>($"api/task/GetQuestionsByTask?TaskId={id}");
+            string token = _configuration["AppSettings:ApiToken"];
             foreach (var question in taskQuestions)
             {
-                // Извлекаем ответы как списки строк, вызывая ваши методы
                 question.SetAnswers(JsonConvert.DeserializeObject<List<string>>(question.Answers));
                 question.SetCorrectAnswers(JsonConvert.DeserializeObject<List<string>>(question.CorrectAnswers));
+
+                if (question.FileUrls != null && question.FileUrls.Any())
+                {
+                    question.FileDownloadLinks = new List<string>();
+                    foreach (var fileUrl in question.FileUrls)
+                    {
+                        var fileLink = await GetFileLink(fileUrl, token); // Убедитесь, что вы передаете токен
+                        if (fileLink != null)
+                        {
+                            question.FileDownloadLinks.Add(fileLink);
+                        }
+                    }
+                }
             }
-            var viewModel = new TaskViewModel // Замените TaskViewModel на вашу модель представления, которая содержит как задание, так и вопросы
+
+            var viewModel = new TaskViewModel
             {
                 Id = id,
                 Name = taskDetails.Name,
@@ -102,23 +138,84 @@ namespace ServiceForTutorClientApp.Controllers
                 Subject = taskDetails.Subject,
                 Questions = taskQuestions
             };
+
             return View(viewModel);
         }
 
+
         [HttpPost]
-        public IActionResult CreateQuestion(int id, string questionText, string questionType, float maxScore, string[] Answers, string[] correctAnswers)
+        public async Task<IActionResult> CreateQuestion(int id, string questionText, string questionType, float maxScore, string[] Answers, string[] CorrectAnswers, List<IFormFile> files)
         {
-            APIClient.PostRequest("api/Task/CreateQuestion", new QuestionBindingModel
+            // Создание модели вопроса
+            var questionModel = new QuestionBindingModel
             {
                 TaskId = id,
                 TaskText = questionText,
                 TypeQuestion = questionType,
                 MaxScore = maxScore,
-                Answers = JsonConvert.SerializeObject(Answers), // Преобразуем массив в JSON
-                CorrectAnswers = JsonConvert.SerializeObject(correctAnswers) // Преобразуем массив в JSON
-            });
+                Answers = JsonConvert.SerializeObject(Answers),
+                CorrectAnswers = JsonConvert.SerializeObject(CorrectAnswers),
+                FileUrls = new List<string>() // Инициализация списка для ссылок на файлы
+            };
+
+            // Загрузка всех файлов на Яндекс Диск
+            foreach (var file in files)
+            {
+                if (file != null && file.Length > 0)
+                {
+                    string fileUrl = await UploadFileToYandexDisk(file);
+                    questionModel.FileUrls.Add(fileUrl); // Добавляем ссылку на файл
+                }
+            }
+
+            // Выполнение запроса на создание вопроса
+            APIClient.PostRequest("api/Task/CreateQuestion", questionModel);
             return RedirectToAction("EditTask", new { id = id });
         }
+
+        private async Task<string> UploadFileToYandexDisk(IFormFile file)
+        {
+            string token = _configuration["AppSettings:ApiToken"];
+            string relativePath = $"/{file.FileName}";
+            string uploadUrl = $"https://cloud-api.yandex.net/v1/disk/resources/upload?path={Uri.EscapeDataString(file.FileName)}&overwrite=false";
+
+            using (var httpClient = new HttpClient())
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("OAuth", token);
+
+                var uploadResponse = await httpClient.GetAsync(uploadUrl);
+                if (!uploadResponse.IsSuccessStatusCode)
+                {
+                    throw new Exception($"Ошибка получения upload link: {uploadResponse.StatusCode}, {await uploadResponse.Content.ReadAsStringAsync()}");
+                }
+
+                var uploadLink = JsonConvert.DeserializeObject<UploadLinkResponse>(await uploadResponse.Content.ReadAsStringAsync());
+
+                if (string.IsNullOrWhiteSpace(uploadLink.Href) || !Uri.IsWellFormedUriString(uploadLink.Href, UriKind.Absolute))
+                {
+                    throw new InvalidOperationException("Получена недействительная ссылка для загрузки файла.");
+                }
+
+                if (file.Length == 0)
+                {
+                    throw new InvalidOperationException("Файл не содержит данных для загрузки.");
+                }
+
+                using (var fileStream = file.OpenReadStream())
+                {
+                    var content = new StreamContent(fileStream);
+                    content.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
+
+                    var response = await httpClient.PutAsync(uploadLink.Href, content);
+                    response.EnsureSuccessStatusCode();
+                }
+
+                return relativePath; // Формирование ссылки на файл
+            }
+        }
+
+        
+
 
         [HttpPost]
         public IActionResult EditQuestion(int editQuestionId, string editQuestionText, string editQuestionType, string editCorrectAnswer, float editMaxScore, int taskId)
@@ -467,5 +564,10 @@ namespace ServiceForTutorClientApp.Controllers
             };
             return View(viewModel);
         }
+    }
+
+    public class UploadLinkResponse
+    {
+        public string Href { get; set; }
     }
 }

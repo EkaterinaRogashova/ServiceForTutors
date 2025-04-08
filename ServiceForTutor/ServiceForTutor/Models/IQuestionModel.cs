@@ -15,5 +15,6 @@ namespace ServiceForTutorDataModels.Models
         float MaxScore { get; set; }
         string Answers { get; set; }
         string CorrectAnswers { get; set; }
+        List<string> FileUrls { get; set; }
     }
 }

@@ -4,11 +4,11 @@
     ViewData["Title"] = "Регистрация";
 }
 
-<div class="containerenter text-center mt-5" style="background-color: #DBCEF6; border-radius: 10px;">
+<div class="containerenter text-center mt-5" style="background-color: #E3EFFF; border-radius: 10px;">
     <h3 class="display-4 mb-4">Регистрация</h3>
     <div class="mb-4 d-flex justify-content-between">
-        <button id="teacherBtn" class="role-button rounded rounded w-100 me-2" style="background-color: #FDF8FF; border-radius: 40px;">Я учитель</button>
-        <button id="studentBtn" class="role-button rounded rounded w-100 me-2" style="background-color: #FDF8FF;">Я ученик</button>
+        <button id="teacherBtn" class="role-button rounded rounded w-100 me-2" style="background-color: white; border-radius: 40px;">Я учитель</button>
+        <button id="studentBtn" class="role-button rounded rounded w-100 me-2" style="background-color: white;">Я ученик</button>
     </div>
     @if (!ViewData.ModelState.IsValid)
     {
@@ -47,7 +47,7 @@
         </div>
         
         <div class="mb-4">
-            <button type="button" id="sendCodeButton" class="btn btn-lg w-100 rounded" style="background-color: #C5A8EA; color: #300E36;">Зарегистрироваться</button>
+            <button type="button" id="sendCodeButton" class="btn btn-lg w-100 rounded" style="background-color: #9ACCFF; color: black;">Зарегистрироваться</button>
         </div>
     </form>
     
@@ -71,8 +71,8 @@
                 <input type="text" id="verificationCode" class="form-control" placeholder="Введите код" required />
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 10px; background-color: #300E36; color: #C5A8EA;">Закрыть</button>
-                <button type="button" id="verifyCodeButton" class="btn btn-primary" style="border-radius: 10px; background-color: #C5A8EA; color: #300E36;">Подтвердить</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 10px; background-color: #9ACCFF; color: black;">Закрыть</button>
+                <button type="button" id="verifyCodeButton" class="btn btn-primary" style="border-radius: 10px; background-color: #E3EFFF; color: black;">Подтвердить</button>
                 <button type="button" id="resendCodeButton" class="btn btn-link">Отправить код снова</button>
             </div>
         </div>
@@ -100,7 +100,7 @@
     .containerenter {
         max-width: 500px;
         margin: auto;
-        background-color: #DBCEF6;
+        background-color: #ECF6FF;
         border-radius: 10px;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         padding: 20px;
@@ -108,7 +108,7 @@
 
     .form-control {
         border-radius: 10px;
-        background-color: #FDF8FF;
+        background-color: #ECF6FF;
         border: none;
     }
 
@@ -129,15 +129,15 @@
     const studentBtn = document.getElementById('studentBtn');
 
     teacherBtn.onclick = function () {
-        teacherBtn.style.backgroundColor = '#C5A8EA';
-        studentBtn.style.backgroundColor = '#FDF8FF';
+        teacherBtn.style.backgroundColor = '#9ACCFF';
+        studentBtn.style.backgroundColor = 'white';
         roleField.value = 'Tutor';
         errorAlert.style.display = 'none';
     }
 
     studentBtn.onclick = function () {
-        studentBtn.style.backgroundColor = '#C5A8EA';
-        teacherBtn.style.backgroundColor = '#FDF8FF';
+        studentBtn.style.backgroundColor = '#9ACCFF';
+        teacherBtn.style.backgroundColor = 'white';
         roleField.value = 'Student';
         errorAlert.style.display = 'none';
     }

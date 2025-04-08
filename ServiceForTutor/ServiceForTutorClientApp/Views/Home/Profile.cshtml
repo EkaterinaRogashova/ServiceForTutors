@@ -7,7 +7,7 @@
 <div class="container mt-5">
     <div class="row">
         <div class="col-md-4">
-            <div class="p-4" style="background-color: #DBCEF6; border-radius: 10px;">
+            <div class="p-4" style="background-color: #ECF6FF; border-radius: 10px;">
                 <h3 class="text-center" style="font-size: 24px;">Мои данные</h3>
                 <img src="https://cdn-icons-png.flaticon.com/256/666/666201.png" alt="Описание изображения" style="display: block; margin: 15px auto; width: 100px; height: 100px;" />
                 <p class="card-text">ФИО: @Model.Surname @Model.Name @Model.LastName</p>
@@ -17,7 +17,7 @@
                     <p class="card-text">Текущий тариф: @Model.TariffName</p>
                     <p class="card-text">Действует до: @Model.PurchasedTariffEnd</p>
                     <div class="mt-3">
-                        <button class="btn btn-lg w-100" style="background-color: #C5A8EA; color: #300E36; border-radius: 40px;" data-bs-toggle="modal" data-bs-target="#confirmModal">
+                        <button class="btn btn-lg w-100" style="background-color: #E3EFFF; color: #300E36; border-radius: 40px;" data-bs-toggle="modal" data-bs-target="#confirmModal">
                             Отменить подписку
                         </button>
                     </div>
@@ -30,17 +30,17 @@
                 @if (APIClient.Client.Role != "Admin")
                 {
                     <div class="mt-3">
-                        <a class="nav-link btn btn-large rounded-pill" href="@Url.Action("EditProfile", "Home")" style="background-color: #C5A8EA; color: #300E36; border-radius: 40px;">Редактировать профиль</a>
+                        <a class="nav-link btn btn-large rounded-pill" href="@Url.Action("EditProfile", "Home")" style="background-color: #E3EFFF; color: #300E36; border-radius: 40px;">Редактировать профиль</a>
                     </div>
                     @if (APIClient.Client.Role == "Tutor")
                     {
                         <div class="mt-3">
-                            <a class="btn btn-lg w-100" href="@Url.Action("CreateReview", "Review")" style="background-color: #C5A8EA; color: #300E36; border-radius: 40px;">Оставить отзыв</a>
+                            <a class="btn btn-lg w-100" href="@Url.Action("CreateReview", "Review")" style="background-color: #E3EFFF; color: #300E36; border-radius: 40px;">Оставить отзыв</a>
                         </div>
                       
                     }
                     <div class="mt-3">
-                        <a class="btn btn-lg w-100" data-bs-toggle="modal" data-bs-target="#confirmModalDeleteAccount" style="background-color: #C5A8EA; color: #300E36; border-radius: 40px;">Удалить аккаунт</a>
+                        <a class="btn btn-lg w-100" data-bs-toggle="modal" data-bs-target="#confirmModalDeleteAccount" style="background-color: #E3EFFF; color: #300E36; border-radius: 40px;">Удалить аккаунт</a>
                     </div>
                 }
             </div>
@@ -52,12 +52,12 @@
                     <div class="d-flex justify-content-between mb-3">
                         @if (APIClient.Client.Role == "Tutor")
                         {
-                            <a class="btn btn-large d-flex align-items-center justify-content-center" href="@Url.Action("MyStudents", "TutorStudent")" style="background-color: #C5A8EA; color: #300E36;  width: 48%; height: 260px;">Мои ученики</a>
+                            <a class="btn btn-large d-flex align-items-center justify-content-center" href="@Url.Action("MyStudents", "TutorStudent")" style="background-color: #E3EFFF; color: #300E36;  width: 48%; height: 260px;">Мои ученики</a>
                             <a class="btn btn-large d-flex align-items-center justify-content-center" href="@Url.Action("Schedule", "Schedule")" style="background-color: #E0D1FE; color: #300E36; width: 48%; height: 260px;">Расписание</a>
                         }
                         else if (APIClient.Client.Role == "Student")
                         {
-                            <a class="btn btn-large d-flex align-items-center justify-content-center" href="@Url.Action("MyTutors", "TutorStudent")" style="background-color: #C5A8EA; color: #300E36; width: 48%; height: 230px;">Мои учителя</a>
+                            <a class="btn btn-large d-flex align-items-center justify-content-center" href="@Url.Action("MyTutors", "TutorStudent")" style="background-color: #E3EFFF; color: #300E36; width: 48%; height: 230px;">Мои учителя</a>
                             <a class="btn btn-large d-flex align-items-center justify-content-center" href="@Url.Action("Schedule", "Schedule")" style="background-color: #E0D1FE; color: #300E36; width: 48%; height: 230px;">Расписание</a>
                         }
                     </div>
@@ -65,7 +65,7 @@
                     {
                         <div class="d-flex justify-content-between mb-3">
                             <a class="btn btn-large d-flex align-items-center justify-content-center" href="@Url.Action("Tasks", "Task")" style="background-color: #E0D1FE; color: #300E36; width: 48%; height: 260px;">Задания</a>
-                            <a class="btn btn-large d-flex align-items-center justify-content-center" href="@Url.Action("AssignedTasks", "Task")" style="background-color: #C5A8EA; color: #300E36; width: 48%; height: 260px;">Назначенные задания</a>
+                            <a class="btn btn-large d-flex align-items-center justify-content-center" href="@Url.Action("AssignedTasks", "Task")" style="background-color: #E3EFFF; color: #300E36; width: 48%; height: 260px;">Назначенные задания</a>
                         </div>
                     }
                     else if (APIClient.Client.Role == "Student")
@@ -113,7 +113,7 @@
                             @for (int i = 0; i < Model.TotalPages; i++)
                             {
                                 <li class="page-item @(i == Model.PageIndex ? "active" : "") mx-1">
-                                    <a class="page-link" asp-action="Profile" asp-route-pageIndex="@i" asp-route-pageSize="@Model.PageSize" style="border-radius: 10px; background-color: #C5A8EA; color: #300E36;">
+                                    <a class="page-link" asp-action="Profile" asp-route-pageIndex="@i" asp-route-pageSize="@Model.PageSize" style="border-radius: 10px; background-color: #E3EFFF; color: #300E36;">
                                         @(i + 1)
                                     </a>
                                 </li>

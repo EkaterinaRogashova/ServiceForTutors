@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
+  <Class Name="ServiceForTutorBusinessLogic.BusinessLogic.AssignedTaskLogic">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQCAAAAAAAAAAAAAAAABAAAAAEAAEABAAAAAAAAARA=</HashCode>
+      <FileName>BusinessLogic\AssignedTaskLogic.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ServiceForTutorBusinessLogic.BusinessLogic.InvitationCodeLogic">
+    <Position X="2.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAAAAAAAACAAAAAAAAAEABAAAAAAAAARE=</HashCode>
+      <FileName>BusinessLogic\InvitationCodeLogic.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ServiceForTutorBusinessLogic.BusinessLogic.PurchasedTariffPlanLogic">
+    <Position X="9.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAgAAAAAEABAAAAAAAAARA=</HashCode>
+      <FileName>BusinessLogic\PurchasedTariffPlanLogic.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ServiceForTutorBusinessLogic.BusinessLogic.QuestionLogic">
+    <Position X="4" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAIAAAAAAAAAAAAAAAAAAAAAEAAEABAAAAAAAAARA=</HashCode>
+      <FileName>BusinessLogic\QuestionLogic.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ServiceForTutorBusinessLogic.BusinessLogic.ReviewLogic">
+    <Position X="7.5" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAABAAAAAAACEABAAAAAAAAAQA=</HashCode>
+      <FileName>BusinessLogic\ReviewLogic.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ServiceForTutorBusinessLogic.BusinessLogic.ScheduleLogic">
+    <Position X="7.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQIAAAAAAAAACAAAAAAAAAAAAEAAEABAAAAAAAAARA=</HashCode>
+      <FileName>BusinessLogic\ScheduleLogic.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ServiceForTutorBusinessLogic.BusinessLogic.SentMessageLogic">
+    <Position X="0.5" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAMABAAAAAAAAAQA=</HashCode>
+      <FileName>BusinessLogic\SentMessageLogic.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ServiceForTutorBusinessLogic.BusinessLogic.StudentAnswerLogic">
+    <Position X="2.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAABAAAAAAAAAAAAAAAAEABAAAAAAAAARA=</HashCode>
+      <FileName>BusinessLogic\StudentAnswerLogic.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ServiceForTutorBusinessLogic.BusinessLogic.TariffPlanLogic">
+    <Position X="4" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAAAAEABAAAAAAEAABA=</HashCode>
+      <FileName>BusinessLogic\TariffPlanLogic.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ServiceForTutorBusinessLogic.BusinessLogic.TaskLogic">
+    <Position X="5.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAABAAAQAEAAEABAAAAAAAAARA=</HashCode>
+      <FileName>BusinessLogic\TaskLogic.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ServiceForTutorBusinessLogic.BusinessLogic.TutorStudentLogic">
+    <Position X="5.75" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAEQAEABAAAAAAAAARA=</HashCode>
+      <FileName>BusinessLogic\TutorStudentLogic.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ServiceForTutorBusinessLogic.BusinessLogic.UserLogic">
+    <Position X="9.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAQAAAAAAAAAAAAAAAAAAAAAgAAAAEABAAAAAAAAARA=</HashCode>
+      <FileName>BusinessLogic\UserLogic.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

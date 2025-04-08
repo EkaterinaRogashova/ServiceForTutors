@@ -207,6 +207,11 @@ namespace ServiceForTutorClientApp.Controllers
             return RedirectToAction("Schedule", date);
         }
 
+        public IActionResult Lesson()
+        {
+            return View();
+        }
+
     }
 
     public class ScheduleRequestParams

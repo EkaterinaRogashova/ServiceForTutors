@@ -20,6 +20,8 @@ namespace ServiceForTutorContracts.ViewModels
         public string Answers { get; set; } = string.Empty;
 
         public string CorrectAnswers { get; set; } = string.Empty;
+        public List<string> FileUrls { get; set; } = new List<string>();
+        public List<string> FileDownloadLinks { get; set; }
         public List<string> StoredAnswers { get; private set; } = new List<string>();
 
 

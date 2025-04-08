@@ -10,7 +10,7 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light" style="background-color: #C5A8EA;">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light" style="background-color: #E3EFFF">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index" style="color: #300E36;">PRO TUTOR</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -20,20 +20,20 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link" href="@Url.Action("Index", "Home")" style="color: #300E36; margin-right: 40px; margin-left: 60px;">Главная</a>
+                            <a class="nav-link" href="@Url.Action("Index", "Home")" style="color: black; margin-right: 40px; margin-left: 60px;">Главная</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="@Url.Action("TariffPlans", "Home")" style="color: #300E36;">Тарифы</a>
+                            <a class="nav-link" href="@Url.Action("TariffPlans", "Home")" style="color: black">Тарифы</a>
                         </li>
                     </ul>
                     @if (APIClient.Client != null)
                     {
                         <ul class="navbar-nav ms-auto">
                             <li class="nav-item me-4">
-                                <a class="nav-link btn rounded-pill" href="@Url.Action("Profile", "Home")" style="background-color: #DBCEF6; color: #300E36;">Личный кабинет</a>
+                                <a class="nav-link btn rounded" href="@Url.Action("Profile", "Home")" style="background-color: #9ACCFF; color: black">Личный кабинет</a>
                             </li>
                             <li class="nav-item me-4">
-                                <a class="nav-link btn rounded-pill" href="@Url.Action("Exit", "Home")" style="background-color: #DBCEF6; color: #300E36;">Выход</a>
+                                <a class="nav-link btn rounded" href="@Url.Action("Exit", "Home")" style="background-color: #9ACCFF; color: black">Выход</a>
                             </li>
                         </ul>
                     }
@@ -41,10 +41,10 @@
                     {
                         <ul class="navbar-nav ms-auto">
                             <li class="nav-item me-4">
-                                <a class="nav-link btn rounded-pill" href="@Url.Action("Enter", "Home")" style="background-color: #DBCEF6; color: #300E36;">Войти</a>
+                                <a class="nav-link btn rounded" href="@Url.Action("Enter", "Home")" style="background-color: #9ACCFF; color: black">Войти</a>
                             </li>
                             <li class="nav-item me-4">
-                                <a class="nav-link btn rounded-pill" href="@Url.Action("Register", "Home")" style="background-color: #DBCEF6; color: #300E36;">Зарегистрироваться</a>
+                                <a class="nav-link btn rounded" href="@Url.Action("Register", "Home")" style="background-color: #9ACCFF; color: black;">Зарегистрироваться</a>
                             </li>
                         </ul>
                     }

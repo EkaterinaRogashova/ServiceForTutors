@@ -30,7 +30,15 @@ namespace ServiceForTutorDatabaseImplements.Implements
         {
             using var context = new ServiceForTutorDatabase();
             if (model.Id.HasValue)
-                return context.Questions.FirstOrDefault(x => x.Id == model.Id)?.GetViewModel;
+            {
+                var question = context.Questions.FirstOrDefault(x => x.Id == model.Id);
+                if (question != null)
+                {
+                    var viewModel = question.GetViewModel;
+                    viewModel.FileUrls = question.FileUrls; // Добавляем FileUrls в ViewModel
+                    return viewModel;
+                }
+            }
             return null;
         }
 

@@ -61,7 +61,7 @@
                 <button class="btn btn-action"
                         data-bs-toggle="modal"
                         data-bs-target="#addTimeSlotModal"
-                        style="background-color: #DBCEF6; color: #300E36; border-radius: 10px; margin-left: 50px;">
+                        style="background-color: #ECF6FF; color: #300E36; border-radius: 10px; margin-left: 50px;">
                     Добавить время
                 </button>
             }
@@ -176,7 +176,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-                            <button type="submit" class="btn" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px;">Сохранить</button>
+                            <button type="submit" class="btn" style="background-color: #E3EFFF; color: #300E36; border-radius: 10px;">Сохранить</button>
                         </div>
                     </form>
                 </div>
@@ -216,7 +216,7 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
                         <div id="actionButtons"></div>
-                        <button type="submit" id="bookButton" class="btn" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px;">Забронировать</button>
+                        <button type="submit" id="bookButton" class="btn" style="background-color: #E3EFFF; color: #300E36; border-radius: 10px;">Забронировать</button>
                     </div>
                 </form>
             </div>
@@ -255,8 +255,8 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-                        <button id="cancelButton" type="submit" class="btn" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px;">Отменить занятие</button>
-                        <button id="startLesson" type="submit" class="btn" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px;">Начать занятие</button>
+                        <button id="cancelButton" type="submit" class="btn" style="background-color: #E3EFFF; color: #300E36; border-radius: 10px;">Отменить занятие</button>
+                        <a class="btn" href="@Url.Action("Lesson", "Schedule")" id="startLesson" style="background-color: #E3EFFF; color: #300E36; border-radius: 10px;">Начать занятие</a>
                     </div>
                 </form>
             </div>
@@ -336,7 +336,6 @@
                 }
             }
         });
-
         $('#viewTimeSlot').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget);
             var id = button.data('id');
@@ -363,23 +362,12 @@
             else {
                 modal.find('#modalDuration').text(duration / 60 + " ч");
             }
-            
 
-            var startDateTime = new Date(`${date}T${startTime}`); // Создаем объект даты/времени начала занятия
-            var currentTime = new Date(); // Текущая дата/время
 
-            // Разница во времени в миллисекундах
-            var timeDifference = startDateTime - currentTime;
             if (status === "Booked") {
                 $('#cancelButton').text('Отменить занятие');
                 $('#cancelButton').prop('disabled', false); // Активируем кнопку отмены
-
-                // Проверяем, активировать ли кнопку "Начать занятие"
-                if (timeDifference <= 5 * 60 * 1000 && timeDifference > 0) { // Если осталось 5 минут или меньше
-                    $('#startLesson').prop('disabled', false); // Активируем кнопку "Начать занятие"
-                } else {
-                    $('#startLesson').prop('disabled', true); // Деактивируем кнопку "Начать занятие"
-                }
+                $('#startLesson').prop('disabled', false); // Активируем кнопку "Начать занятие"
             } else {
                 $('#cancelButton').text('Удалить занятие');
                 $('#cancelButton').prop('disabled', false); // Активируем кнопку удаления
@@ -491,7 +479,7 @@
     }
 
     .btn-active {
-        background-color: #C5A8EA;
+        background-color: #E3EFFF;
         color: #300E36;
         border-radius: 10px;
         border: none;

@@ -11,20 +11,34 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .hero {
-            background-image: url('https://i.pinimg.com/236x/5a/09/c0/5a09c076a7378e8cf088ac20b135d866.jpg');
-            background-size: cover;
-            background-position: center;
-            height: 60vh;
             position: relative;
-            color: white;
+            height: 60vh;
+            color: black;
+            overflow: hidden; /* Позволяет скрыть лишние части псевдоэлем */
+            display: flex; /* Используем Flexbox для центрирования содержимого */
+            justify-content: center; /* Центрируем по горизонтали */
+            align-items: center; /* Центрируем по вертикали */
+            text-align: center; /* Выравниваем текст по центру */
+            padding: 50px;
         }
 
+            .hero::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-image: url('https://i.pinimg.com/736x/40/73/f6/4073f6a30aac0ff35670a09afb9f3057.jpg');
+                background-size: cover;
+                background-position: center;
+                filter: blur(50px); /* Размазываем изображение */
+                z-index: 1; /* Помещаем псевдоэлемент под содержимым */
+            }
+
         .hero-title {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: #4b0082;
+            position: relative; /* Устанавливаем позицию относительно родителя */
+            z-index: 2; /* Помещаем контент над размазанным фоном */
             text-align: center;
         }
 
@@ -43,6 +57,7 @@
             <div class="hero-title">
                 <h1 class="display-4">Добро пожаловать на нашу платформу онлайн-обучения!</h1>
                 <p class="lead">Мы рады представить вам уникальное пространство, где студенты и репетиторы могут легко взаимодействовать и совместно достигать образовательных целей.</p>
+                <br />
                 <a href="@Url.Action("Register", "Home")" class="btn btn-light btn-lg">Начать обучение</a>
             </div>
         </header>
