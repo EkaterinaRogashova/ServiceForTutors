@@ -29,6 +29,16 @@
             </div>
         </div>
 
+        <div class="alert alert mt-4" role="alert" style="background-color: rgba(227, 239, 255, 0.3); border-radius: 0;">
+            <h4 class="alert-heading">Инструкция по смене вопросов местами</h4>
+            <p>
+                Для изменения порядка вопросов, просто перетащите карточку вопроса, которую хотите переместить,
+                на новое место в списке вопросов. Отпустите кнопку мыши, чтобы записать новое положение.
+            </p>
+            <hr>
+            <p class="mb-0">Нажмите на кнопку <strong>Добавить вопрос</strong> для добавления новых вопросов в задание.</p>
+        </div>
+
 
         <div class="mt-4" id="questionsList">
             <h4 class="text-center" style="color: #300E36;">Вопросы к заданию</h4>
@@ -36,15 +46,19 @@
             {
                 foreach (var question in Model.Questions)
                 {
-                    <div class="d-flex mb-3" style="width: 100%;">
-                        <!-- Контейнер для карточки вопроса с фиксированной шириной -->
+                    <div class="d-flex mb-3 question-card" data-question-id="@question.Id" style="width: 100%;" draggable="true" ondragstart="drag(event)" ondragover="allowDrop(event)" ondrop="drop(event)">
                         <div class="flex-fill" style="min-width: 70%; max-width: 90%; /* Задайте фиксированную ширину */">
                             <div class="card" style="background-color: rgba(227, 239, 255, 0.3); border-radius: 0;">
                                 <div class="card-body">
-                                    <div class="d-flex justify-content-between">
-                                        <h5 class="card-title mb-0">@question.TaskText</h5>
+
+                                    <div class="d-flex align-items-center">
+                                        <div class="rounded-circle d-flex justify-content-center align-items-center" style="width: 40px; height: 40px; background-color: #9ACCFF; color: black; font-weight: bold; margin-right: 15px;">
+                                            @question.NumberInTask
+                                        </div>
+                                        <h5 class="card-title mb-0 flex-fill">@question.TaskText</h5>
                                         <span style="font-size: 0.9rem; color: #6c757d;">Тип: @question.TypeQuestion</span>
                                     </div>
+
                                     <hr />
                                     <div class="d-flex justify-content-between align-items-center">
                                         <p class="mb-0">Максимальный балл: <strong>@question.MaxScore</strong></p>
@@ -120,7 +134,6 @@
                                         data-correct-answers='@Html.Raw(System.Text.Json.JsonSerializer.Serialize(question.CorrectAnswers))'>
                                     Редактировать
                                 </button> *@
-
                                 <form asp-action="DeleteQuestion" method="post" style="margin-top: 10px;">
                                     <input type="hidden" id="taskId" name="taskId" value="@Model.Id" />
                                     <input type="hidden" id="questionId" name="id" value="@question.Id" />
@@ -128,6 +141,7 @@
                                         Удалить вопрос
                                     </button>
                                 </form>
+                                
                             </div>
                         </div>
 
@@ -272,40 +286,49 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content" style="border-radius: 15px;">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="assignTaskModalLabel">Добавить вопрос</h5>
+                        <h5 class="modal-title" id="assignTaskModalLabel">Назначить ученика</h5>
                         <button type="button" class="close" data-bs-dismiss="modal" aria-label="Закрыть" style="border: none; background: none;">
                             <span aria-hidden="true" style="font-size: 1.5rem;">&times;</span>
                         </button>
                     </div>
-                    <form asp-action="AssignTask" method="post">
+                    @if (Model.Questions != null && Model.Questions.Any())
+                    {
+                        <form asp-action="AssignTask" method="post">
+                            <div class="modal-body">
+                                <input type="hidden" id="taskId" name="id" value="@Model.Id" />
+                                <div class="mb-3">
+                                    <label for="studentSelect">Выберите ученика</label>
+                                    <select id="studentSelect" name="studentId" class="form-select" required>
+                                        <option value="" disabled selected>-- Выберите ученика --</option>
+                                        @foreach (var student in ViewBag.Students)
+                                        {
+                                            <option value="@student.Id">@student.Name @student.Surname</option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="startDate">Дата и время начала</label>
+                                    <input type="datetime-local" id="startDate" name="startDate" class="form-control" required />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="endDate">Дата и время окончания</label>
+                                    <input type="datetime-local" id="endDate" name="endDate" class="form-control" required />
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn" data-bs-dismiss="modal" style="border-radius: 10px; background-color: #9ACCFF; color: black;">Закрыть</button>
+                                <button type="submit" class="btn" id="saveQuestionButton" style="border-radius: 10px; background-color: #E3EFFF; color: black;">Назначить задание</button>
+                            </div>
+                        </form>
+                    }
+                    else
+                    {
                         <div class="modal-body">
-                            <input type="hidden" id="taskId" name="id" value="@Model.Id" />
-                            <div class="mb-3">
-                                <label for="studentSelect">Выберите ученика</label>
-                                <select id="studentSelect" name="studentId" class="form-select" required>
-                                    <option value="" disabled selected>-- Выберите ученика --</option>
-                                    @foreach (var student in ViewBag.Students)
-                                    {
-                                        <option value="@student.Id">@student.Name @student.Surname</option>
-                                    }
-                                </select>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="startDate">Дата и время начала</label>
-                                <input type="datetime-local" id="startDate" name="startDate" class="form-control" required />
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="endDate">Дата и время окончания</label>
-                                <input type="datetime-local" id="endDate" name="endDate" class="form-control" required />
-                            </div>
+                            <p>Пустое задание нельзя назначить ученику. Добавьте сначала вопросы!</p>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn" data-bs-dismiss="modal" style="border-radius: 10px; background-color: #9ACCFF; color: black;">Закрыть</button>
-                            <button type="submit" class="btn" id="saveQuestionButton" style="border-radius: 10px; background-color: #E3EFFF; color: black;">Назначить задание</button>
-                        </div>
-                    </form>
+                    }
                 </div>
             </div>
         </div>
@@ -669,6 +692,125 @@
                 $('#errorModal').modal('show');
             }
         });
+
+
+        let dragged;
+
+        function drag(event) {
+            dragged = event.target; // Установить элемент, который мы перетаскиваем
+            // Убедитесь, что мы перетаскиваем родительский элемент карточки
+            if (event.target.classList.contains('question-card')) {
+                event.dataTransfer.setData("text/plain", null); // Для Firefox
+            } else {
+                dragged = event.target.closest('.question-card');
+            }
+            dragged.style.opacity = 0.5; // Изменить стиль для визуализации перетаскивания
+        }
+
+        function allowDrop(event) {
+            event.preventDefault(); // Разрешить перетаскивание
+        }
+
+        function drop(event) {
+            event.preventDefault();
+            // Убедитесь, что сбрасываемое место также соответствует карточке вопроса
+            const target = event.target.closest('.question-card');
+            if (target && target !== dragged) {
+                // Переместить карточку
+                target.parentNode.insertBefore(dragged, target.nextSibling);
+                updateOrder();
+            }
+            dragged.style.opacity = ""; // Сбросить стиль
+        }
+
+        // Сбрасываем стиль при уходе мыши на другие элементы
+        document.querySelectorAll('.question-card').forEach(element => {
+            element.addEventListener('dragleave', function () {
+                element.style.opacity = "";
+            });
+        });
+
+        function updateOrder() {
+            const questionsList = document.querySelectorAll('.question-card');
+
+            // Массив для хранения обновленного порядка
+            const orderData = [];
+
+            questionsList.forEach((card, index) => {
+                const questionId = card.getAttribute('data-question-id'); // Предполагается, что у вашей карточки есть атрибут data-id с идентификатором вопроса
+                const taskId = document.getElementById('taskId').value; // Получаем taskId из скрытого поля
+                orderData.push({
+                    id: questionId,
+                    numberInTask: index + 1, // Индексы начинаются с 0, поэтому добавляем 1
+                    taskId: taskId // Добавляем taskId для передачи
+                });
+            });
+
+            // Отправить новый порядок на сервер
+            saveOrder(orderData);
+        }
+
+        function saveOrder(orderData) {
+            // const taskId = orderData[0].taskId;
+            // const id = orderData[0].id;
+
+            // fetch(`/Task/EditQuestion?questionId=${id}&numberInTask=${orderData[0].numberInTask}&taskId=${taskId}`, {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json'
+            //     },
+            //     body: JSON.stringify(orderData) // Если нужно, можете оставить это, если сервер ожидает тело
+            // })
+            //     .then(response => {
+            //         if (response.ok) {
+            //             console.log('Order updated successfully');
+            //             // Обновите интерфейс или перезагрузите страницу, если это необходимо
+            //             location.reload(); // Перезагрузить страницу
+            //         } else {
+            //             console.error('Error updating order');
+            //         }
+            //     })
+            //     .catch(error => {
+            //         console.error('Error sending data to server:', error);
+            //     });
+            console.log('Order Data:', orderData);
+            fetch('/Task/EditQuestions', { // Здесь нужно указать правильный URL
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(orderData) // Отправляем весь массив как JSON
+            })
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Order updated successfully');
+                        location.reload(); // Перезагрузить страницу, чтобы отобразить обновленные данные
+                    } else {
+                        console.error('Error updating order');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error sending data to server:', error);
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const startDateInput = document.getElementById('startDate');
+            const endDateInput = document.getElementById('endDate');
+
+            // Получаем текущую дату и время в формате yyyy-MM-ddTHH:mm
+            const now = new Date();
+            const nowString = now.toISOString().slice(0, 16); // Убираем секунды и миллисекунды
+
+            // Устанавливаем минимальное значение для startDate
+            startDateInput.setAttribute('min', nowString);
+
+            // Устанавливаем минимальное значение для endDate
+            endDateInput.setAttribute('min', nowString);
+        });
+
+
+
     </script>
 
 }

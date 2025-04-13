@@ -173,13 +173,13 @@ namespace ServiceForTutorRestApi.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAssignedTaskList(int? tutorId, string? status, int? studentId, int pageIndex = 0, int pageSize = 10)
+        public IActionResult GetAssignedTaskList(int? tutorId, string? status, string? subject, int? studentId, int pageIndex = 0, int pageSize = 10)
         {
             try
             {
                 var model = studentId != null
-                    ? new AssignedTaskSearchModel { StudentId = studentId, Status = status, PageIndex = pageIndex, PageSize = pageSize }
-                    : new AssignedTaskSearchModel { TutorId = tutorId, Status = status, PageIndex = pageIndex, PageSize = pageSize };
+                    ? new AssignedTaskSearchModel { StudentId = studentId, Status = status, Subject = subject, PageIndex = pageIndex, PageSize = pageSize }
+                    : new AssignedTaskSearchModel { TutorId = tutorId, Status = status, Subject = subject, PageIndex = pageIndex, PageSize = pageSize };
 
                 var taskList = _assignTaskLogic.ReadList(model); // Получаем заданные задачи
 
@@ -187,6 +187,29 @@ namespace ServiceForTutorRestApi.Controllers
 
                 var response = new AssignedTaskListResponse(taskList, totalCount);
                 return Ok(response); // Возвращаем экземпляр класса ответа
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
+        [HttpGet]
+        public IActionResult GetUniqueSubjects(int? studentId, int? tutorId)
+        {
+            try
+            {
+                var model = studentId != null
+                    ? new AssignedTaskSearchModel { StudentId = studentId}
+                    : new AssignedTaskSearchModel { TutorId = tutorId};
+
+                var taskList = _assignTaskLogic.ReadList(model);
+                var uniqueSubjects = taskList
+             .Select(at => at.Subject) // Здесь предполагаем, что в AssignedTask есть свойство Task с Subject
+             .Distinct()
+             .ToList();
+
+                return Ok(uniqueSubjects);
             }
             catch (Exception ex)
             {

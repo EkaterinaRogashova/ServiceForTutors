@@ -18,6 +18,15 @@
                         <option value="@status">@StatusDictionary.GetTranslation(status)</option>
                     }
                 </select>
+                <label for="subjectFilter" class="mr-2">Фильтр по предмету:</label>
+                <select id="subjectFilter" name="subject" class="form-control mr-2" style="flex: 1;">
+                    <option value="">Все предметы</option>
+                    @foreach (var subject in ViewData["UniqueSubjects"] as List<string>)
+                    {
+                        <option value="@subject">@subject</option>
+                    }
+                </select>
+
                 <button type="submit" class="btn-create">Применить фильтр</button>
             </div>
         </form>

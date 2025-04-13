@@ -23,6 +23,8 @@ namespace ServiceForTutorContracts.ViewModels
         public List<string> FileUrls { get; set; } = new List<string>();
         public List<string> FileDownloadLinks { get; set; }
         public List<string> StoredAnswers { get; private set; } = new List<string>();
+        public List<string> StoredFileUrls { get; set; } = new List<string>();
+        public int NumberInTask { get; set; }
 
 
         public void SetAnswers(object answers)

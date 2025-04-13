@@ -11,14 +11,14 @@
         <div class="container">
             <div class="row justify-content-center" style="margin-top: 20px;">
                 <div class="col-md-6">
-                    <div class="p-4" style="background-color: #DBCEF6; border-radius: 10px;">
+                    <div class="p-4" style="background-color: #E3EFFF; border-radius: 10px;">
                         <h3 class="text-center mt-3" style="color: #300E36;">@Model.Name</h3>
                         <p style="font-weight: bold;">Темa: @Model.Topic</p>
                         <p style="font-weight: bold;">Предмет: @Model.Subject</p>
                     </div>
                 </div>
                 <div class="col-md-6 text-center">
-                    <img src="https://cdn-icons-png.flaticon.com/512/5058/5058451.png" alt="" style="max-width: 40%; margin-left: -20px; height: auto; border-radius: 10px;">
+                    <img src="https://okeygeek.ru/wp-content/uploads/2019/09/icon_needs_assessment_blue-300x300-768x768.png" alt="" style="max-width: 40%; margin-left: -20px; height: auto; border-radius: 10px;">
                 </div>
             </div>
         </div>
@@ -26,7 +26,7 @@
 
     <div class="mt-4" id="questionsList">
     <h4 class="text-center" style="color: #300E36;">Вопросы к заданию</h4>
-    <form method="post" action="@Url.Action("CreateStudentAnswer", "Task")">
+        <form method="post" action="@Url.Action("CreateStudentAnswer", "Task")" enctype="multipart/form-data">
         <input type="hidden" name="taskId" value="@Model.Id" />
         @if (Model.Questions != null && Model.Questions.Any())
         {
@@ -34,29 +34,55 @@
             {
                 <div class="d-flex mb-3" style="width: 100%;">
                     <div class="flex-fill" style="min-width: 70%; max-width: 90%;">
-                        <div class="card" style="background-color: #F5F4FF; border-radius: 0;">
+                        <div class="card" style="background-color: rgba(227, 239, 255, 0.3); border-radius: 0;">
                             <div class="card-body">
-                                <div class="d-flex justify-content-between">
-                                    <h5 class="card-title mb-0">@question.TaskText</h5>
+                                <div class="d-flex align-items-center">
+                                    <div class="rounded-circle d-flex justify-content-center align-items-center" style="width: 40px; height: 40px; background-color: #9ACCFF; color: black; font-weight: bold; margin-right: 15px;">
+                                        @question.NumberInTask
+                                    </div>
+                                    <h5 class="card-title mb-0 flex-fill">@question.TaskText</h5>
                                     <span style="font-size: 0.9rem; color: #6c757d;">Тип: @question.TypeQuestion</span>
                                 </div>
                                 <hr />
                                 <div class="d-flex justify-content-between align-items-center">
                                     <p class="mb-0">Максимальный балл: <strong>@question.MaxScore</strong></p>
                                 </div>
+                                @if (question.FileUrls != null && question.FileDownloadLinks != null && question.FileDownloadLinks.Any())
+                                {
+                                    <div class="mt-3">
+                                        <h6>Прикрепленные файлы:</h6>
+                                        <ul class="list-group">
+                                            @for (int i = 0; i < question.FileDownloadLinks.Count; i++)
+                                            {
+                                                var fileLink = question.FileDownloadLinks[i];
+                                                var isImage = fileLink.Contains("content_type=image");
 
+                                                <li class="list-group-item">
+                                                    @if (isImage)
+                                                    {
+                                                        <img src="@fileLink" alt="Изображение" style="max-width: 100%; height: auto;" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <a href="@fileLink" target="_blank">Скачать файл</a>
+                                                    }
+                                                </li>
+                                            }
+                                        </ul>
+                                    </div>
+                                }
                                 @if (question.TypeQuestion == "Краткий ответ")
                                 {
                                     <div class="mb-3">
                                         <label for="shortAnswer_@question.Id" class="form-label">Ваш ответ:</label>
-                                        <textarea name="answer[@question.Id]" class="form-control" rows="3">@string.Join(", ", question.StoredAnswers)</textarea>
+                                        <textarea name="answer[@question.Id]" class="form-control" rows="3">@(string.Join(", ", question.StoredAnswers))</textarea>
                                     </div>
                                 }
                                 else if (question.TypeQuestion == "Развернутый ответ")
                                 {
                                     <div class="mb-3">
                                         <label for="longAnswer_@question.Id" class="form-label">Ваш ответ:</label>
-                                        <textarea class="form-control" id="longAnswer_@question.Id" name="answer[@question.Id]" rows="5">@question.StoredAnswers</textarea>
+                                                <textarea class="form-control" id="longAnswer_@question.Id" name="answer[@question.Id]" rows="5">@(string.Join(", ", question.StoredAnswers))</textarea>
                                     </div>
                                 }
                                 else if (question.TypeQuestion == "Единичный выбор")
@@ -116,9 +142,39 @@
                                 else if (question.TypeQuestion == "Прикрепление файла")
                                 {
                                     <div class="mb-3">
-                                        <label class="form-label">Прикрепите файл:</label>
-                                        <input class="form-control" type="file" name="fileAttachment[@question.Id]" id="fileUpload_@question.Id" />
+                                        <div class="file-upload-container">
+                                            <label for="fileUpload" class="file-upload-label">Перетащите сюда файлы или нажмите для загрузки</label>
+                                            <input type="file" id="fileUpload" name="files[@question.Id]" multiple accept=".jpg, .jpeg, .png, .pdf, .docx" />
+                                                    <textarea style="display:none;" name="answer[@question.Id]" rows="3" placeholder="Ваш текстовый ответ..."></textarea>
+                                            <button type="button" class="upload-button" id="showFileUploadButton">Загрузить файлы</button>
+                                            <div id="filePreviewContainer" class="file-preview"></div>
+                                            <small class="form-text">Вы можете вставлять файлы из буфера обмена или выбирать их из вашего устройства.</small>
+                                        </div>
                                     </div>
+                                    if (question.StoredFileUrls != null && question.StoredFileUrls.Any())
+                                    {
+                                        <h5>Прикрепленные файлы:</h5>
+                                        <ul id="existingFilesContainer_@question.Id">
+                                            @for (int i = 0; i < question.StoredFileUrls.Count; i++)
+                                            {
+                                                var fileLink = question.StoredFileUrls[i];
+                                                var isImage = fileLink.Contains("content_type=image");
+
+                                                <li class="list-group-item">
+                                                    @if (isImage)
+                                                    {
+                                                        <img src="@fileLink" alt="Изображение" style="max-width: 100%; height: auto;" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <a href="@fileLink" target="_blank">Скачать файл</a>
+                                                    }
+                                                    <button type="button" class="btn btn-danger btn-sm remove-existing-file" data-file-url="@fileLink">Удалить</button>
+
+                                                </li>
+                                            }
+                                        </ul>
+                                    }
                                 }
 
                             </div>
@@ -131,8 +187,138 @@
         {
             <p class="text-center">Нет вопросов для отображения.</p>
         }
-        <button type="submit" name="action" value="finish" class="btn" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px;">Закончить попытку</button>
-        <button type="submit" name="action" value="save" class="btn" style="background-color: #C5A8EA; color: #300E36; border-radius: 10px;">Сохранить прогресс и вернуться позже</button>
+            <div class="text-center mt-4">
+                <button type="submit" name="action" value="finish" class="btn" style="background-color: #9ACCFF; color: #300E36; border-radius: 10px;">Закончить попытку</button>
+                <button type="submit" name="action" value="save" class="btn" style="background-color: #9ACCFF; color: #300E36; border-radius: 10px;">Сохранить прогресс и вернуться позже</button>
+            </div>
         </form>
     </div>
 </body>
+<style>
+    .file-upload-container {
+        margin: 20px;
+        border: 2px dashed #4a90e2;
+        border-radius: 10px;
+        padding: 20px;
+        background-color: #f9f9f9;
+        text-align: center;
+    }
+
+    .file-upload-label {
+        display: block;
+        font-size: 18px;
+        margin-bottom: 10px;
+        color: #4a90e2;
+        cursor: pointer;
+    }
+
+    .upload-button {
+        background-color: #4a90e2;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+
+        .upload-button:hover {
+            background-color: #357ab8;
+        }
+
+    #fileUpload {
+        display: none; /* Скрываем стандартный input */
+    }
+
+    .file-preview {
+        margin-top: 20px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+        .file-preview div {
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 5px;
+            position: relative;
+        }
+
+        .file-preview img {
+            width: 300px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+    .remove-btn {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background: #e74c3c;
+        color: white;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+        font-size: 12px;
+        padding: 3px 5px;
+    }
+
+</style>
+
+
+<script>
+    let filesArray = [];
+
+    // Обработчик события для выбора файлов
+    document.getElementById('fileUpload').addEventListener('change', function (event) {
+        const files = event.target.files;
+        for (let i = 0; i < files.length; i++) {
+            filesArray.push(files[i]); // Добавляем каждый выбранный файл в массив
+        }
+
+        renderFilePreview(); // Обновляем превью
+    });
+
+    // Обработчик кнопки загрузки файлов
+    document.getElementById('showFileUploadButton').addEventListener('click', function () {
+        document.getElementById('fileUpload').click();
+    });
+
+    // Функция для отображения предварительного просмотра файлов
+    function renderFilePreview() {
+        const previewContainer = document.getElementById("filePreviewContainer");
+        previewContainer.innerHTML = ""; // Очищаем контейнер перед обновлением
+
+        filesArray.forEach((file, index) => {
+            const fileDiv = document.createElement("div");
+            fileDiv.innerText = file.name;
+
+            const removeBtn = document.createElement("button");
+            removeBtn.innerText = "X";
+            removeBtn.className = "remove-btn";
+            removeBtn.onclick = function () {
+                removeFile(index); // Удаляем файл из массива по индексу
+            };
+
+            // Если файл — это изображение, показываем миниатюру
+            if (file.type.startsWith("image/")) {
+                const img = document.createElement("img");
+                img.src = URL.createObjectURL(file);
+                img.style.width = "300px"; // Ограничиваем ширину миниатюры
+                img.style.height = "auto"; // Поддерживаем пропорции
+                fileDiv.appendChild(img);
+            }
+            fileDiv.appendChild(removeBtn); // Добавляем кнопку "Удалить"
+            previewContainer.appendChild(fileDiv);
+        });
+    }
+
+    // Функция для удаления файла
+    function removeFile(index) {
+        filesArray.splice(index, 1); // Удаляем файл из массива
+        renderFilePreview(); // Обновляем превью
+    }
+</script>

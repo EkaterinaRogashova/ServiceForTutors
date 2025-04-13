@@ -146,8 +146,13 @@ namespace ServiceForTutorClientApp.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> CreateQuestion(int id, string questionText, string questionType, float maxScore, string[] Answers, string[] CorrectAnswers, List<IFormFile> files)
+        public async Task<IActionResult> CreateQuestion(int id, string questionText, string questionType, float maxScore, string[] Answers, string[] CorrectAnswers, List<IFormFile> files, int? numberInTask)
         {
+            var taskQuestions = APIClient.GetRequest<List<QuestionViewModel>>($"api/task/GetQuestionsByTask?TaskId={id}");
+            if (!numberInTask.HasValue)
+            {
+                numberInTask = (taskQuestions.Count > 0) ? taskQuestions.Count + 1 : 1;
+            }
             // Создание модели вопроса
             var questionModel = new QuestionBindingModel
             {
@@ -157,6 +162,7 @@ namespace ServiceForTutorClientApp.Controllers
                 MaxScore = maxScore,
                 Answers = JsonConvert.SerializeObject(Answers),
                 CorrectAnswers = JsonConvert.SerializeObject(CorrectAnswers),
+                NumberInTask = numberInTask.Value,
                 FileUrls = new List<string>() // Инициализация списка для ссылок на файлы
             };
 
@@ -220,17 +226,18 @@ namespace ServiceForTutorClientApp.Controllers
 
 
         [HttpPost]
-        public IActionResult EditQuestion(int editQuestionId, string editQuestionText, string editQuestionType, string editCorrectAnswer, float editMaxScore, int taskId)
+        public IActionResult EditQuestions([FromBody] List<QuestionBindingModel> questions)
         {
-            APIClient.PostRequest("api/Task/UpdateQuestion", new QuestionBindingModel
+            foreach (var question in questions)
             {
-                Id = editQuestionId,
-                TaskText = editQuestionText,
-                TypeQuestion = editQuestionType,
-                MaxScore = editMaxScore,
-                Answers = editCorrectAnswer
-            });
-            return RedirectToAction("EditTask", new { id = taskId });
+                var questionModel = new QuestionBindingModel
+                {
+                    Id = question.Id,
+                    NumberInTask = question.NumberInTask
+                };
+                APIClient.PostRequest("api/Task/UpdateQuestion", questionModel);
+            }
+            return Ok();
         }
 
         [HttpPost]
@@ -293,7 +300,7 @@ namespace ServiceForTutorClientApp.Controllers
             return RedirectToAction("EditTask", new { id = id });
         }
 
-        public IActionResult AssignedTasks(int studentId, string? status, int pageIndex = 0, int pageSize = 10)
+        public IActionResult AssignedTasks(int studentId, string? status, string? subject, int pageIndex = 0, int pageSize = 10)
         {
             if (APIClient.Client == null)
             {
@@ -304,17 +311,17 @@ namespace ServiceForTutorClientApp.Controllers
                 ViewData["StudentId"] = studentId;
             }
 
-            AssignedTaskListResponse response = null; // Инициализация переменной как null
+            AssignedTaskListResponse response = null;
 
             if (APIClient.Client.Role == "Student")
             {
-                response = APIClient.GetRequest<AssignedTaskListResponse>($"api/task/GetAssignedTaskList?Status={status}&StudentId={APIClient.Client.Id}&pageIndex={pageIndex}&pageSize={pageSize}");
+                response = APIClient.GetRequest<AssignedTaskListResponse>($"api/task/GetAssignedTaskList?Status={status}&Subject={subject}&StudentId={APIClient.Client.Id}&pageIndex={pageIndex}&pageSize={pageSize}");
             }
             else if (APIClient.Client.Role == "Tutor")
             {
                 response = studentId > 0
-                    ? APIClient.GetRequest<AssignedTaskListResponse>($"api/task/GetAssignedTaskList?Status={status}&StudentId={studentId}&pageIndex={pageIndex}&pageSize={pageSize}")
-                    : APIClient.GetRequest<AssignedTaskListResponse>($"api/task/GetAssignedTaskList?Status={status}&TutorId={APIClient.Client.Id}&pageIndex={pageIndex}&pageSize={pageSize}");
+                    ? APIClient.GetRequest<AssignedTaskListResponse>($"api/task/GetAssignedTaskList?Status={status}&Subject={subject}&StudentId={studentId}&pageIndex={pageIndex}&pageSize={pageSize}")
+                    : APIClient.GetRequest<AssignedTaskListResponse>($"api/task/GetAssignedTaskList?Status={status}&Subject={subject}&TutorId={APIClient.Client.Id}&pageIndex={pageIndex}&pageSize={pageSize}");
             }
 
             // Проверка, было ли получено значение от API
@@ -323,6 +330,17 @@ namespace ServiceForTutorClientApp.Controllers
                 ViewData["ErrorMessage"] = "Произошла ошибка при загрузке заданий.";
                 return View("Error"); // Предполагается наличие страницы с ошибкой
             }
+            List<string> uniqueSubjects = new List<string>();
+            if (APIClient.Client.Role == "Student")
+            {
+                uniqueSubjects = APIClient.GetRequest<List<string>>($"api/task/GetUniqueSubjects?StudentId={APIClient.Client.Id}");
+            }
+            else if (APIClient.Client.Role == "Tutor")
+            {
+                uniqueSubjects = APIClient.GetRequest<List<string>>($"api/task/GetUniqueSubjects?TutorId={APIClient.Client.Id}");
+            }
+
+            ViewData["UniqueSubjects"] = uniqueSubjects;
 
             // Создание объекта PaginatedList
             var paginatedList = new PaginatedList<AssignedTaskViewModel>(response.Items, response.TotalCount, pageIndex, pageSize);
@@ -343,7 +361,7 @@ namespace ServiceForTutorClientApp.Controllers
             return RedirectToAction("AssignedTasks");
         }
 
-        public IActionResult CompletingTask(int id)
+        public async Task<IActionResult> CompletingTask(int id)
         {
             if (APIClient.Client == null)
             {
@@ -356,7 +374,61 @@ namespace ServiceForTutorClientApp.Controllers
             // Создаем модель представления
             var studentAnswers = APIClient.GetRequest<List<StudentAnswerViewModel>>($"api/task/GetStudentAnswers?AssignedTaskId={test.Id}");
             var answersDictionary = studentAnswers?.ToDictionary(answer => answer.QuestionId, answer => answer.Answer);
+            string token = _configuration["AppSettings:ApiToken"];
+            foreach (var question in taskQuestions)
+            {
+                question.SetAnswers(JsonConvert.DeserializeObject<List<string>>(question.Answers));
+                question.SetCorrectAnswers(JsonConvert.DeserializeObject<List<string>>(question.CorrectAnswers));
 
+                if (question.FileUrls != null && question.FileUrls.Any())
+                {
+                    question.FileDownloadLinks = new List<string>();
+                    foreach (var fileUrl in question.FileUrls)
+                    {
+                        var fileLink = await GetFileLink(fileUrl, token);
+                        if (fileLink != null)
+                        {
+                            question.FileDownloadLinks.Add(fileLink);
+                        }
+                    }
+                }
+
+                if (answersDictionary != null && answersDictionary.TryGetValue(question.Id, out var storedAnswer))
+                {
+                    // Десериализуем сохраненные файлы из ответа
+                    var storedFiles = JsonConvert.DeserializeObject<List<string>>(storedAnswer);
+
+                    // Создаем новый список для хранения новых ссылок на файлы
+                    var newFileLinks = new List<string>();
+
+                    // Убедимся, что storedFiles не пустой и содержит строки
+                    if (storedFiles != null && storedFiles.Count > 0)
+                    {
+                        foreach (var fileUrl in storedFiles)
+                        {
+                            // Проверка актуальности типа
+                            if (fileUrl is string url && !string.IsNullOrEmpty(url)) // Проверяем, что fileUrl это строка
+                            {
+                                var fileLink = await GetFileLink(url, token); // Передаем url
+                                if (fileLink != null)
+                                {
+                                    newFileLinks.Add(fileLink); // Добавляем в новый список, если файл был найден
+                                }
+                            }
+                            else
+                            {
+                                // Обработка случая, когда fileUrl не строка или пустая
+                                // Можно добавить логирование или другую логику
+                                Console.WriteLine($"Не удалось получить корректный fileUrl: {fileUrl}");
+                            }
+                        }
+                    }
+
+                    // Присваиваем question.StoredFileUrls только новые ссылки
+                    question.StoredFileUrls = newFileLinks;
+                }
+
+            }
             var viewModel = new TaskViewModel
             {
                 Id = id,
@@ -374,7 +446,7 @@ namespace ServiceForTutorClientApp.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateStudentAnswer(int taskId, IFormCollection form)
+        public async Task<IActionResult> CreateStudentAnswer(int taskId, IFormCollection form)
         {
             var action = form["action"];
             foreach (var key in form.Keys)
@@ -396,16 +468,39 @@ namespace ServiceForTutorClientApp.Controllers
                     {
                         var selectedAnswers = form[questionId];
                         var userAnswerList = selectedAnswers.ToList();
+                        // Подготовка пути для файлов и ответов
+                        string filesPath = "";
+                        bool hasFiles = false;
+                        var fileUrls = new List<string>();
+                        var files = form.Files.Where(f => f.Name == $"files[{parsedQuestionId}]").ToList();
+                        // Сохранение загруженных файлов
+                        foreach (var file in files)
+                        {
+                            if (file.Length > 0)
+                            {
+                                hasFiles = true;
+                                // Задаем путь для хранения файлов
+                                string fileUrl = await UploadFileToYandexDisk(file);
+                                fileUrls.Add(fileUrl);
+                            }
+                        }
 
-                        if (userAnswerList.Any())
+                        if (userAnswerList.Any() || hasFiles)
                         {
                             var studentAnswer = new StudentAnswerBindingModel
                             {
                                 AssignedTaskId = taskId,
                                 QuestionId = parsedQuestionId,
-                                Answer = JsonConvert.SerializeObject(userAnswerList),
                                 Score = CalculateScoreForQuestion(userAnswerList, parsedQuestionId)
                             };
+                            if (hasFiles)
+                            {
+                                studentAnswer.Answer = JsonConvert.SerializeObject(fileUrls);
+                            }
+                            else
+                            {
+                                studentAnswer.Answer = JsonConvert.SerializeObject(userAnswerList);
+                            }
                             totalScore += studentAnswer.Score;
 
                             if (existingAnswers != null && existingAnswers.TryGetValue(parsedQuestionId, out var existingAnswer))
@@ -467,7 +562,7 @@ namespace ServiceForTutorClientApp.Controllers
             return 0; // Если корректные ответы не заданы, возвращаем 0
         }
 
-        public IActionResult CheckTask(int id)
+        public async Task<IActionResult> CheckTask(int id)
         {
             if (APIClient.Client == null)
             {
@@ -477,7 +572,23 @@ namespace ServiceForTutorClientApp.Controllers
             var taskDetails = APIClient.GetRequest<TaskViewModel>($"api/task/GetTask?TaskId={test.TaskId}");
             var taskQuestions = APIClient.GetRequest<List<QuestionViewModel>>($"api/task/GetQuestionsByTask?TaskId={test.TaskId}");
             var answers = APIClient.GetRequest<List<StudentAnswerViewModel>>($"api/task/GetStudentAnswers?AssignedTaskId={id}");
-            var viewModel = new AssignedTaskViewModel
+            string token = _configuration["AppSettings:ApiToken"];
+            foreach (var question in taskQuestions)
+            {
+                if (question.FileUrls != null && question.FileUrls.Any())
+                {
+                    question.FileDownloadLinks = new List<string>();
+                    foreach (var fileUrl in question.FileUrls)
+                    {
+                        var fileLink = await GetFileLink(fileUrl, token);
+                        if (fileLink != null)
+                        {
+                            question.FileDownloadLinks.Add(fileLink);
+                        }
+                    }
+                }
+            }
+                var viewModel = new AssignedTaskViewModel
             {
                 Id = id,
                 Status = test.Status,

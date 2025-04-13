@@ -48,7 +48,7 @@ namespace ServiceForTutorDatabaseImplements.Implements
             if (model.TaskId.HasValue)
             {
                 return context.Questions
-                .Where(x => x.TaskId == model.TaskId).Select(x => x.GetViewModel).ToList();
+                .Where(x => x.TaskId == model.TaskId).OrderBy(x => x.NumberInTask).Select(x => x.GetViewModel).ToList();
             }
             return null;
         }

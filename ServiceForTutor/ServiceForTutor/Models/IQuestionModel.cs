@@ -16,5 +16,6 @@ namespace ServiceForTutorDataModels.Models
         string Answers { get; set; }
         string CorrectAnswers { get; set; }
         List<string> FileUrls { get; set; }
+        int NumberInTask { get; set; }
     }
 }

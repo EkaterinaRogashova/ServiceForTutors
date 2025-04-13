@@ -57,6 +57,11 @@ namespace ServiceForTutorDatabaseImplements.Implements
                 query = query.Where(at => at.Status == model.Status);
             }
 
+            if (!string.IsNullOrEmpty(model.Subject))
+            {
+                query = query.Where(at => at.Task.Subject == model.Subject);
+            }
+
             if (model.TaskId.HasValue)
             {
                 query = query.Where(x => x.TaskId == model.TaskId);
@@ -74,7 +79,8 @@ namespace ServiceForTutorDatabaseImplements.Implements
                 Grade = at.Grade,
                 TaskName = at.Task.Name,
                 TaskTopic = at.Task.Topic,
-                Status = at.Status
+                Status = at.Status,
+                Subject = at.Task.Subject
             }).ToList();
         }
 

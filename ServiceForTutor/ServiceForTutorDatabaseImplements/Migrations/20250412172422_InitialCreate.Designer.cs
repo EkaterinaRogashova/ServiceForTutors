@@ -13,7 +13,7 @@ using ServiceForTutorDatabaseImplements;
 namespace ServiceForTutorDatabaseImplements.Migrations
 {
     [DbContext(typeof(ServiceForTutorDatabase))]
-    [Migration("20250407175517_InitialCreate")]
+    [Migration("20250412172422_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -142,6 +142,9 @@ namespace ServiceForTutorDatabaseImplements.Migrations
 
                     b.Property<float>("MaxScore")
                         .HasColumnType("real");
+
+                    b.Property<int>("NumberInTask")
+                        .HasColumnType("integer");
 
                     b.Property<int>("TaskId")
                         .HasColumnType("integer");

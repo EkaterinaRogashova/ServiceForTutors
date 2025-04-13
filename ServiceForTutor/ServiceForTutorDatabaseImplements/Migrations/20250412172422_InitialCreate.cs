@@ -243,7 +243,8 @@ namespace ServiceForTutorDatabaseImplements.Migrations
                     MaxScore = table.Column<float>(type: "real", nullable: false),
                     Answers = table.Column<string>(type: "text", nullable: false),
                     CorrectAnswers = table.Column<string>(type: "text", nullable: false),
-                    FileUrls = table.Column<List<string>>(type: "text[]", nullable: false)
+                    FileUrls = table.Column<List<string>>(type: "text[]", nullable: false),
+                    NumberInTask = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {

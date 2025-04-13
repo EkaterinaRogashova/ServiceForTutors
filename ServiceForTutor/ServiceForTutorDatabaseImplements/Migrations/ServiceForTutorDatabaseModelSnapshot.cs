@@ -140,6 +140,9 @@ namespace ServiceForTutorDatabaseImplements.Migrations
                     b.Property<float>("MaxScore")
                         .HasColumnType("real");
 
+                    b.Property<int>("NumberInTask")
+                        .HasColumnType("integer");
+
                     b.Property<int>("TaskId")
                         .HasColumnType("integer");
 
