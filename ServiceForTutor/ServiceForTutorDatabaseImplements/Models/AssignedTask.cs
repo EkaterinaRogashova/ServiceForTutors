@@ -79,7 +79,8 @@ namespace ServiceForTutorDatabaseImplements.Models
             DateTimeStart = DateTimeStart,
             DateTimeEnd = DateTimeEnd,
             Grade = Grade,
-            Status = Status
+            Status = Status,
+            StudentFIO = Student?.Name + " " + Student?.Surname
         };
     }
 }

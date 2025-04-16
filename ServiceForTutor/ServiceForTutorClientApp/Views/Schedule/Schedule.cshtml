@@ -69,77 +69,185 @@
         </div>
         
 
-        <div class="schedule-container">
-            <input type="date" id="datePicker" class="form-control mx-2" style="width: 200px; height: 40px;" />
+<div class="compact-schedule-container">
+    <input type="date" id="datePicker" class="form-control date-picker" />
+    
+    <!-- Контейнер для заголовков дней и слотов -->
+    <div class="schedule-grid">
+        <!-- Пустая ячейка для выравнивания -->
+        <div class="corner-cell"></div>
+        
+        <!-- Заголовки дней недели -->
+        <div class="days-header">
             @foreach (var day in datesOfWeek)
             {
-                <div class="day-schedule">
-                    <h5>@(day.ToString("dddd, dd MMMM"))</h5> <!-- Заголовок с днем недели -->
-                    <table class="table">
-                        <thead>
-                        </thead>
-                        <tbody>
-                            @foreach (var time in uniqueTimesByDay[day]) // Используем уникальные времена для текущего дня
+                <div class="day-header @(day.Date == DateTime.Today ? "today" : "")">
+                    <div class="day-name">@day.ToString("ddd")</div>
+                    <div class="day-date">@day.Day</div>
+                </div>
+            }
+        </div>
+        
+        <!-- Колонка с временами -->
+        <div class="time-column">
+            @for (var hour = 8; hour < 22; hour++)
+            {
+                <div class="time-label">@hour:00</div>
+            }
+        </div>
+        
+        <!-- Основное содержимое с временными слотами -->
+        <div class="days-slots">
+            @foreach (var day in datesOfWeek)
+            {
+                <div class="day-column @(day.Date == DateTime.Today ? "today" : "")">
+                    <div class="day-slots-container" style="height: 840px;">
+                        @{
+                            var localDayStart = new DateTime(day.Year, day.Month, day.Day, 0, 0, 0, DateTimeKind.Local);
+                            var daySlots = slotsByDate[day]
+                                .Select(s => new {
+                                    Slot = s,
+                                    LocalStart = s.DateTimeStart.ToLocalTime(),
+                                    LocalEnd = s.DateTimeEnd.ToLocalTime()
+                                })
+                                .OrderBy(x => x.LocalStart)
+                                .ToList();
+                            
+                            var lastEndTime = localDayStart.AddHours(8);
+                        }
+                        
+                        @foreach (var slot in daySlots)
+                        {
+                            var localStart = slot.LocalStart;
+                            var localEnd = slot.LocalEnd;
+                            
+                            @if (localStart > lastEndTime)
                             {
-                                var timeSlot = slotsByDate[day].FirstOrDefault(m => m.DateTimeStart.TimeOfDay == time);
-                                var duration = timeSlot != null ? (int)(timeSlot.DateTimeEnd - timeSlot.DateTimeStart).TotalMinutes : 0;
-
-                                <tr>
-                                    <td style="vertical-align: top; text-align: center;">
-                                        @if (timeSlot != null)
-                                        {
-                                            var localStartDate = timeSlot.DateTimeStart.ToLocalTime();
-                                            var localEndDate = timeSlot.DateTimeEnd.ToLocalTime();
-                                            if (timeSlot.Status == "Available")
-                                            {
-                                                <button class="time-slot-button-available" data-bs-toggle="modal"
-                                                        data-bs-target="@((APIClient.Client.Role == "Student" && timeSlot.Status == "Available") ? "#reservation" : "#viewTimeSlot")"
-                                                        data-id="@timeSlot.Id"
-                                                        data-date="@localStartDate.ToString("dddd, dd MMMM yyyy")"
-                                                        data-start-time="@localStartDate.ToString("HH:mm")"
-                                                        data-end-time="@localEndDate.ToString("HH:mm")"
-                                                        data-tutor-id="@timeSlot.TutorId"
-                                                        data-status="@timeSlot.Status">
-                                                    @StatusTimeSlotDictionary.GetTranslation(timeSlot.Status) <br />
-                                                    @localStartDate.ToString("HH:mm") - @localEndDate.ToString("HH:mm")
-                                                </button>
-                                            }
-                                            if (timeSlot.Status == "Booked" && APIClient.Client.Role == "Tutor")
-                                            {
-                                                <button class="time-slot-button-booked" data-bs-toggle="modal"
-                                                        data-bs-target="@((APIClient.Client.Role == "Student" && timeSlot.Status == "Available") ? "#reservation" : "#viewTimeSlot")"
-                                                        data-id="@timeSlot.Id"
-                                                        data-date="@localStartDate.ToString("dddd, dd MMMM yyyy")"
-                                                        data-start-time="@localStartDate.ToString("HH:mm")"
-                                                        data-end-time="@localEndDate.ToString("HH:mm")"
-                                                        data-tutor-id="@timeSlot.TutorId"
-                                                        data-status="@timeSlot.Status">
-                                                    @(timeSlot.Surname + " " + timeSlot.Name) <br />
-                                                    @localStartDate.ToString("HH:mm") - @localEndDate.ToString("HH:mm")
-                                                </button>
-                                            }
-                                            if (timeSlot.Status == "Booked" && APIClient.Client.Role == "Student")
-                                            {
-                                                <button class="time-slot-button-booked">
-                                                    @(timeSlot.Surname + " " + timeSlot.Name) <br />
-                                                    @localStartDate.ToString("HH:mm") - @localEndDate.ToString("HH:mm")
-                                                </button>
-                                            }
-
-                                        }
-                                        else
-                                        {
-                                            <span style="display: block; height: 20px;"></span> <!-- Пустой элемент для визуального выравнивания -->
-                                        }
-                                    </td>
-                                </tr>
+                                <div class="empty-slot" style="height: @GetMinutesHeight(localStart - lastEndTime)"></div>
                             }
-                        </tbody>
-                    </table>
+                            
+                            
+                                var duration = localEnd - localStart;
+                                var slotHeight = GetSlotHeight(duration);
+                                var topPosition = GetMinutesHeight(localStart.TimeOfDay - TimeSpan.FromHours(8));
+                                lastEndTime = localEnd;
+                            
+                            
+                            <div class="time-slot-wrapper" 
+                                 style="height: @(slotHeight); top: @(topPosition); min-height: 30px;"
+                                 onclick="event.stopPropagation()">
+                                
+                                        @if (slot.Slot.Status == "Available")
+                                        {
+                                            if (APIClient.Client.Role == "Student")
+                                            {
+                                                <button class="time-slot available"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#reservation"
+                                                        data-id="@slot.Slot.Id"
+                                                        data-date="@localStart.ToString("yyyy-MM-dd")"
+                                                        data-start-time="@localStart.ToString("HH:mm")"
+                                                        data-end-time="@localEnd.ToString("HH:mm")"
+                                                        data-tutor-id="@slot.Slot.TutorId"
+                                                        data-status="@slot.Slot.Status"
+                                                        style="min-height: @(slotHeight);">
+                                                    <div class="slot-content">
+                                                        <div class="time-range">@localStart.ToString("HH:mm")-@localEnd.ToString("HH:mm")</div>
+                                                        <div class="slot-text">@StatusTimeSlotDictionary.GetTranslation(slot.Slot.Status)</div>
+                                                    </div>
+                                                </button>
+                                            }
+                                            else if (APIClient.Client.Role == "Tutor")
+                                            {
+                                                <button class="time-slot available"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#viewTimeSlot"
+                                                        data-id="@slot.Slot.Id"
+                                                        data-date="@localStart.ToString("yyyy-MM-dd")"
+                                                        data-start-time="@localStart.ToString("HH:mm")"
+                                                        data-end-time="@localEnd.ToString("HH:mm")"
+                                                        data-tutor-id="@slot.Slot.TutorId"
+                                                        data-status="@slot.Slot.Status"
+                                                        style="min-height: @(slotHeight);">
+                                                    <div class="slot-content">
+                                                        <div class="time-range">@localStart.ToString("HH:mm")-@localEnd.ToString("HH:mm")</div>
+                                                        <div class="slot-text">@StatusTimeSlotDictionary.GetTranslation(slot.Slot.Status)</div>
+                                                    </div>
+                                                </button>
+                                            }
+                                        }
+                                        else if (slot.Slot.Status == "Booked")
+                                        {
+                                            if (APIClient.Client.Role == "Tutor")
+                                            {
+                                                <button class="time-slot booked"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#viewTimeSlot"
+                                                        data-id="@slot.Slot.Id"
+                                                        data-date="@localStart.ToString("yyyy-MM-dd")"
+                                                        data-start-time="@localStart.ToString("HH:mm")"
+                                                        data-end-time="@localEnd.ToString("HH:mm")"
+                                                        data-tutor-id="@slot.Slot.TutorId"
+                                                        data-status="@slot.Slot.Status"
+                                                        data-student-id="@slot.Slot.StudentId"
+                                                        style="min-height: @(slotHeight);">
+                                                    <div class="slot-content">
+                                                        <div class="time-range">@localStart.ToString("HH:mm")-@localEnd.ToString("HH:mm")</div>
+                                                        <div class="slot-text">@slot.Slot.Surname @slot.Slot.Name</div>
+                                                    </div>
+                                                </button>
+                                            }
+                                            else if (APIClient.Client.Role == "Student" && slot.Slot.StudentId == APIClient.Client.Id)
+                                            {
+                                                <button class="time-slot booked"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#viewTimeSlot"
+                                                        data-id="@slot.Slot.Id"
+                                                        data-date="@localStart.ToString("yyyy-MM-dd")"
+                                                        data-start-time="@localStart.ToString("HH:mm")"
+                                                        data-end-time="@localEnd.ToString("HH:mm")"
+                                                        data-tutor-id="@slot.Slot.TutorId"
+                                                        data-status="@slot.Slot.Status"
+                                                        data-student-id="@slot.Slot.StudentId"
+                                                        style="min-height: @(slotHeight);">
+                                                    <div class="slot-content">
+                                                        <div class="time-range">@localStart.ToString("HH:mm")-@localEnd.ToString("HH:mm")</div>
+                                                        <div class="slot-text">@slot.Slot.Surname @slot.Slot.Name</div>
+                                                    </div>
+                                                </button>
+                                            }
+                                            else
+                                            {
+                                                <button class="time-slot booked" disabled
+                                                        style="min-height: @(slotHeight);">
+                                                    <div class="slot-content">
+                                                        <div class="time-range">@localStart.ToString("HH:mm")-@localEnd.ToString("HH:mm")</div>
+                                                        <div class="slot-text">@slot.Slot.Surname @slot.Slot.Name</div>
+                                                    </div>
+                                                </button>
+                                            }
+                                        }
+                            </div>
+                        }
+                    </div>
                 </div>
             }
         </div>
     </div>
+</div>
+
+        @functions {
+            string GetMinutesHeight(TimeSpan duration)
+            {
+                return $"{duration.TotalMinutes}px";
+            }
+
+            string GetSlotHeight(TimeSpan duration)
+            {
+                // Для 30-минутных слотов возвращаем 40px, для остальных - по минутам
+                return duration.TotalMinutes == 30 ? "40px" : $"{duration.TotalMinutes}px";
+            }
+        }
 
 
         <div class="modal fade" id="addTimeSlotModal" tabindex="-1" role="dialog" aria-labelledby="addTimeSlotModalLabel" aria-hidden="true">
@@ -224,45 +332,51 @@
         </div>
     </div>
 
-
     <div class="modal fade" id="viewTimeSlot" tabindex="-1" role="dialog" aria-labelledby="viewTimeSlotLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="viewTimeSlotLabel">Бронирование</h5>
+                    <h5 class="modal-title" id="viewTimeSlotLabel">Временной слот</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form asp-action="DeleteBook" method="post">
                     <div class="modal-body">
-                        <input type="hidden" id="modalId" name="id" />
-                        <input type="hidden" id="modalTutorId" name="tutorId" />
-                        <input type="hidden" id="modalStatus" name="status" />
+                        <input type="hidden" id="viewModalId" name="id" />
+                        <input type="hidden" id="viewModalTutorId" name="tutorId" />
+                        <input type="hidden" id="viewModalStatus" name="status" />
+                        <input type="hidden" id="viewModalStudentId" name="studentId" />
                         <div class="mb-3">
                             <label>Дата:</label>
-                            <p id="modalDate"></p>
+                            <p id="viewModalDate"></p>
+                            <p id="viewModalDayOfWeek" class="text-muted small"></p>
                         </div>
                         <div class="mb-3">
                             <label>Время начала:</label>
-                            <p id="modalStartTime"></p>
+                            <p id="viewModalStartTime"></p>
                         </div>
                         <div class="mb-3">
                             <label>Время окончания:</label>
-                            <p id="modalEndTime"></p>
+                            <p id="viewModalEndTime"></p>
                         </div>
                         <div class="mb-3">
-                            <label for="duration">Продолжительность занятия:</label>
-                            <p id="modalDuration"></p>
+                            <label>Продолжительность занятия:</label>
+                            <p id="viewModalDuration"></p>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn" data-bs-dismiss="modal" style="border-radius: 10px; background-color: #9ACCFF; color: black;">Закрыть</button>
-                        <button id="cancelButton" type="submit" class="btn" style="background-color: #E3EFFF; color: #300E36; border-radius: 10px;">Отменить занятие</button>
-                        <a class="btn" href="@Url.Action("Lesson", "Schedule")" id="startLesson" style="background-color: #E3EFFF; color: #300E36; border-radius: 10px;">Начать занятие</a>
+                        <button type="submit" id="deleteSlotBtn" class="btn" style="background-color: #E3EFFF; color: #300E36; border-radius: 10px; display: none;">Удалить слот</button>
+                        <button type="submit" id="cancelLessonBtn" class="btn" style="background-color: #E3EFFF; color: #300E36; border-radius: 10px; display: none;">Отменить занятие</button>
+                        <a href="#" id="startLessonBtn" class="btn" style="background-color: #E3EFFF; color: #300E36; border-radius: 10px; display: none;">Начать занятие</a>
+                        <a href="#" id="joinLessonBtn" class="btn" style="background-color: #E3EFFF; color: #300E36; border-radius: 10px; display: none;">Подключиться к занятию</a>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+
+
+    
     <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -339,45 +453,117 @@
         });
         $('#viewTimeSlot').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget);
+            console.log("Modal opening with data:", button.data()); // Для отладки
+
+            // Получаем данные из кнопки
             var id = button.data('id');
-            var date = button.data('date');
+            var status = button.data('status');
+            var tutorId = button.data('tutor-id');
+            var studentId = button.data('student-id');
+            var dateStr = button.data('date');
             var startTime = button.data('start-time');
             var endTime = button.data('end-time');
-            var tutorId = button.data('tutor-id');
-            var status = button.data('status');
-            var dayOfWeek = new Date(date).toLocaleDateString('ru-RU', { weekday: 'long' });
+            var role = '@APIClient.Client.Role';
+            var currentUserId = '@APIClient.Client.Id';
+
+            // Преобразуем дату для правильного отображения дня недели
+            var dateObj = new Date(dateStr);
+            var dayOfWeek = dateObj.toLocaleDateString('ru-RU', { weekday: 'long' });
+
+            var startDateTime = new Date(dateStr + 'T' + startTime);
+            var endDateTime = new Date(dateStr + 'T' + endTime);
+            var currentDateTime = new Date();
+
+            // Добавляем 1 час к времени окончания для "льготного периода"
+            var gracePeriodEnd = new Date(endDateTime.getTime() + 60 * 60 * 1000);
+
+            // Разница в минутах до начала/окончания
+            var minutesToStart = (startDateTime - currentDateTime) / (1000 * 60);
+            var minutesAfterEnd = (currentDateTime - gracePeriodEnd) / (1000 * 60);
+
+            // Заполняем данные в модальном окне
+            $('#viewModalId').val(id);
+            $('#viewModalTutorId').val(tutorId);
+            $('#viewModalStatus').val(status);
+            $('#viewModalStudentId').val(studentId);
+            $('#viewModalDate').text(dateStr);
+            $('#viewModalDayOfWeek').text(dayOfWeek);
+            $('#viewModalStartTime').text(startTime);
+            $('#viewModalEndTime').text(endTime);
+
+            // Рассчитываем продолжительность
             var duration = (new Date(`2000-01-01 ${endTime}`) - new Date(`2000-01-01 ${startTime}`)) / (1000 * 60);
+            var durText = duration === 30 ? "30 минут" : (duration / 60) + " часа";
+            $('#viewModalDuration').text(durText);
 
-            var modal = $(this);
-            modal.find('#modalId').val(id);
-            modal.find('#modalDate').text(date);
-            modal.find('#modalDayOfWeek').text(dayOfWeek);
-            modal.find('#modalStartTime').text(startTime);
-            modal.find('#modalEndTime').text(endTime);
-            modal.find('#modalTutorId').val(tutorId);
-            modal.find('#modalStatus').val(status);
-            var dur = duration / 60
-            if (dur === 0.5) {
-                modal.find('#modalDuration').text("30 мин");
-            }
-            else {
-                modal.find('#modalDuration').text(duration / 60 + " ч");
-            }
+            // Управление кнопками
+            $('#deleteSlotBtn, #cancelLessonBtn, #startLessonBtn, #joinLessonBtn').hide();
 
+            if (role === "Tutor") {
+                if (status === "Available") {
+                    $('#deleteSlotBtn').show();
+                } else if (status === "Booked") {
+                    $('#cancelLessonBtn').show();
+                    var canStartLesson = (minutesToStart <= 10) && (minutesAfterEnd <= 0);
 
-            if (status === "Booked") {
-                $('#cancelButton').text('Отменить занятие');
-                $('#cancelButton').prop('disabled', false); // Активируем кнопку отмены
-                $('#startLesson').prop('disabled', false); // Активируем кнопку "Начать занятие"
-            } else {
-                $('#cancelButton').text('Удалить занятие');
-                $('#cancelButton').prop('disabled', false); // Активируем кнопку удаления
-                $('#startLesson').prop('disabled', true); // Деактивируем кнопку "Начать занятие"
+                    if (canStartLesson) {
+                        $('#startLessonBtn')
+                            .show()
+                            .attr('href', `@Url.Action("Lesson", "Schedule")?timeSlotId=${id}&studentId=${studentId}`)
+                            .prop('disabled', false)
+                            .attr('title', '');
+                    } else {
+                        var modalMessage = '';
+                        if (minutesToStart > 10) {
+                            modalMessage = `Вы сможете начать занятие только за 10 минут до его начала.`;
+                        } else if (minutesAfterEnd > 0) {
+                            modalMessage = 'Это занятие уже завершено. Время для его начала истекло.';
+                        }
+
+                        $('#startLessonBtn')
+                            .show()
+                            .attr('href', '#')
+                            .prop('disabled', true)
+                            .click(function (e) {
+                                e.preventDefault();
+                                showCannotStartLessonModal(modalMessage);
+                            });
+                    }
+                }
+            } else if (role === "Student" && studentId == currentUserId) {
+                $('#joinLessonBtn')
+                    .show()
+                    .attr('href', `@Url.Action("Lesson", "Schedule")?timeSlotId=${id}`);
             }
         });
     </script>
 
     <script>
+        function showCannotStartLessonModal(message) {
+            if (!$('#cannotStartLessonModal').length) {
+                $('body').append(`
+                    <div class="modal fade" id="cannotStartLessonModal" tabindex="-1" role="dialog" aria-labelledby="cannotStartLessonModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="cannotStartLessonModalLabel">Невозможно начать занятие</h5>
+                                </div>
+                                <div class="modal-body">
+                                    <p id="cannotStartLessonMessage"></p>
+                                </div>
+                                <div class="modal-footer">
+                                <button type="button" class="btn" data-bs-dismiss="modal" style="border-radius: 10px; background-color: #9ACCFF; color: black;">Понятно</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `);
+            }
+
+            // Устанавливаем сообщение и показываем модальное окно
+            $('#cannotStartLessonMessage').text(message);
+            $('#cannotStartLessonModal').modal('show');
+        }
     $(function () {
         $("#datePicker").datepicker({
             dateFormat: "yy-mm-dd", // Формат даты
@@ -448,47 +634,152 @@
 
 
 
-
 <style>
-    .time-slot-button-available {
-        border-radius: 10px;
-        width: 90%; /* Ширина кнопки 90% от ширины ячейки */
-        background-color: #B0EF9F;
-        color: black;
-        border: none;
-        cursor: pointer;
-        min-height: 30px; /* Минимальная высота кнопки для видимости */
-        transition: background-color 0.3s; /* Плавный переход цвета при наведении */
-        display: block; /* Чтобы margin работал */
-        margin: 0 auto; /* Центрирование кнопки */
+    /* Основные стили расписания */
+    .compact-schedule-container {
+        font-family: 'Segoe UI', Roboto, sans-serif;
+        margin: 20px 0;
     }
 
-    .time-slot-button-booked {
-        border-radius: 10px;
-        width: 90%; /* Ширина кнопки 90% от ширины ячейки */
-        background-color: #FEB0B0;
-        color: black;
-        border: none;
-        cursor: pointer;
-        min-height: 30px; /* Минимальная высота кнопки для видимости */
-        transition: background-color 0.3s; /* Плавный переход цвета при наведении */
-        display: block; /* Чтобы margin работал */
-        margin: 0 auto; /* Центрирование кнопки */
+    .date-picker {
+        width: 200px;
+        margin-bottom: 15px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 8px;
     }
 
-    .schedule-container {
+    .week-days-container {
         display: flex;
-        flex-wrap: wrap; /* Вертикальное расположение таблиц */
-        gap: 10px; /* Интервал между таблицами */
+        gap: 5px;
+        overflow-x: auto;
+        padding-bottom: 10px;
     }
 
-    .day-schedule {
-        border: 1px solid #ccc; /* Граница вокруг каждой таблицы */
-        padding: 5px; /* Отступ внутри таблицы */
-        border-radius: 5px; /* Закругленные углы */
-        max-width: 11%; /* Ограничиваем максимальную ширину таблицы */
+    /* Колонка с временами */
+    .time-column {
+        width: 50px;
+        flex-shrink: 0;
+        margin-top: 40px; /* Для заголовка дня */
+        background: #f8f9fa;
     }
 
+    .time-label {
+        height: 60px;
+        font-size: 12px;
+        text-align: right;
+        padding-right: 5px;
+        position: relative;
+        top: -10px;
+        color: #70757a;
+    }
+
+    /* Стили для дней */
+    .day-column {
+        flex: 1;
+        min-width: 120px;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        background: white;
+        margin-right: 12px;
+    }
+
+        .day-column.today {
+            border-color: #1a73e8;
+            background-color: #f1f3f4;
+        }
+
+    .day-header {
+        text-align: center;
+        padding: 8px 0;
+        border-bottom: 1px solid #eee;
+    }
+
+    .day-name {
+        font-size: 14px;
+        color: #70757a;
+        text-transform: uppercase;
+    }
+
+    .day-date {
+        font-size: 20px;
+        font-weight: 400;
+        margin-top: 5px;
+    }
+
+    .day-column.today .day-date {
+        color: #1a73e8;
+    }
+
+    /* Контейнер для слотов */
+    .day-slots-container {
+        position: relative;
+
+    }
+
+    /* Стили временных слотов */
+    <style >
+    /* Обновленные стили для слотов */
+    .time-slot-wrapper {
+        position: absolute;
+        left: 2px;
+        right: 2px;
+        margin: 1px 0;
+    }
+
+    .time-slot {
+        width: 100%;
+        height: 100%;
+        border-radius: 4px;
+        padding: 4px;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-align: left;
+        transition: all 0.2s;
+        font-size: 12px;
+        overflow: hidden;
+    }
+
+    .slot-content {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        justify-content: center;
+    }
+
+    .time-range {
+        font-weight: 500;
+        white-space: nowrap;
+        line-height: 1.2;
+    }
+
+    .slot-text {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        line-height: 1.2;
+        font-size: 11px;
+    }
+
+    .time-slot.available {
+        background-color: #e6f4ea;
+        color: #188038;
+        border: 1px solid #81c995;
+    }
+
+    .time-slot.booked {
+        background-color: #fce8e6;
+        color: #d93025;
+        border: 1px solid #f28b82;
+    }
+
+    .time-slot:disabled {
+        cursor: not-allowed;
+        opacity: 0.7;
+    }
     .btn-active {
         background-color: #E3EFFF;
         color: #300E36;
@@ -500,6 +791,69 @@
             background-color: #9ACCFF;
     }
 
+    .time-slot {
+        min-height: 40px; /* Минимальная высота для всех слотов */
+    }
+
+    .time-slot-wrapper[style*="height: 30px"] {
+        height: 40px !important; /* Принудительно увеличиваем 30-минутные слоты */
+    }
+
+
+    .schedule-grid {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        grid-template-rows: auto 1fr;
+        margin-top: 10px;
+    }
+
+    .corner-cell {
+        grid-row: 1;
+        grid-column: 1;
+        width: 50px; /* Ширина time-column */
+        height: 40px; /* Высота days-header */
+    }
+
+    .days-header {
+        grid-row: 1;
+        grid-column: 2;
+        display: flex;
+    }
+
+    .time-column {
+        grid-row: 2;
+        grid-column: 1;
+        width: 50px;
+        background: #f8f9fa;
+    }
+
+    .days-slots {
+        grid-row: 2;
+        grid-column: 2;
+        display: flex;
+        overflow-x: auto;
+    }
+
+    /* Остальные стили остаются без изменений */
+    .day-header {
+        flex: 1;
+        text-align: center;
+        padding: 5px 0;
+        border-bottom: 1px solid #eee;
+        min-width: 120px;
+    }
+
+    .time-label {
+        height: 60px;
+        font-size: 12px;
+        text-align: right;
+        padding-right: 5px;
+        position: relative;
+        top: -10px;
+        color: #70757a;
+    }
+
 </style>
+
 
 

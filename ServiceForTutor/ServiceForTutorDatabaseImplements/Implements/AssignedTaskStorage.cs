@@ -32,7 +32,13 @@ namespace ServiceForTutorDatabaseImplements.Implements
         {
             using var context = new ServiceForTutorDatabase();
             if (model.Id.HasValue)
-                return context.AssignedTasks.FirstOrDefault(x => x.Id == model.Id)?.GetViewModel;
+            {
+                return context.AssignedTasks
+                    .Include(at => at.Task)
+                    .Include(at => at.Student) // Добавляем загрузку данных студента
+                    .FirstOrDefault(x => x.Id == model.Id)?
+                    .GetViewModel;
+            }
             return null;
         }
 

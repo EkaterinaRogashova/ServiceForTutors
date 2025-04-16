@@ -588,7 +588,33 @@ namespace ServiceForTutorClientApp.Controllers
                     }
                 }
             }
-                var viewModel = new AssignedTaskViewModel
+            foreach (var answer in answers)
+            {
+                var question = taskQuestions.FirstOrDefault(q => q.Id == answer.QuestionId);
+                if (question != null)
+                {
+                    if (question.TypeQuestion == "Прикрепление файла")
+                    {
+                        answer.IsFileAnswer = true;
+                        answer.FileDownloadLinks = new List<string>();
+
+                        var filePaths = JsonConvert.DeserializeObject<List<string>>(answer.Answer);
+                        foreach (var filePath in filePaths)
+                        {
+                            var fileLink = await GetFileLink(filePath, token);
+                            if (fileLink != null)
+                            {
+                                answer.FileDownloadLinks.Add(fileLink);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        answer.IsFileAnswer = false;
+                    }
+                }
+            }
+            var viewModel = new AssignedTaskViewModel
             {
                 Id = id,
                 Status = test.Status,
@@ -601,7 +627,8 @@ namespace ServiceForTutorClientApp.Controllers
                 TaskTopic = taskDetails.Topic,
                 StudentFIO = test.StudentFIO,
                 Answers = answers,
-                Questions = taskQuestions
+                Questions = taskQuestions,
+                Subject = taskDetails.Subject
             };
             return View(viewModel);
         }
@@ -646,7 +673,7 @@ namespace ServiceForTutorClientApp.Controllers
             return RedirectToAction("AssignedTasks");
         }
 
-        public IActionResult ResultCheck(int id)
+        public async Task<IActionResult> ResultCheck(int id)
         {
             if (APIClient.Client == null)
             {
@@ -656,8 +683,53 @@ namespace ServiceForTutorClientApp.Controllers
             var taskDetails = APIClient.GetRequest<TaskViewModel>($"api/task/GetTask?TaskId={test.TaskId}");
             var taskQuestions = APIClient.GetRequest<List<QuestionViewModel>>($"api/task/GetQuestionsByTask?TaskId={test.TaskId}");
             var answers = APIClient.GetRequest<List<StudentAnswerViewModel>>($"api/task/GetStudentAnswers?AssignedTaskId={id}");
+            string token = _configuration["AppSettings:ApiToken"];
+            foreach (var question in taskQuestions)
+            {
+                question.SetAnswers(JsonConvert.DeserializeObject<List<string>>(question.Answers));
+                question.SetCorrectAnswers(JsonConvert.DeserializeObject<List<string>>(question.CorrectAnswers));
 
-            var maxGrade = taskQuestions.Sum(q => q.MaxScore);
+                if (question.FileUrls != null && question.FileUrls.Any())
+                {
+                    question.FileDownloadLinks = new List<string>();
+                    foreach (var fileUrl in question.FileUrls)
+                    {
+                        var fileLink = await GetFileLink(fileUrl, token);
+                        if (fileLink != null)
+                        {
+                            question.FileDownloadLinks.Add(fileLink);
+                        }
+                    }
+                }
+            }
+            foreach (var answer in answers)
+            {
+                var question = taskQuestions.FirstOrDefault(q => q.Id == answer.QuestionId);
+                if (question != null)
+                {
+                    if (question.TypeQuestion == "Прикрепление файла")
+                    {
+                        answer.IsFileAnswer = true;
+                        answer.FileDownloadLinks = new List<string>();
+
+                        var filePaths = JsonConvert.DeserializeObject<List<string>>(answer.Answer);
+                        foreach (var filePath in filePaths)
+                        {
+                            var fileLink = await GetFileLink(filePath, token);
+                            if (fileLink != null)
+                            {
+                                answer.FileDownloadLinks.Add(fileLink);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        answer.IsFileAnswer = false;
+                    }
+                }
+            }
+        
+        var maxGrade = taskQuestions.Sum(q => q.MaxScore);
 
             var viewModel = new AssignedTaskViewModel
             {
@@ -673,7 +745,8 @@ namespace ServiceForTutorClientApp.Controllers
                 StudentFIO = test.StudentFIO,
                 Answers = answers,
                 Questions = taskQuestions,
-                MaxGrade = maxGrade
+                MaxGrade = maxGrade,
+                Subject = taskDetails.Subject
             };
             return View(viewModel);
         }

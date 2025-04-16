@@ -18,6 +18,8 @@ namespace ServiceForTutorContracts.ViewModels
         public string Answer { get; set; } = string.Empty;
         public float Score { get; set; }
         public int Id { get; set; }
+        public bool IsFileAnswer { get; set; } // Флаг, указывающий, что ответ — файл
+        public List<string> FileDownloadLinks { get; set; } // Ссылки для скачивания файлов
         public void SetAnswer(object answers)
         {
             Answer = JsonConvert.SerializeObject(answers);
