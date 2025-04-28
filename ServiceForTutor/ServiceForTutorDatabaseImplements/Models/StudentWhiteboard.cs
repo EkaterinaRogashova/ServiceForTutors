@@ -15,11 +15,11 @@ namespace ServiceForTutorDatabaseImplements.Models
     {
         public int Id { get; set; }
         [Required]
-        public int StudentId { get; set; }
+        public int TutorStudentId { get; set; }
         public string Data { get; set; } = string.Empty;
         [Required]
         public DateTime LastUpdated { get; set; }
-        public User Student { get; set; }
+        public TutorStudent TutorStudent { get; set; }
 
         public static StudentWhiteboard? Create(StudentWhiteboardBindingModel model)
         {
@@ -30,7 +30,7 @@ namespace ServiceForTutorDatabaseImplements.Models
             return new StudentWhiteboard()
             {
                 Id = model.Id,
-                StudentId = model.StudentId,
+                TutorStudentId = model.TutorStudentId,
                 Data = model.Data,
                 LastUpdated = model.LastUpdated
             };
@@ -40,7 +40,7 @@ namespace ServiceForTutorDatabaseImplements.Models
             return new StudentWhiteboard
             {
                 Id = model.Id,
-                StudentId = model.StudentId,
+                TutorStudentId = model.TutorStudentId,
                 Data = model.Data,
                 LastUpdated = model.LastUpdated
             };
@@ -59,7 +59,7 @@ namespace ServiceForTutorDatabaseImplements.Models
         public StudentWhiteboardViewModel GetViewModel => new()
         {
             Id = Id,
-            StudentId = StudentId,
+            TutorStudentId = TutorStudentId,
             Data = Data,
             LastUpdated = LastUpdated
         };

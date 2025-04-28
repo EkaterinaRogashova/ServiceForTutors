@@ -16,7 +16,6 @@ namespace ServiceForTutorDataModels.Models
         string Status { get; }
         int? StudentCount { get; }
         int? TaskCount { get; }
-        bool AudioInTask { get; }
-        bool VideoInTask { get; }
+        bool IsUseBoards { get; }
     }
 }

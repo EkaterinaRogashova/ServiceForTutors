@@ -457,58 +457,6 @@
 
             
         });
-        // document.getElementById('saveQuestionButton').onclick = function (event) {
-        //     event.preventDefault(); // предотвратить отправку формы по умолчанию
-
-        //     const formData = new FormData();
-        //     const id = document.getElementById('taskId').value;
-        //     const questionText = document.getElementById('questionText').value;
-        //     const questionType = document.getElementById('questionType').value;
-        //     const maxScore = document.getElementById('maxScore').value;
-
-        //     // Добавляем поля в FormData
-        //     formData.append("id", id);
-        //     formData.append("questionText", questionText);
-        //     formData.append("questionType", questionType);
-        //     formData.append("maxScore", maxScore);
-
-        //     // Добавляем массив ответов
-        //     const answers = document.querySelectorAll('input[name="Answers[]"]');
-        //     answers.forEach(answerInput => {
-        //         formData.append("Answers[]", answerInput.value);
-        //     });
-
-        //     // Добавляем массив правильных ответов
-        //     const correctAnswers = document.querySelectorAll('input[name="correctAnswers"]:checked');
-        //     correctAnswers.forEach(correctAnswerInput => {
-        //         formData.append("CorrectAnswers[]", correctAnswerInput.value);
-        //     });
-
-
-        //     // Добавляем файлы
-        //     filesArray.forEach(file => {
-        //         formData.append("files", file);
-        //     });
-        //     for (const [key, value] of formData.entries()) {
-        //         console.log(key, value);
-        //     }
-        //     // Отправка данных на сервер
-        //     fetch("CreateQuestion", {
-        //         method: "POST",
-        //         body: formData
-        //     })
-        //     .then(response => {
-        //         if (response.ok) {
-        //             console.log("Данные успешно отправлены");
-        //             $('#addQuestionModal').modal('hide'); // Закрываем модальное окно
-        //         } else {
-        //             console.error("Ошибка при отправке данных");
-        //         }
-        //     })
-        //     .catch(error => {
-        //         console.error("Произошла ошибка:", error);
-        //     });
-        // };
 
         // Функция добавления варианта ответа
         function addAnswer() {

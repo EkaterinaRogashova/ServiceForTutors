@@ -27,9 +27,8 @@ namespace ServiceForTutorDatabaseImplements.Models
         public int? StudentCount { get; set; }
         public int? TaskCount { get; set; }
         [Required]
-        public bool AudioInTask { get; set; }
-        [Required]
-        public bool VideoInTask { get; set; }
+        public bool IsUseBoards { get; set; }
+        
 
         public int Id { get; set; }
 
@@ -49,8 +48,7 @@ namespace ServiceForTutorDatabaseImplements.Models
                 Status = model.Status,
                 StudentCount = model.StudentCount,
                 TaskCount = model.TaskCount,
-                AudioInTask = model.AudioInTask,
-                VideoInTask = model.VideoInTask
+                IsUseBoards = model.IsUseBoards
             };
         }
         public static TariffPlan Create(TariffPlanViewModel model)
@@ -65,8 +63,7 @@ namespace ServiceForTutorDatabaseImplements.Models
                 Status = model.Status,
                 StudentCount = model.StudentCount,
                 TaskCount = model.TaskCount,
-                AudioInTask = model.AudioInTask,
-                VideoInTask = model.VideoInTask
+                IsUseBoards = model.IsUseBoards
             };
         }
 
@@ -88,8 +85,7 @@ namespace ServiceForTutorDatabaseImplements.Models
             Status = Status,
             StudentCount = StudentCount,
             TaskCount = TaskCount,
-            AudioInTask = AudioInTask,
-            VideoInTask = VideoInTask
+            IsUseBoards = IsUseBoards
         };
     }
 }

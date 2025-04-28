@@ -339,7 +339,7 @@ namespace ServiceForTutorClientApp.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateTariff(string name, string description, decimal cost, int periodInDays, string status, int studentCount, int taskCount)
+        public IActionResult CreateTariff(string name, string description, decimal cost, int periodInDays, string status, int studentCount, int taskCount, bool isUseBoards)
         {
             APIClient.PostRequest("api/TariffPlan/CreateTariffPlan", new TariffPlanBindingModel
             {
@@ -350,8 +350,7 @@ namespace ServiceForTutorClientApp.Controllers
                 Status = status,
                 StudentCount = studentCount,
                 TaskCount = taskCount,
-                AudioInTask = false,
-                VideoInTask = false
+                IsUseBoards = isUseBoards
             });
 
             return RedirectToAction("TariffPlans");

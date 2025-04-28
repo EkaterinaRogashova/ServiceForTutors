@@ -49,7 +49,15 @@
                             <td>
                                 <a class="btn btn-action btn-sm" asp-controller="Task" asp-action="AssignedTasks" asp-route-studentId="@item.Id" style="height: 40px;">Назначенные задания</a>
                                 <a class="btn btn-action btn-sm" asp-action="DeleteStudent" asp-route-id="@item.Id" style="height: 40px;" onclick="return confirm('Вы уверены, что хотите удалить ученика?');">Удалить</a>
-                                <a class="btn btn-action btn-sm" asp-action="Board" asp-route-id="@item.Id" style="height: 40px;">Доска</a>
+                                @if ((bool)ViewData["CanUseBoard"])
+                                {
+                                    <a class="btn btn-action btn-sm" asp-action="Board" asp-route-id="@item.Id" style="height: 40px;">Доска</a>
+
+                                }
+                                else
+                                {
+                                    <button class="btn btn-action btn-sm" style="height: 40px;" data-bs-toggle="modal" data-bs-target="#errorModal">Доска</button>
+                                }
                             </td>
                         </tr>
                     }
@@ -60,6 +68,22 @@
         {
             <h3 class="display-4 mt-4">Нет прикрепленных учеников</h3>
         }
+    </div>
+
+    <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="errorModalLabel">Предупреждение</h5>
+                </div>
+                <div class="modal-body">
+                    <p id="modalMessage">Данная функия не доступна на вашем тарифе</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" data-bs-dismiss="modal" style="border-radius: 10px; background-color: #9ACCFF; color: black;">Закрыть</button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 

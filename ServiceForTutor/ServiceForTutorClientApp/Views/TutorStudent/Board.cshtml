@@ -59,6 +59,7 @@
             height: 100%;
             overflow: auto;
             cursor: grab;
+            transition: transform 0.1s ease;
         }
 
             #drawing-container.grabbing {
@@ -70,6 +71,7 @@
             background-image: none !important;
             will-change: transform;
             image-rendering: optimizeSpeed;
+            transform-origin: 0 0;
         }
     </style>
 </head>
@@ -102,6 +104,9 @@
             <button id="eraseButton" title="Ластик"><i class="fas fa-eraser"></i></button>
             <button id="clearButton" title="Очистить доску"><i class="fas fa-trash"></i></button>
             <button id="saveButton" title="Сохранить"><i class="fas fa-save"></i></button>
+            <button id="zoomIn" title="Приблизить"><i class="fas fa-search-plus"></i></button>
+            <button id="zoomOut" title="Отдалить"><i class="fas fa-search-minus"></i></button>
+            <button id="resetZoom" title="Сбросить масштаб"><i class="fas fa-expand-arrows-alt"></i></button>
         </div>
     </div>
 
@@ -112,6 +117,10 @@
     @section Scripts {
         <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.2.4/fabric.min.js"></script>
         <script>
+            let zoomLevel = 1;
+            const ZOOM_STEP = 0.1;
+            const MIN_ZOOM = 0.3;
+            const MAX_ZOOM = 3;
             // Инициализация canvas с фиксированным размером
             const canvas = new fabric.Canvas('drawingBoard', {
                 selection: false,
@@ -126,7 +135,7 @@
             fabric.Object.prototype.objectCaching = true;
             fabric.Object.prototype.noScaleCache = false;
             fabric.Object.prototype.dirty = false;
-
+            
 
             canvas.setBackgroundColor('white', function () {
                 canvas.renderAll();
@@ -139,6 +148,40 @@
             let currentMode = 'draw';
             let lastRenderTime = 0;
             const container = document.getElementById('drawing-container');
+            container.addEventListener('wheel', function (e) {
+                if (e.ctrlKey) { // Zoom только при зажатом Ctrl
+                    e.preventDefault();
+
+                    const delta = -e.deltaY;
+                    const zoom = delta > 0 ? zoomLevel + ZOOM_STEP : zoomLevel - ZOOM_STEP;
+
+                    // Получаем позицию курсора относительно canvas
+                    const pointer = canvas.getPointer(e);
+                    zoomToPoint(pointer, zoom);
+                }
+            }, { passive: false });
+            document.getElementById('zoomIn').addEventListener('click', function () {
+                zoomToPoint(new fabric.Point(canvas.getWidth() / 2, canvas.getHeight() / 2), zoomLevel + ZOOM_STEP);
+            });
+
+            document.getElementById('zoomOut').addEventListener('click', function () {
+                zoomToPoint(new fabric.Point(canvas.getWidth() / 2, canvas.getHeight() / 2), zoomLevel - ZOOM_STEP);
+            });
+
+            document.getElementById('resetZoom').addEventListener('click', function () {
+                zoomToPoint(new fabric.Point(canvas.getWidth() / 2, canvas.getHeight() / 2), 1);
+            });
+
+            function zoomToPoint(point, zoom) {
+                zoom = Math.max(MIN_ZOOM, Math.min(zoom, MAX_ZOOM));
+
+                canvas.zoomToPoint(point, zoom);
+                zoomLevel = zoom;
+
+                // Обновляем скролл, чтобы центр оставался на месте
+                container.scrollLeft = (canvas.getWidth() * zoomLevel - container.clientWidth) / 2;
+                container.scrollTop = (canvas.getHeight() * zoomLevel - container.clientHeight) / 2;
+            }
 
             // Пиксельный ластик
             function setupEraser(width) {
@@ -303,7 +346,7 @@
             // Сохранение состояния
             function saveWhiteboardState() {
                 const jsonData = JSON.stringify(canvas.toJSON());
-                const studentId = @Model.StudentId;
+                const tutorStudentId = @Model.TutorStudentId;
 
                 fetch('/TutorStudent/SaveWhiteboard', {
                     method: 'POST',
@@ -311,7 +354,7 @@
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        studentId: studentId,
+                        tutorStudentId: tutorStudentId,
                         data: jsonData
                     })
                 })

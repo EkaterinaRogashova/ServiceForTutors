@@ -30,7 +30,7 @@ public class WhiteboardHub : Hub
         // Сохраняем в базу
         var model = new StudentWhiteboardBindingModel
         {
-            StudentId = studentId,
+            TutorStudentId = studentId,
             Data = jsonData,
             LastUpdated = DateTime.UtcNow
         };

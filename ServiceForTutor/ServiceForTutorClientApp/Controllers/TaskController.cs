@@ -52,8 +52,22 @@ namespace ServiceForTutorClientApp.Controllers
 
             // Создание объекта PaginatedList
             var paginatedList = new PaginatedList<TaskViewModel>(response.Items, response.TotalCount, pageIndex, pageSize);
-
+            var userDetails = APIClient.GetRequest<UserViewModel>($"api/user/GetUser?UserId={APIClient.Client.Id}");
+            if (userDetails != null)
+            {
+                int? taskLimit = 11;
+                if (userDetails.PurchasedTariffId.HasValue)
+                {
+                    var existingTariffPlan = APIClient.GetRequest<TariffPlanViewModel>($"api/TariffPlan/GetTariffPlan?TariffPlanId={userDetails.PurchasedTariffId}");
+                    taskLimit = existingTariffPlan.TaskCount;
+                }
+                bool canCreateTask = response.TotalCount < taskLimit;
+                ViewData["CanCreateTask"] = canCreateTask;
+                ViewData["TaskLimit"] = taskLimit;
+                ViewData["CurrentTasksCount"] = response.TotalCount;
+            }
             // Установка заголовка страницы
+
             ViewData["Title"] = "Список задач";
 
             return View(paginatedList); // Передача paginatedList в представление

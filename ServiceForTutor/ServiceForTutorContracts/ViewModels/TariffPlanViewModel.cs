@@ -21,8 +21,7 @@ namespace ServiceForTutorContracts.ViewModels
 
         public int? StudentCount { get; set; }
         public int? TaskCount { get; set; }
-        public bool AudioInTask { get; set; }
-        public bool VideoInTask { get; set; }
+        public bool IsUseBoards { get; set; }
 
         public int Id { get; set; }
     }

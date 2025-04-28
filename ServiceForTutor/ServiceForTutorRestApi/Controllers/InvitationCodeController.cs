@@ -75,7 +75,7 @@ namespace ServiceForTutorRestApi.Controllers
                 // Автоматически создаем доску для ученика, если ее еще нет
                 var whiteboardSearch = new StudentWhiteboardSearchModel
                 {
-                    StudentId = model.StudentId
+                    TutorStudentId = result
                 };
 
                 var existingBoard = _studentWhiteboardLogic.ReadElement(whiteboardSearch);
@@ -83,14 +83,14 @@ namespace ServiceForTutorRestApi.Controllers
                 {
                     var newBoard = new StudentWhiteboardBindingModel
                     {
-                        StudentId = model.StudentId,
+                        TutorStudentId = result,
                         Data = "[]", // Пустой JSON массив
                         LastUpdated = DateTime.UtcNow
                     };
                     _studentWhiteboardLogic.Create(newBoard);
                 }
 
-                return Ok(result);
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -99,13 +99,13 @@ namespace ServiceForTutorRestApi.Controllers
         }
 
         [HttpGet]
-        public StudentWhiteboardViewModel? GetBoard(int studentId)
+        public StudentWhiteboardViewModel? GetBoard(int tutorStudentId)
         {
             try
             {
                 return _studentWhiteboardLogic.ReadElement(new StudentWhiteboardSearchModel
                 {
-                    StudentId = studentId
+                    TutorStudentId = tutorStudentId
                 });
             }
             catch (Exception ex)
@@ -115,11 +115,11 @@ namespace ServiceForTutorRestApi.Controllers
         }
 
         [HttpGet]
-        public string LoadWhiteboard(int studentId)
+        public string LoadWhiteboard(int tutorStudentId)
         {
             try
             {
-                var board = _studentWhiteboardLogic.ReadElement(new StudentWhiteboardSearchModel { StudentId = studentId });
+                var board = _studentWhiteboardLogic.ReadElement(new StudentWhiteboardSearchModel { TutorStudentId = tutorStudentId });
                 return board?.Data ?? "[]";
             }
             catch (Exception ex)

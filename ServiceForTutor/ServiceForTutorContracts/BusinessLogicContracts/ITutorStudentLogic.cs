@@ -13,7 +13,7 @@ namespace ServiceForTutorContracts.BusinessLogicContracts
     {
         List<TutorStudentViewModel>? ReadList(TutorStudentSearchModel? model);
         TutorStudentViewModel? ReadElement(TutorStudentSearchModel model);
-        bool Create(TutorStudentBindingModel model);
+        int Create(TutorStudentBindingModel model);
         bool Delete(TutorStudentBindingModel model);
     }
 }

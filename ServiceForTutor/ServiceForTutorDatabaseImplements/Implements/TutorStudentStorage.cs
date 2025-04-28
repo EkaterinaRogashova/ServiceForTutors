@@ -29,18 +29,26 @@ namespace ServiceForTutorDatabaseImplements.Implements
         public TutorStudentViewModel? GetElement(TutorStudentSearchModel model)
         {
             using var context = new ServiceForTutorDatabase();
+
+            // Начинаем с базового запроса
+            var query = context.TutorStudents.AsQueryable();
+
+            // Фильтруем по StudentId, если он задан
             if (model.StudentId.HasValue)
             {
-                return context.TutorStudents.
-                FirstOrDefault(x => x.StudentId == model.StudentId)?.GetViewModel;
+                query = query.Where(x => x.StudentId == model.StudentId);
             }
+
+            // Фильтруем по TutorId, если он задан
             if (model.TutorId.HasValue)
             {
-                return context.TutorStudents
-                .FirstOrDefault(x => x.TutorId == model.TutorId)?.GetViewModel;
+                query = query.Where(x => x.TutorId == model.TutorId);
             }
-            return null;
+
+            // Получаем первый подходящий элемент или null
+            return query.FirstOrDefault()?.GetViewModel;
         }
+
 
         public List<TutorStudentViewModel> GetFilteredList(TutorStudentSearchModel model)
         {

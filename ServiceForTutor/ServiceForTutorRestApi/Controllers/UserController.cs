@@ -229,5 +229,25 @@ namespace ServiceForTutorRestApi.Controllers
                 throw;
             }
         }
+
+
+        [HttpGet]
+        public TutorStudentViewModel? GetTutorStudent(int tutorId, int studentId)
+        {
+            try
+            {
+                var tutorStudent = _tutorStudentLogic.ReadElement(new TutorStudentSearchModel
+                {
+                    TutorId = tutorId,
+                    StudentId = studentId
+                });
+
+                return tutorStudent;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
     }
 }

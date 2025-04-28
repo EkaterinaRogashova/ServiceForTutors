@@ -10,7 +10,7 @@ namespace ServiceForTutorContracts.ViewModels
     public class StudentWhiteboardViewModel: IStudentWhiteboard
     {
         public int Id { get; set; }
-        public int StudentId { get; set; }
+        public int TutorStudentId { get; set; }
         public string Data { get; set; } = string.Empty;
         public DateTime LastUpdated { get; set; }
     }

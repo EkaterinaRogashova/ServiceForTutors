@@ -26,8 +26,7 @@ namespace ServiceForTutorDatabaseImplements.Migrations
                     Status = table.Column<string>(type: "text", nullable: false),
                     StudentCount = table.Column<int>(type: "integer", nullable: true),
                     TaskCount = table.Column<int>(type: "integer", nullable: true),
-                    AudioInTask = table.Column<bool>(type: "boolean", nullable: false),
-                    VideoInTask = table.Column<bool>(type: "boolean", nullable: false)
+                    IsUseBoards = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -154,27 +153,6 @@ namespace ServiceForTutorDatabaseImplements.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "StudentWhiteboards",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    StudentId = table.Column<int>(type: "integer", nullable: false),
-                    Data = table.Column<string>(type: "text", nullable: false),
-                    LastUpdated = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_StudentWhiteboards", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_StudentWhiteboards_Users_StudentId",
-                        column: x => x.StudentId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Tasks",
                 columns: table => new
                 {
@@ -279,6 +257,27 @@ namespace ServiceForTutorDatabaseImplements.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "StudentWhiteboards",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    TutorStudentId = table.Column<int>(type: "integer", nullable: false),
+                    Data = table.Column<string>(type: "text", nullable: false),
+                    LastUpdated = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StudentWhiteboards", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_StudentWhiteboards_TutorStudents_TutorStudentId",
+                        column: x => x.TutorStudentId,
+                        principalTable: "TutorStudents",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "StudentAnswers",
                 columns: table => new
                 {
@@ -362,9 +361,9 @@ namespace ServiceForTutorDatabaseImplements.Migrations
                 column: "QuestionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_StudentWhiteboards_StudentId",
+                name: "IX_StudentWhiteboards_TutorStudentId",
                 table: "StudentWhiteboards",
-                column: "StudentId");
+                column: "TutorStudentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tasks_TutorId",
@@ -404,9 +403,6 @@ namespace ServiceForTutorDatabaseImplements.Migrations
                 name: "StudentWhiteboards");
 
             migrationBuilder.DropTable(
-                name: "TutorStudents");
-
-            migrationBuilder.DropTable(
                 name: "TariffPlans");
 
             migrationBuilder.DropTable(
@@ -414,6 +410,9 @@ namespace ServiceForTutorDatabaseImplements.Migrations
 
             migrationBuilder.DropTable(
                 name: "Questions");
+
+            migrationBuilder.DropTable(
+                name: "TutorStudents");
 
             migrationBuilder.DropTable(
                 name: "Tasks");

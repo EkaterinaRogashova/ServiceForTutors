@@ -17,8 +17,8 @@ namespace ServiceForTutorDatabaseImplements.Implements
         public StudentWhiteboardViewModel? GetElement(StudentWhiteboardSearchModel model)
         {
             using var context = new ServiceForTutorDatabase();
-            if (model.StudentId.HasValue)
-                return context.StudentWhiteboards.FirstOrDefault(x => x.StudentId == model.StudentId)?.GetViewModel;
+            if (model.TutorStudentId.HasValue)
+                return context.StudentWhiteboards.FirstOrDefault(x => x.TutorStudentId == model.TutorStudentId)?.GetViewModel;
             return null;
         }
 

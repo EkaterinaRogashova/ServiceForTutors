@@ -9,7 +9,7 @@ namespace ServiceForTutorDataModels.Models
 {
     public interface IStudentWhiteboard: IId
     {
-        int StudentId { get; set; }
+        int TutorStudentId { get; set; }
         string Data { get; set; }
         DateTime LastUpdated { get; set; }
     }

@@ -13,7 +13,7 @@ using ServiceForTutorDatabaseImplements;
 namespace ServiceForTutorDatabaseImplements.Migrations
 {
     [DbContext(typeof(ServiceForTutorDatabase))]
-    [Migration("20250420151034_InitialCreate")]
+    [Migration("20250428115149_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -270,12 +270,12 @@ namespace ServiceForTutorDatabaseImplements.Migrations
                     b.Property<DateTime>("LastUpdated")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("StudentId")
+                    b.Property<int>("TutorStudentId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("StudentId");
+                    b.HasIndex("TutorStudentId");
 
                     b.ToTable("StudentWhiteboards");
                 });
@@ -288,15 +288,15 @@ namespace ServiceForTutorDatabaseImplements.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("AudioInTask")
-                        .HasColumnType("boolean");
-
                     b.Property<decimal>("Cost")
                         .HasColumnType("numeric");
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<bool>("IsUseBoards")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -314,9 +314,6 @@ namespace ServiceForTutorDatabaseImplements.Migrations
 
                     b.Property<int?>("TaskCount")
                         .HasColumnType("integer");
-
-                    b.Property<bool>("VideoInTask")
-                        .HasColumnType("boolean");
 
                     b.HasKey("Id");
 
@@ -525,13 +522,13 @@ namespace ServiceForTutorDatabaseImplements.Migrations
 
             modelBuilder.Entity("ServiceForTutorDatabaseImplements.Models.StudentWhiteboard", b =>
                 {
-                    b.HasOne("ServiceForTutorDatabaseImplements.Models.User", "Student")
+                    b.HasOne("ServiceForTutorDatabaseImplements.Models.TutorStudent", "TutorStudent")
                         .WithMany()
-                        .HasForeignKey("StudentId")
+                        .HasForeignKey("TutorStudentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Student");
+                    b.Navigation("TutorStudent");
                 });
 
             modelBuilder.Entity("ServiceForTutorDatabaseImplements.Models.Task", b =>

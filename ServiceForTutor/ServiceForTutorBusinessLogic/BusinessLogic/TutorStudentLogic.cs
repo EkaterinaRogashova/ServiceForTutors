@@ -18,16 +18,16 @@ namespace ServiceForTutorBusinessLogic.BusinessLogic
         {
             _tutorStudentStorage = tutorStudentStorage;
         }
-        public bool Create(TutorStudentBindingModel model)
+        public int Create(TutorStudentBindingModel model)
         {
             CheckModel(model);
             var result = _tutorStudentStorage.Insert(model);
 
             if (result == null)
             {
-                return false;
+                return 0;
             }
-            return true;
+            return result.Id;
         }
 
         public bool Delete(TutorStudentBindingModel model)

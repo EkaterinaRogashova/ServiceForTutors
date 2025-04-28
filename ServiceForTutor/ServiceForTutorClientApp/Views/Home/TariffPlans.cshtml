@@ -2,6 +2,19 @@
 @model List<TariffPlanViewModel>
 @{
     ViewData["Title"] = "Тарифы";
+
+    var defaultTariff = new TariffPlanViewModel
+    {
+        Id = 0, // ID 0 означает, что это не сохраненный в БД тариф
+        Name = "Базовый тариф",
+        Description = "Тариф по умолчанию для всех зарегистрированных пользователей",
+        StudentCount = 7,
+        TaskCount = 20,
+        IsUseBoards = false,
+        Cost = 0,
+        PeriodInDays = 0,
+        Status = "Active"
+    };
 }
 
 <div class="container mt-5">
@@ -30,6 +43,23 @@
         }
     }
     <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title text-center">@defaultTariff.Name</h5>
+                    <p class="card-text">@defaultTariff.Description</p>
+                    <p class="text-center">На этом тарифе Вам доступно:</p>
+                    <p class="text">- прикрепление до @defaultTariff.StudentCount учеников</p>
+                    <p class="text">- возможность создать до @defaultTariff.TaskCount заданий</p>
+                    @if (defaultTariff.IsUseBoards)
+                    {
+                        <p class="text">- возможность использовать индивидуальные интерактивные доски</p>
+                    }
+                    <h6 class="card-subtitle mb-2 text-muted text-center">Бесплатно</h6>
+                    <p class="text-center">Срок действия: без срока</p>
+                </div>
+            </div>
+        </div>
         @foreach (var tariff in Model)
         {
             <div class="col-md-4 mb-4">
@@ -39,7 +69,16 @@
                         <p class="card-text">@tariff.Description</p>
                         <p class="text-center">На этом тарифе Вам доступно:</p>
                         <p class="text">- прикрепление до @tariff.StudentCount ученика(-ов)</p>
-                        <p class="text">- возможность создать до @tariff.TaskCount заданя(-ий)</p>
+                        <p class="text">- возможность создать до @tariff.TaskCount заданий(-ий)</p>
+                        @if(tariff.IsUseBoards == true)
+                        {
+                            <p class="text">- возможность использовать индивидуальные интерактивные доски</p>
+                        }
+                        else
+                        {
+                            <br>
+                            <br />
+                        }
                         <h6 class="card-subtitle mb-2 text-muted text-center">@tariff.Cost.ToString("C")</h6>
                         <p class="text-center">Срок действия: @tariff.PeriodInDays дней</p>
                         @if (APIClient.Client != null)

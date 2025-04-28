@@ -64,29 +64,36 @@ namespace ServiceForTutorClientApp.Controllers
         {
             var students = APIClient.GetRequest<List<UserViewModel>>($"api/user/GetStudents?TutorId={APIClient.Client.Id}");
             ViewBag.InvitationCode = invitationCode;
+            ViewData["CanUseBoard"] = false;
+            var userDetails = APIClient.GetRequest<UserViewModel>($"api/user/GetUser?UserId={APIClient.Client.Id}");
+            if (students != null)
+            {
+                if (userDetails != null && userDetails.PurchasedTariffId.HasValue)
+                {
+                    var existingTariffPlan = APIClient.GetRequest<TariffPlanViewModel>($"api/TariffPlan/GetTariffPlan?TariffPlanId={userDetails.PurchasedTariffId}");
+                    if (existingTariffPlan != null)
+                    {
+                        ViewData["CanUseBoard"] = existingTariffPlan.IsUseBoards;
+                    }
+                }
+            }
             return View(students);
         }
         [HttpGet]
         public IActionResult Board(int id)
         {
-            string board = APIClient.GetRequest<string>($"api/InvitationCode/LoadWhiteboard?StudentId={id}");
-            var model = new StudentWhiteboardViewModel
+            var tutorStudent = APIClient.GetRequest<TutorStudentViewModel>($"api/user/GetTutorStudent?TutorId={APIClient.Client.Id}&StudentId={id}");
+            if (tutorStudent != null)
             {
-                StudentId = id,
-                Data = board
-            };
-            return View(model);
-        }
-
-        public string LoadData(int id)
-        {
-            var board = APIClient.GetRequest<StudentWhiteboardViewModel>($"api/InvitationCode/LoadWhiteboard?StudentId={id}");
-            var model = new StudentWhiteboardViewModel
-            {
-                StudentId = id,
-                Data = board?.Data ?? "[]"
-            };
-            return model.Data;
+                string board = APIClient.GetRequest<string>($"api/InvitationCode/LoadWhiteboard?TutorStudentId={tutorStudent.Id}");
+                var model = new StudentWhiteboardViewModel
+                {
+                    TutorStudentId = tutorStudent.Id,
+                    Data = board
+                };
+                return View(model);
+            }
+            return View();
         }
 
         [HttpPost]
@@ -94,11 +101,11 @@ namespace ServiceForTutorClientApp.Controllers
         {
             try
             {
-                var board = APIClient.GetRequest<StudentWhiteboardViewModel>($"api/InvitationCode/GetBoard?StudentId={model.StudentId}");
+                var board = APIClient.GetRequest<StudentWhiteboardViewModel>($"api/InvitationCode/GetBoard?TutorStudentId={model.TutorStudentId}");
                 await APIClient.PostRequestAsync("api/InvitationCode/SaveWhiteboard", new StudentWhiteboardBindingModel
                 {
                     Id = board.Id,
-                    StudentId = model.StudentId,
+                    TutorStudentId = model.TutorStudentId,
                     Data = model.Data,
                     LastUpdated = DateTime.Now
                 });
