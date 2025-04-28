@@ -1,0 +1,359 @@
+﻿@using ServiceForTutorContracts.ViewModels
+@model StudentWhiteboardViewModel
+@{
+    ViewData["Title"] = "Доска";
+}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.2.4/fabric.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.2.4/fabric.min.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+
+        #controls {
+            position: fixed;
+            top: 60px;
+            left: 10px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        #toolbar button, #toolbar select {
+            padding: 8px 12px;
+            margin: 5px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+            #toolbar button:hover, #toolbar select:hover {
+                background-color: #0056b3;
+            }
+
+            #toolbar button.active {
+                background-color: #28a745;
+            }
+
+        #drawing-container {
+            position: absolute;
+            margin-left: -60px;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            cursor: grab;
+        }
+
+            #drawing-container.grabbing {
+                cursor: grabbing;
+            }
+
+        #drawingBoard {
+            background-color: white !important;
+            background-image: none !important;
+            will-change: transform;
+            image-rendering: optimizeSpeed;
+        }
+    </style>
+</head>
+<body>
+    <div id="loading-overlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:9999; display:flex; justify-content:center; align-items:center;">
+        <div>Загрузка доски...</div>
+    </div>
+
+    <div id="controls">
+        <div id="toolbar">
+            <select id="colorPicker">
+                <option value="black">Чёрный</option>
+                <option value="red">Красный</option>
+                <option value="green">Зелёный</option>
+                <option value="blue">Синий</option>
+                <option value="yellow">Жёлтый</option>
+                <option value="purple">Пурпурный</option>
+            </select>
+
+            <select id="brushSize">
+                <option value="3">Тонкий</option>
+                <option value="5" selected>Средний</option>
+                <option value="10">Толстый</option>
+                <option value="15">Очень толстый</option>
+                <option value="25">Гигантский</option>
+            </select>
+
+            <button id="handButton" title="Режим перемещения"><i class="fas fa-hand-paper"></i></button>
+            <button id="drawButton" class="active" title="Режим рисования"><i class="fas fa-pencil-alt"></i></button>
+            <button id="eraseButton" title="Ластик"><i class="fas fa-eraser"></i></button>
+            <button id="clearButton" title="Очистить доску"><i class="fas fa-trash"></i></button>
+            <button id="saveButton" title="Сохранить"><i class="fas fa-save"></i></button>
+        </div>
+    </div>
+
+    <div id="drawing-container">
+        <canvas id="drawingBoard" width="5000" height="5000"></canvas>
+    </div>
+
+    @section Scripts {
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.2.4/fabric.min.js"></script>
+        <script>
+            // Инициализация canvas с фиксированным размером
+            const canvas = new fabric.Canvas('drawingBoard', {
+                selection: false,
+                backgroundColor: 'white',
+                preserveObjectStacking: true,
+                renderOnAddRemove: false,
+                skipOffscreen: true,
+                allowCache: true
+            });
+
+            // Оптимизация объектов
+            fabric.Object.prototype.objectCaching = true;
+            fabric.Object.prototype.noScaleCache = false;
+            fabric.Object.prototype.dirty = false;
+
+
+            canvas.setBackgroundColor('white', function () {
+                canvas.renderAll();
+                document.getElementById('loading-overlay').style.display = 'none';
+            });
+
+            // Состояние доски
+            let isDragging = false;
+            let lastPosX, lastPosY;
+            let currentMode = 'draw';
+            let lastRenderTime = 0;
+            const container = document.getElementById('drawing-container');
+
+            // Пиксельный ластик
+            function setupEraser(width) {
+                canvas.isDrawingMode = true;
+                canvas.freeDrawingBrush = new fabric.EraserBrush(canvas);
+                canvas.freeDrawingBrush.width = width;
+                canvas.freeDrawingBrush.color = 'white';
+                canvas.defaultCursor = 'pointer';
+            }
+
+            // Обработчики перемещения
+            container.addEventListener('mousedown', function (e) {
+                if (currentMode === 'hand') {
+                    isDragging = true;
+                    lastPosX = e.clientX;
+                    lastPosY = e.clientY;
+                    container.classList.add('grabbing');
+                    e.preventDefault();
+                }
+            });
+
+            document.addEventListener('mousemove', function (e) {
+                if (isDragging && currentMode === 'hand') {
+                    const deltaX = e.clientX - lastPosX;
+                    const deltaY = e.clientY - lastPosY;
+
+                    container.scrollLeft -= deltaX;
+                    container.scrollTop -= deltaY;
+
+                    lastPosX = e.clientX;
+                    lastPosY = e.clientY;
+                    e.preventDefault();
+                }
+            });
+
+            document.addEventListener('mouseup', function () {
+                if (isDragging) {
+                    isDragging = false;
+                    container.classList.remove('grabbing');
+                }
+            });
+
+            // Лимит объектов
+            const MAX_OBJECTS = 1000;
+            canvas.on('object:added', function () {
+                if (canvas.getObjects().length > MAX_OBJECTS) {
+                    canvas.remove(canvas.getObjects()[0]);
+                }
+            });
+
+            // Инициализация инструментов рисования
+            canvas.isDrawingMode = true;
+            canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
+            canvas.freeDrawingBrush.color = document.getElementById('colorPicker').value;
+            canvas.freeDrawingBrush.width = parseInt(document.getElementById('brushSize').value);
+            canvas.defaultCursor = 'crosshair';
+
+            // Изменение цвета
+            document.getElementById('colorPicker').addEventListener('change', function (e) {
+                canvas.freeDrawingBrush.color = e.target.value;
+            });
+
+            // Изменение толщины инструментов
+            document.getElementById('brushSize').addEventListener('change', function (e) {
+                const width = parseInt(e.target.value);
+                if (currentMode === 'erase') {
+                    if (canvas.freeDrawingBrush && canvas.freeDrawingBrush.isEraser) {
+                        canvas.freeDrawingBrush.width = width;
+                        updateEraserCursor(width);
+                    }
+                } else {
+                    canvas.freeDrawingBrush.width = width;
+                }
+            });
+
+            // Режим руки (перемещение)
+            document.getElementById('handButton').addEventListener('click', function () {
+                currentMode = 'hand';
+                canvas.isDrawingMode = false;
+                canvas.defaultCursor = 'grab';
+
+                document.querySelectorAll('#toolbar button').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                this.classList.add('active');
+            });
+
+            // Режим рисования
+            document.getElementById('drawButton').addEventListener('click', function () {
+                currentMode = 'draw';
+                canvas.isDrawingMode = true;
+                canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
+                canvas.freeDrawingBrush.color = document.getElementById('colorPicker').value;
+                canvas.freeDrawingBrush.width = parseInt(document.getElementById('brushSize').value);
+                canvas.defaultCursor = 'crosshair';
+
+                document.querySelectorAll('#toolbar button').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                this.classList.add('active');
+            });
+
+
+            document.getElementById('eraseButton').addEventListener('click', function () {
+                currentMode = 'erase';
+                const width = parseInt(document.getElementById('brushSize').value);
+
+                canvas.isDrawingMode = true;
+                canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
+                canvas.freeDrawingBrush.width = width;
+                canvas.freeDrawingBrush.color = 'rgba(255,255,255,100)'; // Белый цвет для "стирания"
+                canvas.freeDrawingBrush.globalCompositeOperation = 'destination-out'; // Режим удаления пикселей
+
+                // Кастомный курсор
+                const cursorSize = Math.max(10, width);
+                const cursorSVG = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="${cursorSize}" height="${cursorSize}" viewBox="0 0 ${cursorSize} ${cursorSize}"><circle cx="${cursorSize / 2}" cy="${cursorSize / 2}" r="${cursorSize / 2 - 1}" fill="none" stroke="black" stroke-width="1" stroke-dasharray="2,2"/></svg>`;
+                canvas.defaultCursor = `url("${cursorSVG}") ${cursorSize / 2} ${cursorSize / 2}, auto`;
+
+                document.querySelectorAll('#toolbar button').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                this.classList.add('active');
+            });
+
+            // Функция для обновления курсора ластика
+            function updateEraserCursor(width) {
+                const cursorSize = Math.max(10, width);
+                const cursorSVG = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="${cursorSize}" height="${cursorSize}" viewBox="0 0 ${cursorSize} ${cursorSize}"><circle cx="${cursorSize / 2}" cy="${cursorSize / 2}" r="${cursorSize / 2 - 1}" fill="none" stroke="black" stroke-width="1" stroke-dasharray="2,2"/></svg>`;
+                canvas.defaultCursor = `url("${cursorSVG}") ${cursorSize / 2} ${cursorSize / 2}, auto`;
+                canvas.upperCanvasEl.style.cursor = `url("${cursorSVG}") ${cursorSize / 2} ${cursorSize / 2}, auto`;
+            }
+
+            // Очистка доски
+            document.getElementById('clearButton').addEventListener('click', function () {
+                if (confirm('Вы уверены, что хотите очистить всю доску?')) {
+                    canvas.clear();
+                    canvas.setBackgroundColor('white', function () {
+                        canvas.renderAll();
+                    });
+                }
+            });
+
+            // Сохранение изображения
+            document.getElementById('saveButton').addEventListener('click', function () {
+                const dataURL = canvas.toDataURL({
+                    format: 'png',
+                    quality: 1
+                });
+                const link = document.createElement('a');
+                link.href = dataURL;
+                link.download = 'drawing-' + new Date().toISOString().slice(0, 10) + '.png';
+                link.click();
+            });
+
+            // Центрирование доски при загрузке
+            window.addEventListener('load', function () {
+                container.scrollLeft = (canvas.width - container.clientWidth) / 2;
+                container.scrollTop = (canvas.height - container.clientHeight) / 2;
+                loadWhiteboardState();
+            });
+
+            // Сохранение состояния
+            function saveWhiteboardState() {
+                const jsonData = JSON.stringify(canvas.toJSON());
+                const studentId = @Model.StudentId;
+
+                fetch('/TutorStudent/SaveWhiteboard', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        studentId: studentId,
+                        data: jsonData
+                    })
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Ошибка сохранения: ' + response.statusText);
+                        }
+                        return response.json();
+                    })
+                    .catch(error => {
+                        console.error('Ошибка сохранения:', error);
+                        // Можно добавить уведомление пользователю об ошибке
+                    });
+            }
+
+            function loadWhiteboardState() {
+                // Получаем данные прямо из модели представления
+                const canvasData = @Html.Raw(Model.Data);
+                console.log("Canvas data from model:", canvasData);
+
+                if (!canvasData || !canvasData.objects) {
+                    console.warn("Empty or invalid canvas data");
+                    return;
+                }
+
+                // Загружаем данные в canvas
+                canvas.loadFromJSON(canvasData, function () {
+                    canvas.renderAll();
+                    console.log("Successfully loaded", canvas.getObjects().length, "objects");
+
+                    // Восстанавливаем инструменты рисования после загрузки
+                    canvas.isDrawingMode = true;
+                    canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
+                    canvas.freeDrawingBrush.color = document.getElementById('colorPicker').value;
+                    canvas.freeDrawingBrush.width = parseInt(document.getElementById('brushSize').value);
+                });
+            }
+            // Автосохранение
+            canvas.on('object:added', saveWhiteboardState);
+            canvas.on('object:modified', saveWhiteboardState);
+            canvas.on('object:removed', saveWhiteboardState);
+        </script>
+    }
+</body>
+</html>

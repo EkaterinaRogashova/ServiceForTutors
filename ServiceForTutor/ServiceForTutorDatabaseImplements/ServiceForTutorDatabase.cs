@@ -31,6 +31,7 @@ namespace ServiceForTutorDatabaseImplements
         public virtual DbSet<Task> Tasks { get; set; }
         public virtual DbSet<TutorStudent> TutorStudents { get; set; }
         public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<StudentWhiteboard> StudentWhiteboards { get; set; }
 
     }
 }

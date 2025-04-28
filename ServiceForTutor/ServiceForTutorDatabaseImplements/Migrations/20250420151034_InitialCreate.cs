@@ -154,6 +154,27 @@ namespace ServiceForTutorDatabaseImplements.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "StudentWhiteboards",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    StudentId = table.Column<int>(type: "integer", nullable: false),
+                    Data = table.Column<string>(type: "text", nullable: false),
+                    LastUpdated = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StudentWhiteboards", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_StudentWhiteboards_Users_StudentId",
+                        column: x => x.StudentId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Tasks",
                 columns: table => new
                 {
@@ -341,6 +362,11 @@ namespace ServiceForTutorDatabaseImplements.Migrations
                 column: "QuestionId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_StudentWhiteboards_StudentId",
+                table: "StudentWhiteboards",
+                column: "StudentId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Tasks_TutorId",
                 table: "Tasks",
                 column: "TutorId");
@@ -373,6 +399,9 @@ namespace ServiceForTutorDatabaseImplements.Migrations
 
             migrationBuilder.DropTable(
                 name: "StudentAnswers");
+
+            migrationBuilder.DropTable(
+                name: "StudentWhiteboards");
 
             migrationBuilder.DropTable(
                 name: "TutorStudents");

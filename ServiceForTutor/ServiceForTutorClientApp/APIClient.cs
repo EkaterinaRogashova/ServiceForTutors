@@ -60,7 +60,11 @@ namespace ServiceForTutorClientApp
             }
 
             var createdVisitor = JsonConvert.DeserializeObject<InvitationCodeBindingModel>(result);
-            return createdVisitor.Id; // Предполагается, что у вас есть свойство Id в VisitorBindingModel
+            if(createdVisitor != null) {
+                return createdVisitor.Id;
+            }
+            return 0;
+             // Предполагается, что у вас есть свойство Id в VisitorBindingModel
         }
 
         

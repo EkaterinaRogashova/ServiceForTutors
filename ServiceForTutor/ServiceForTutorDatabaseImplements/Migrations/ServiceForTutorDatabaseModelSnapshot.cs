@@ -252,6 +252,31 @@ namespace ServiceForTutorDatabaseImplements.Migrations
                     b.ToTable("StudentAnswers");
                 });
 
+            modelBuilder.Entity("ServiceForTutorDatabaseImplements.Models.StudentWhiteboard", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Data")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("LastUpdated")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("StudentId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("StudentWhiteboards");
+                });
+
             modelBuilder.Entity("ServiceForTutorDatabaseImplements.Models.TariffPlan", b =>
                 {
                     b.Property<int>("Id")
@@ -493,6 +518,17 @@ namespace ServiceForTutorDatabaseImplements.Migrations
                     b.Navigation("AssignedTask");
 
                     b.Navigation("Question");
+                });
+
+            modelBuilder.Entity("ServiceForTutorDatabaseImplements.Models.StudentWhiteboard", b =>
+                {
+                    b.HasOne("ServiceForTutorDatabaseImplements.Models.User", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("ServiceForTutorDatabaseImplements.Models.Task", b =>

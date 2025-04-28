@@ -66,5 +66,48 @@ namespace ServiceForTutorClientApp.Controllers
             ViewBag.InvitationCode = invitationCode;
             return View(students);
         }
+        [HttpGet]
+        public IActionResult Board(int id)
+        {
+            string board = APIClient.GetRequest<string>($"api/InvitationCode/LoadWhiteboard?StudentId={id}");
+            var model = new StudentWhiteboardViewModel
+            {
+                StudentId = id,
+                Data = board
+            };
+            return View(model);
+        }
+
+        public string LoadData(int id)
+        {
+            var board = APIClient.GetRequest<StudentWhiteboardViewModel>($"api/InvitationCode/LoadWhiteboard?StudentId={id}");
+            var model = new StudentWhiteboardViewModel
+            {
+                StudentId = id,
+                Data = board?.Data ?? "[]"
+            };
+            return model.Data;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveWhiteboard([FromBody] StudentWhiteboardViewModel model)
+        {
+            try
+            {
+                var board = APIClient.GetRequest<StudentWhiteboardViewModel>($"api/InvitationCode/GetBoard?StudentId={model.StudentId}");
+                await APIClient.PostRequestAsync("api/InvitationCode/SaveWhiteboard", new StudentWhiteboardBindingModel
+                {
+                    Id = board.Id,
+                    StudentId = model.StudentId,
+                    Data = model.Data,
+                    LastUpdated = DateTime.Now
+                });
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

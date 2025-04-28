@@ -5,6 +5,7 @@ using ServiceForTutorContracts.BindingModels;
 using ServiceForTutorContracts.BusinessLogicContracts;
 using ServiceForTutorContracts.StoragesContracts;
 using ServiceForTutorDatabaseImplements.Implements;
+using ServiceForTutorRestApi;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Logging.SetMinimumLevel(LogLevel.Trace);
@@ -12,6 +13,7 @@ builder.Logging.AddLog4Net("log4net.config");
 
 // Add services to the container.
 builder.Services.AddControllers();
+builder.Services.AddSignalR();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -34,7 +36,7 @@ builder.Services.AddTransient<ITariffPlanStorage, TariffPlanStorage>();
 builder.Services.AddTransient<ITaskStorage, TaskStorage>();
 builder.Services.AddTransient<ITutorStudentStorage, TutorStudentStorage>();
 builder.Services.AddTransient<IUserStorage, UserStorage>();
-
+builder.Services.AddTransient<IStudentWhiteboardStorage, StudentWhiteboardStorage>();
 
 builder.Services.AddTransient<IInvitationCodeLogic, InvitationCodeLogic>();
 builder.Services.AddTransient<IAssignedTaskLogic, AssignedTaskLogic>();
@@ -47,6 +49,7 @@ builder.Services.AddTransient<ITariffPlanLogic, TariffPlanLogic>();
 builder.Services.AddTransient<ITaskLogic, TaskLogic>();
 builder.Services.AddTransient<ITutorStudentLogic, TutorStudentLogic>();
 builder.Services.AddTransient<IUserLogic, UserLogic>();
+builder.Services.AddTransient<IStudentWhiteboardLogic, StudentWhiteboardLogic>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
@@ -73,10 +76,18 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json",
    "ServiceForTutorRestApi v1"));
 }
+app.UseRouting();
 
 app.UseHttpsRedirection();
+app.UseCors(builder => builder
+    .WithOrigins("https://localhost:7016") // Замените на ваш домен
+    .AllowAnyHeader()
+    .AllowAnyMethod()
+    .AllowCredentials());
 
 app.UseAuthorization();
+
+app.MapHub<WhiteboardHub>("/whiteboardHub");
 
 app.MapControllers();
 

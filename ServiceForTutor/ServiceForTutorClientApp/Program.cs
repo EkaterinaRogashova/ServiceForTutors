@@ -26,6 +26,7 @@ builder.Services.AddTransient<ITariffPlanStorage, TariffPlanStorage>();
 builder.Services.AddTransient<ITaskStorage, TaskStorage>();
 builder.Services.AddTransient<ITutorStudentStorage, TutorStudentStorage>();
 builder.Services.AddTransient<IUserStorage, UserStorage>();
+builder.Services.AddTransient<IStudentWhiteboardStorage, StudentWhiteboardStorage>();
 var app = builder.Build();
 APIClient.Connect(builder.Configuration);
 
